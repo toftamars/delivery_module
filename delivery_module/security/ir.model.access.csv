@@ -31,3 +31,4 @@ access_res_city_district_manager,res.city.district.manager,model_res_city_distri
 access_res_city_district_all_users,res.city.district.all.users,model_res_city_district,base.group_user,1,0,0,0
 access_delivery_photo_user,delivery.photo.user,model_delivery_photo,delivery_module.group_delivery_user,1,1,1,0
 access_delivery_photo_manager,delivery.photo.manager,model_delivery_photo,delivery_module.group_delivery_manager,1,1,1,1
+access_delivery_photo_driver,delivery.photo.driver,model_delivery_photo,delivery_module.group_delivery_driver,1,1,1,0
