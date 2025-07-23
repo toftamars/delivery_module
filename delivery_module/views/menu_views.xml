@@ -53,7 +53,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_setup_delivery_schedule_wizard"
                   sequence="45"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_manager"/>
 
         <!-- Konfigürasyon Menüsü -->
         <menuitem id="menu_delivery_config"
