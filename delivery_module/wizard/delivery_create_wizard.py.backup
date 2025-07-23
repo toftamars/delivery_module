@@ -164,7 +164,6 @@ class DeliveryCreateWizard(models.TransientModel):
                 raise UserError(_(f'Bu transfer zaten "{existing_delivery.name}" teslimat belgesine atanmış.'))
             
             partner_id = picking.partner_id.id
-            delivery_address = picking.partner_id.street or ""
             picking_ids = [(4, picking.id)]
             
         else:
@@ -174,7 +173,6 @@ class DeliveryCreateWizard(models.TransientModel):
             
             # Müşteri seçimi opsiyonel - eğer seçilmişse kullan, seçilmemişse None
             partner_id = self.manual_partner_id.id if self.manual_partner_id else False
-            delivery_address = ""
             picking_ids = []
 
         if not self.district_id:

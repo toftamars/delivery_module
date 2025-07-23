@@ -177,7 +177,7 @@ class DeliveryDocument(models.Model):
                 ('vehicle_id', '=', self.vehicle_id.id),
                 ('date', '=', self.date),
                 ('state', 'in', ['draft', 'ready']),
-                ("id", "!=", self.id) if isinstance(self.id, int) and self.id else None
+                ('id', '!=', self.id)
             ])
             
             if today_count >= self.vehicle_id.daily_limit:
