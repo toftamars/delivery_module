@@ -18,7 +18,7 @@ class CapacityControlWizard(models.TransientModel):
         used = len(deliveries)
         total = self.vehicle_id.daily_limit
         remaining = total - used
-        self.result = f"Toplam Kapasite: {total}\nKullanılan: {used}\nKalan: {remaining}"
+        self.result = "Toplam Kapasite: {}\nKullanılan: {}\nKalan: {}".format(total, used, remaining)
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'capacity.control.wizard',
