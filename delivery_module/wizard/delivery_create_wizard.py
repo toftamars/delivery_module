@@ -6,17 +6,39 @@ class DeliveryCreateWizard(models.TransientModel):
     _description = 'Teslimat Oluşturma Sihirbazı'
     _transient_max_hours = 24  # 24 saat sonra otomatik temizle
 
+    # Teslimat türü seçimi
+    delivery_type = fields.Selection([
+        ('transfer', 'Transfer No ile Teslimat'),
+        ('manual', 'Manuel Teslimat')
+    ], string='Teslimat Türü', required=True, default='transfer')
+    
     date = fields.Date('Teslimat Tarihi', required=True, default=fields.Date.context_today)
     vehicle_id = fields.Many2one('delivery.vehicle', string='Araç', required=True, ondelete='cascade')
-    picking_name = fields.Char('Transfer Numarası', required=True, help='Transfer numarasını girin (örn: WH/OUT/00001)')
+    picking_name = fields.Char('Transfer Numarası', help='Transfer numarasını girin (örn: WH/OUT/00001)')
     picking_id = fields.Many2one('stock.picking', string='Seçilen Transfer', readonly=True)
     district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
     available_dates = fields.Text('Uygun Teslimat Günleri', readonly=True)
     vehicle_info = fields.Text('Araç Bilgileri', readonly=True)
+    
+    # Manuel teslimat alanları
+    manual_task = fields.Text('Yapılacak İş', help='Manuel teslimat için yapılacak işi açıklayın')
+    manual_partner_id = fields.Many2one('res.partner', string='Müşteri', help='Manuel teslimat için müşteri seçin')
+
+    @api.onchange('delivery_type')
+    def _onchange_delivery_type(self):
+        """Teslimat türü değiştiğinde alanları güncelle"""
+        if self.delivery_type == 'manual':
+            # Manuel teslimat seçildiğinde transfer alanlarını temizle
+            self.picking_name = False
+            self.picking_id = False
+        else:
+            # Transfer seçildiğinde manuel alanları temizle
+            self.manual_task = False
+            self.manual_partner_id = False
 
     @api.onchange('picking_name')
     def _onchange_picking_name(self):
-        if self.picking_name:
+        if self.picking_name and self.delivery_type == 'transfer':
             # Transfer numarasını temizle (boşlukları kaldır)
             picking_name_clean = self.picking_name.strip()
             
@@ -89,8 +111,8 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
-        if self.date and self.district_id:
-            # Seçilen tarihin uygun bir gün olup olmadığını kontrol et
+        if self.date and self.district_id and self.delivery_type == 'transfer':
+            # Sadece transfer teslimatları için tarih kontrolü yap
             day_of_week = str(self.date.weekday())
             
             # Debug için gün bilgisini yazdır
@@ -115,19 +137,42 @@ class DeliveryCreateWizard(models.TransientModel):
                     print(f"Teslimat yöneticisi uygun olmayan tarihte teslimat oluşturuyor: {self.date.strftime('%d/%m/%Y')} - {selected_day_name}")
 
     def action_create_delivery(self):
-        # Transfer numarasını tekrar kontrol et
-        if not self.picking_name:
-            raise UserError(_('Lütfen transfer numarası girin.'))
-        
-        # Transfer numarasını temizle ve tekrar ara
-        picking_name_clean = self.picking_name.strip()
-        picking = self.env['stock.picking'].search([
-            ('name', '=', picking_name_clean),
-            ('state', 'in', ['confirmed', 'assigned', 'done'])
-        ], limit=1)
-        
-        if not picking:
-            raise UserError(_(f'"{picking_name_clean}" numaralı transfer bulunamadı veya uygun durumda değil. Lütfen transfer numarasını kontrol edin.'))
+        if self.delivery_type == 'transfer':
+            # Transfer teslimatı için kontroller
+            if not self.picking_name:
+                raise UserError(_('Lütfen transfer numarası girin.'))
+            
+            # Transfer numarasını temizle ve tekrar ara
+            picking_name_clean = self.picking_name.strip()
+            picking = self.env['stock.picking'].search([
+                ('name', '=', picking_name_clean),
+                ('state', 'in', ['confirmed', 'assigned', 'done'])
+            ], limit=1)
+            
+            if not picking:
+                raise UserError(_(f'"{picking_name_clean}" numaralı transfer bulunamadı veya uygun durumda değil. Lütfen transfer numarasını kontrol edin.'))
+
+            # Transfer zaten bir teslimat belgesine atanmış mı kontrol et
+            existing_delivery = self.env['delivery.document'].search([
+                ('picking_ids', 'in', picking.id)
+            ], limit=1)
+            
+            if existing_delivery:
+                raise UserError(_(f'Bu transfer zaten "{existing_delivery.name}" teslimat belgesine atanmış.'))
+            
+            partner_id = picking.partner_id.id
+            picking_ids = [(4, picking.id)]
+            
+        else:
+            # Manuel teslimat için kontroller
+            if not self.manual_task:
+                raise UserError(_('Lütfen yapılacak işi açıklayın.'))
+            
+            if not self.manual_partner_id:
+                raise UserError(_('Lütfen müşteri seçin.'))
+            
+            partner_id = self.manual_partner_id.id
+            picking_ids = []
 
         if not self.district_id:
             raise UserError(_('Lütfen ilçe seçin.'))
@@ -150,20 +195,12 @@ class DeliveryCreateWizard(models.TransientModel):
                 # Teslimat yöneticisi için uyarı ver ama devam et
                 print(f"Teslimat yöneticisi limit aşımında teslimat oluşturuyor: {self.vehicle_id.name} - {today_count}/{self.vehicle_id.daily_limit}")
 
-        # Transfer zaten bir teslimat belgesine atanmış mı kontrol et
-        existing_delivery = self.env['delivery.document'].search([
-            ('picking_ids', 'in', picking.id)
-        ], limit=1)
-        
-        if existing_delivery:
-            raise UserError(_(f'Bu transfer zaten "{existing_delivery.name}" teslimat belgesine atanmış.'))
-
         delivery = self.env['delivery.document'].create({
             'date': self.date,
             'vehicle_id': self.vehicle_id.id,
-            'partner_id': picking.partner_id.id,
+            'partner_id': partner_id,
             'district_id': self.district_id.id,
-            'picking_ids': [(4, picking.id)],
+            'picking_ids': picking_ids,
         })
 
         return {
@@ -172,4 +209,4 @@ class DeliveryCreateWizard(models.TransientModel):
             'res_model': 'delivery.document',
             'view_mode': 'form',
             'res_id': delivery.id,
-        } 
+        }
