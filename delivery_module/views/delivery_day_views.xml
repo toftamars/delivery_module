@@ -30,9 +30,11 @@
                 <form string="Teslimat Günü">
                     <header>
                         <button name="action_temporarily_close" string="Geçici Kapat" type="object" 
-                                class="btn-warning" attrs="{'invisible': [('is_temporarily_closed', '=', True)]}"/>
+                                class="btn-warning" attrs="{'invisible': [('is_temporarily_closed', '=', True)]}"
+                                groups="delivery_module.group_delivery_manager"/>
                         <button name="action_reopen" string="Tekrar Aç" type="object" 
-                                class="btn-success" attrs="{'invisible': [('is_temporarily_closed', '=', False)]}"/>
+                                class="btn-success" attrs="{'invisible': [('is_temporarily_closed', '=', False)]}"
+                                groups="delivery_module.group_delivery_manager"/>
                         <field name="status" widget="statusbar" statusbar_visible="active,temporarily_closed,inactive"/>
                     </header>
                     <sheet>
@@ -109,4 +111,4 @@
             </field>
         </record>
     </data>
-</odoo> 
+</odoo>

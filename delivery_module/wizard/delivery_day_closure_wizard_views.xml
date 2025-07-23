@@ -6,7 +6,7 @@
             <field name="name">delivery.day.closure.wizard.form</field>
             <field name="model">delivery.day.closure.wizard</field>
             <field name="arch" type="xml">
-                <form string="Teslimat Gününü Geçici Kapat">
+                <form string="Teslimat Gününü Geçici Kapat" groups="delivery_module.group_delivery_manager">
                     <div class="alert alert-warning" role="alert">
                         <strong>Dikkat:</strong> Bu işlem seçilen gün için teslimatları geçici olarak durduracaktır.
                     </div>
@@ -27,4 +27,4 @@
             </field>
         </record>
     </data>
-</odoo> 
+</odoo>
