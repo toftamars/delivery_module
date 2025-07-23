@@ -178,7 +178,7 @@ class DeliveryDocument(models.Model):
                 return {
                     "warning": {
                         "title": "Uyarı - Geçmiş Tarih",
-                        "message": f"Seçilen tarih ({self.date.strftime("%d/%m/%Y")}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez."
+                        "message": "Seçilen tarih ({}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez.".format(self.date.strftime("%d/%m/%Y"))
                     }
                 }
             
