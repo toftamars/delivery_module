@@ -253,8 +253,13 @@ class DeliveryDocument(models.Model):
         }
 
     def action_cancel(self):
-        self.write({"state": "cancel"})
-        # self._send_sms_notification("cancel")  # SMS pasif
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "cancel.confirmation.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_delivery_id": self.id}
+        }
         
         return {
             "type": "ir.actions.client",

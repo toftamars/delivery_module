@@ -46,7 +46,7 @@
         'wizard/delivery_vehicle_closure_wizard_views.xml',
         'wizard/setup_delivery_schedule_wizard_views.xml',
         "wizard/capacity_control_wizard_views.xml",        'views/menu_views.xml',
-    ],
+        "wizard/cancel_confirmation_wizard_views.xml",    ],
     'demo': [],
     'installable': True,
     'application': True,

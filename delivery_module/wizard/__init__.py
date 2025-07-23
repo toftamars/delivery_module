@@ -5,3 +5,4 @@ from . import delivery_vehicle_closure_wizard
 from . import setup_delivery_schedule_wizard
 from . import delivery_photo_wizard
 # from . import delivery_photo_wizard  # Geçici olarak devre dışı bırakıldı from . import capacity_control_wizard
+from . import cancel_confirmation_wizard
