@@ -6,7 +6,7 @@
             <field name="name">delivery.vehicle.closure.wizard.form</field>
             <field name="model">delivery.vehicle.closure.wizard</field>
             <field name="arch" type="xml">
-                <form string="Teslimat Aracını Geçici Kapat">
+                <form string="Teslimat Aracını Geçici Kapat" groups="delivery_module.group_delivery_manager">
                     <div class="alert alert-warning" role="alert">
                         <strong>Dikkat:</strong> Bu işlem seçilen araç için teslimatları geçici olarak durduracaktır.
                     </div>
@@ -27,4 +27,4 @@
             </field>
         </record>
     </data>
-</odoo> 
+</odoo>

@@ -14,6 +14,13 @@ class DeliveryVehicleClosureWizard(models.TransientModel):
     is_permanent = fields.Boolean('Süresiz Kapatma', default=False, 
                                  help='Bu seçenek işaretlenirse tarih aralığı belirtilmez')
     
+    @api.model
+    def create(self, vals):
+        """Wizard oluşturulurken yetki kontrolü"""
+        if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+            raise UserError(_('Bu işlem için teslimat yöneticisi yetkisi gereklidir.'))
+        return super().create(vals)
+    
     @api.onchange('is_permanent')
     def _onchange_is_permanent(self):
         if self.is_permanent:
@@ -79,4 +86,4 @@ class DeliveryVehicleClosureWizard(models.TransientModel):
 
     def action_cancel(self):
         """İptal et"""
-        return {'type': 'ir.actions.act_window_close'} 
+        return {'type': 'ir.actions.act_window_close'}

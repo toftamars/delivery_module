@@ -15,13 +15,13 @@
                   sequence="10"
                   groups="base.group_user"/>
 
-        <!-- Teslimat Oluştur Menüsü -->
+        <!-- Teslimat Oluştur Menüsü - Sadece Teslimat Kullanıcısı ve Yöneticisi -->
         <menuitem id="menu_delivery_create"
                   name="Teslimat Belgesi Oluştur"
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_create_wizard"
                   sequence="20"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_user,delivery_module.group_delivery_manager"/>
 
         <!-- Teslimat Araçları Menüsü -->
         <menuitem id="menu_delivery_vehicle"
@@ -62,4 +62,4 @@
                   sequence="100"
                   groups="base.group_user"/>
     </data>
-</odoo> 
+</odoo>

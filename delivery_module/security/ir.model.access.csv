@@ -10,6 +10,7 @@ access_delivery_day_manager,delivery.day.manager,model_delivery_day,delivery_mod
 access_delivery_day_all_users,delivery.day.all.users,model_delivery_day,base.group_user,1,0,0,0
 access_delivery_vehicle_user,delivery.vehicle.user,model_delivery_vehicle,delivery_module.group_delivery_user,1,0,0,0
 access_delivery_vehicle_manager,delivery.vehicle.manager,model_delivery_vehicle,delivery_module.group_delivery_manager,1,1,1,1
+access_delivery_vehicle_driver,delivery.vehicle.driver,model_delivery_vehicle,delivery_module.group_delivery_driver,1,0,0,0
 access_delivery_vehicle_all_users,delivery.vehicle.all.users,model_delivery_vehicle,base.group_user,1,0,0,0
 access_delivery_limit_warning_wizard_user,delivery.limit.warning.wizard.user,model_delivery_limit_warning_wizard,base.group_user,1,1,1,0
 access_delivery_limit_warning_wizard_manager,delivery.limit.warning.wizard.manager,model_delivery_limit_warning_wizard,delivery_module.group_delivery_manager,1,1,1,1
