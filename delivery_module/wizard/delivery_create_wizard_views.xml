@@ -19,7 +19,7 @@
                         <field name="picking_id" readonly="1" attrs="{'invisible': [('delivery_type', '!=', 'transfer')]}"/>
                         
                         <!-- Manuel Teslimat Alanları -->
-                        <field name="manual_partner_id" attrs="{'required': [('delivery_type', '=', 'manual')], 'invisible': [('delivery_type', '!=', 'manual')]}"/>
+                        <field name="manual_partner_id" attrs="{'invisible': [('delivery_type', '!=', 'manual')]}"/>
                         <field name="manual_task" placeholder="Örn: Müşteri ziyareti, Ürün kurulumu, Bakım işlemi..." 
                                attrs="{'required': [('delivery_type', '=', 'manual')], 'invisible': [('delivery_type', '!=', 'manual')]}"/>
                         

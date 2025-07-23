@@ -22,7 +22,7 @@ class DeliveryCreateWizard(models.TransientModel):
     
     # Manuel teslimat alanları
     manual_task = fields.Text('Yapılacak İş', help='Manuel teslimat için yapılacak işi açıklayın')
-    manual_partner_id = fields.Many2one('res.partner', string='Müşteri', help='Manuel teslimat için müşteri seçin')
+    manual_partner_id = fields.Many2one('res.partner', string='Müşteri', help='Manuel teslimat için müşteri seçin (opsiyonel)')
 
     @api.onchange('delivery_type')
     def _onchange_delivery_type(self):
@@ -171,10 +171,8 @@ class DeliveryCreateWizard(models.TransientModel):
             if not self.manual_task:
                 raise UserError(_('Lütfen yapılacak işi açıklayın.'))
             
-            if not self.manual_partner_id:
-                raise UserError(_('Lütfen müşteri seçin.'))
-            
-            partner_id = self.manual_partner_id.id
+            # Müşteri seçimi opsiyonel - eğer seçilmişse kullan, seçilmemişse None
+            partner_id = self.manual_partner_id.id if self.manual_partner_id else False
             picking_ids = []
 
         if not self.district_id:
