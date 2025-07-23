@@ -31,6 +31,20 @@ class DeliveryDocument(models.Model):
     delivery_photo_count = fields.Integer(compute='_compute_photo_count', string='Fotoğraf Sayısı')
     has_photos = fields.Boolean(compute='_compute_has_photos', string='Fotoğraf Var mı?')
 
+    # Kapasite kontrolü alanları
+    capacity_check_date = fields.Date('Kapasite Kontrol Tarihi', help='Kapasite kontrolü için tarih seçin')
+    capacity_check_district_id = fields.Many2one('res.city.district', string='Kapasite Kontrol İlçesi', help='Kapasite kontrolü için ilçe seçin')
+    capacity_status = fields.Selection([
+        ('available', 'Müsait'),
+        ('limited', 'Sınırlı'),
+        ('full', 'Dolu'),
+        ('closed', 'Kapalı')
+    ], string='Kapasite Durumu', compute='_compute_capacity_status', store=False)
+    available_vehicles = fields.Text('Müsait Araçlar', compute='_compute_capacity_status', store=False)
+    total_capacity = fields.Integer('Toplam Kapasite', compute='_compute_capacity_status', store=False)
+    used_capacity = fields.Integer('Kullanılan Kapasite', compute='_compute_capacity_status', store=False)
+    remaining_capacity = fields.Integer('Kalan Kapasite', compute='_compute_capacity_status', store=False)
+
     def _compute_picking_count(self):
         for delivery in self:
             delivery.picking_count = len(delivery.picking_ids)
@@ -52,6 +66,76 @@ class DeliveryDocument(models.Model):
                 delivery.delivery_address = delivery.partner_id.street
             else:
                 delivery.delivery_address = False
+
+    @api.depends('capacity_check_date', 'capacity_check_district_id')
+    def _compute_capacity_status(self):
+        """Kapasite durumunu hesaplar"""
+        for delivery in self:
+            if not delivery.capacity_check_date or not delivery.capacity_check_district_id:
+                delivery.capacity_status = False
+                delivery.available_vehicles = ''
+                delivery.total_capacity = 0
+                delivery.used_capacity = 0
+                delivery.remaining_capacity = 0
+                continue
+
+            # Seçilen tarih için teslimat günü kontrolü
+            day_of_week = str(delivery.capacity_check_date.weekday())
+            delivery_day = self.env['delivery.day'].search([
+                ('day_of_week', '=', day_of_week),
+                ('active', '=', True),
+                ('is_temporarily_closed', '=', False),
+                ('district_ids', 'in', delivery.capacity_check_district_id.id)
+            ], limit=1)
+
+            if not delivery_day:
+                delivery.capacity_status = 'closed'
+                delivery.available_vehicles = 'Bu tarih ve ilçe için teslimat günü tanımlanmamış'
+                delivery.total_capacity = 0
+                delivery.used_capacity = 0
+                delivery.remaining_capacity = 0
+                continue
+
+            # Müsait araçları bul
+            available_vehicles = self.env['delivery.vehicle'].search([
+                ('active', '=', True),
+                ('is_temporarily_closed', '=', False)
+            ])
+
+            total_capacity = 0
+            used_capacity = 0
+            available_vehicle_list = []
+
+            for vehicle in available_vehicles:
+                # Aracın o günkü teslimat sayısını hesapla
+                vehicle_delivery_count = self.env['delivery.document'].search_count([
+                    ('vehicle_id', '=', vehicle.id),
+                    ('date', '=', delivery.capacity_check_date),
+                    ('state', 'in', ['draft', 'ready']),
+                    ('district_id', '=', delivery.capacity_check_district_id.id)
+                ])
+
+                remaining = vehicle.daily_limit - vehicle_delivery_count
+                if remaining > 0:
+                    available_vehicle_list.append(f"{vehicle.name} ({remaining} kapasite)")
+                    total_capacity += vehicle.daily_limit
+                    used_capacity += vehicle_delivery_count
+
+            delivery.total_capacity = total_capacity
+            delivery.used_capacity = used_capacity
+            delivery.remaining_capacity = total_capacity - used_capacity
+
+            if available_vehicle_list:
+                delivery.available_vehicles = ', '.join(available_vehicle_list)
+                if delivery.remaining_capacity > 5:
+                    delivery.capacity_status = 'available'
+                elif delivery.remaining_capacity > 0:
+                    delivery.capacity_status = 'limited'
+                else:
+                    delivery.capacity_status = 'full'
+            else:
+                delivery.available_vehicles = 'Müsait araç bulunamadı'
+                delivery.capacity_status = 'full'
 
     def action_view_pickings(self):
         return {
@@ -201,4 +285,4 @@ class DeliveryDocument(models.Model):
     #         'cancel': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız iptal edildi.',
     #         'on_the_way': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız yola çıktı.'
     #     }
-    #     return messages.get(state) 
+    #     return messages.get(state)

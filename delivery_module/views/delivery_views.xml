@@ -125,5 +125,44 @@
                 </search>
             </field>
         </record>
+
+        <!-- Teslimat Belgesi Tree Görünümü - Kapasite Kontrolü ile -->
+        <record id="view_delivery_document_tree_with_capacity" model="ir.ui.view">
+            <field name="name">delivery.document.tree.with.capacity</field>
+            <field name="model">delivery.document</field>
+            <field name="arch" type="xml">
+                <tree string="Teslimat Belgeleri">
+                    <!-- Kapasite Kontrolü Alanı -->
+                    <field name="capacity_check_date" widget="date" options="{'format': 'dd/mm/yyyy'}" 
+                           placeholder="Tarih seçin"/>
+                    <field name="capacity_check_district_id" placeholder="İlçe seçin"/>
+                    <field name="capacity_status" readonly="1"/>
+                    <field name="available_vehicles" readonly="1"/>
+                    <field name="total_capacity" readonly="1"/>
+                    <field name="used_capacity" readonly="1"/>
+                    <field name="remaining_capacity" readonly="1"/>
+                    
+                    <!-- Mevcut Alanlar -->
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="vehicle_id"/>
+                    <field name="picking_count"/>
+                    <field name="delivery_photo_count"/>
+                    <field name="delivery_address"/>
+                    <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_finish_delivery" type="object" icon="fa-check" string="Tamamla" 
+                            attrs="{'invisible': [('state', '!=', 'ready')]}"/>
+                    <button name="action_view_pickings" type="object" icon="fa-list" string="Transferler" 
+                            attrs="{'invisible': [('picking_count', '=', 0)]}"/>
+                    <button name="action_view_photos" type="object" icon="fa-camera" string="Fotoğraflar" 
+                            attrs="{'invisible': [('delivery_photo_count', '=', 0)]}"/>
+                    <button name="action_open_in_maps" type="object" icon="fa-map-marker" string="Haritada Aç" 
+                            attrs="{'invisible': [('delivery_address', '=', False)]}"/>
+                </tree>
+            </field>
+        </record>
     </data>
-</odoo> 
+</odoo>
