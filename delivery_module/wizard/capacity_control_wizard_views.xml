@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_capacity_control_wizard_form" model="ir.ui.view">
+        <field name="name">capacity.control.wizard.form</field>
+        <field name="model">capacity.control.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Kapasite Kontrol">
+                <group>
+                    <field name="date"/>
+                    <field name="vehicle_id"/>
+                </group>
+                <footer>
+                    <button name="action_query_capacity" string="Kapasite Sorgula" type="object" class="btn-primary"/>
+                    <button string="Kapat" class="btn-secondary" special="cancel"/>
+                </footer>
+                <group>
+                    <field name="result" readonly="1"/>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

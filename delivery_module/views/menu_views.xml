@@ -25,9 +25,9 @@
 
         <!-- Teslimat Araçları Menüsü -->
         <menuitem id="menu_delivery_vehicle"
-                  name="Teslimat Araçları"
+                  name="Kapasite Kontrol"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_delivery_vehicle"
+                  action="delivery_module.action_capacity_control_wizard"
                   sequence="30"
                   groups="base.group_user"/>
 
