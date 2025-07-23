@@ -121,7 +121,7 @@ class DeliveryCreateWizard(models.TransientModel):
                 return {
                     "warning": {
                         "title": "Uyarı - Geçmiş Tarih",
-                        "message": f"Seçilen tarih ({self.date.strftime("%d/%m/%Y")}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez."
+                        "message": "Seçilen tarih ({}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez.".format(self.date.strftime("%d/%m/%Y"))
                     }
                 }
             
@@ -207,7 +207,7 @@ class DeliveryCreateWizard(models.TransientModel):
                 raise UserError(_(f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş. İlave teslimat için yetkilendirme gerekli.'))
             else:
                 # Teslimat yöneticisi için uyarı ver ama devam et
-                print(f"Teslimat yöneticisi limit aşımında teslimat oluşturuyor: {self.vehicle_id.name} - {today_count}/{self.vehicle_id.daily_limit}")
+                print("Teslimat yöneticisi limit aşımında teslimat oluşturuyor: {} - {}/{}".format(self.vehicle_id.name, today_count, self.vehicle_id.daily_limit))
 
         delivery = self.env['delivery.document'].create({
             'date': self.date,
