@@ -114,7 +114,18 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
-        if self.date and self.district_id and self.delivery_type == 'transfer':
+        if self.date:
+            # Geçmiş tarih kontrolü
+            today = fields.Date.today()
+            if self.date < today:
+                return {
+                    "warning": {
+                        "title": "Uyarı - Geçmiş Tarih",
+                        "message": f"Seçilen tarih ({self.date.strftime("%d/%m/%Y")}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez."
+                    }
+                }
+            
+            if self.district_id and self.delivery_type == 'transfer':
             # Sadece transfer teslimatları için tarih kontrolü yap
             day_of_week = str(self.date.weekday())
             

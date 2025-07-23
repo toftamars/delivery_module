@@ -171,7 +171,18 @@ class DeliveryDocument(models.Model):
 
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):
-        if self.vehicle_id and self.date:
+        if self.date:
+            # Geçmiş tarih kontrolü
+            today = fields.Date.today()
+            if self.date < today:
+                return {
+                    "warning": {
+                        "title": "Uyarı - Geçmiş Tarih",
+                        "message": f"Seçilen tarih ({self.date.strftime("%d/%m/%Y")}) bugünden önce. Geçmiş tarihlerde teslimat oluşturmak önerilmez."
+                    }
+                }
+            
+            if self.vehicle_id:
             # Aracın o günkü teslimat sayısını kontrol et
             today_count = self.env['delivery.document'].search_count([
                 ('vehicle_id', '=', self.vehicle_id.id),

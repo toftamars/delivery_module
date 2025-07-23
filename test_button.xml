@@ -1,2 +1,0 @@
-                    <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
-                            attrs="{\"invisible\": [(\"state\", \"!=\", \"draft\")]}" groups="delivery_module.group_delivery_manager"/>
