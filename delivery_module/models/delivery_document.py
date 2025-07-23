@@ -183,134 +183,27 @@ class DeliveryDocument(models.Model):
                 }
             
             if self.vehicle_id:
-            # Aracın o günkü teslimat sayısını kontrol et
-            today_count = self.env['delivery.document'].search_count([
-                ('vehicle_id', '=', self.vehicle_id.id),
-                ('date', '=', self.date),
-                ('state', 'in', ['draft', 'ready']),
-                ("id", "!=", self.id) if isinstance(self.id, int) and self.id else None
-            ])
-            
-            if today_count >= self.vehicle_id.daily_limit:
-                # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
-                    return {
-                        'warning': {
-                            'title': 'Uyarı',
-                            'message': f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş. İlave teslimat için yetkilendirme gerekli.'
+                # Aracın o günkü teslimat sayısını kontrol et
+                today_count = self.env["delivery.document"].search_count([
+                    ("vehicle_id", "=", self.vehicle_id.id),
+                    ("date", "=", self.date),
+                    ("state", "in", ["draft", "ready"]),
+                    ("id", "!=", self.id) if isinstance(self.id, int) and self.id else None
+                ])
+                
+                if today_count >= self.vehicle_id.daily_limit:
+                    # Teslimat yöneticisi için sadece uyarı ver, engelleme
+                    if not self.env.user.has_group("delivery_module.group_delivery_manager"):
+                        return {
+                            "warning": {
+                                "title": "Uyarı",
+                                "message": f"{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş. İlave teslimat için yetkilendirme gerekli."
+                            }
                         }
-                    }
-                else:
-                    return {
-                        'warning': {
-                            'title': 'Uyarı - Teslimat Yöneticisi',
-                            'message': f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş, ancak teslimat yöneticisi olarak ilave teslimat oluşturabilirsiniz.'
+                    else:
+                        return {
+                            "warning": {
+                                "title": "Uyarı - Teslimat Yöneticisi",
+                                "message": f"{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş, ancak teslimat yöneticisi olarak ilave teslimat oluşturabilirsiniz."
+                            }
                         }
-                    }
-
-    def action_approve(self):
-        self.write({'state': 'ready'})
-        self._send_sms_notification('ready')
-
-    def action_on_the_way(self):
-        """Yolda butonu - Taslaktan Hazır durumuna geçer"""
-        if self.state != 'draft':
-            raise UserError(_('Sadece taslak durumundaki teslimatlar yola çıkabilir.'))
-        
-        self.write({'state': 'ready'})
-        # self._send_sms_notification('on_the_way')  # SMS pasif
-        
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Başarılı'),
-                'message': _('%s numaralı teslimat yola çıktı.') % self.name,  # SMS mesajı kaldırıldı
-                'type': 'success',
-            }
-        }
-
-    def action_complete(self):
-        self.write({'state': 'done'})
-        # self._send_sms_notification('done')  # SMS pasif
-
-    def action_finish_delivery(self):
-        """Tamamla butonu - Hazır durumundan Tamamlandı durumuna geçer"""
-        if self.state != 'ready':
-            raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
-        
-        self.write({'state': 'done'})
-        # self._send_sms_notification('done')  # SMS pasif
-        
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Başarılı'),
-                'message': _('%s numaralı teslimat tamamlandı.') % self.name,  # SMS mesajı kaldırıldı
-                'type': 'success',
-            }
-        }
-
-    def action_cancel(self):
-        return {
-            "type": "ir.actions.act_window",
-            "res_model": "cancel.confirmation.wizard",
-            "view_mode": "form",
-            "target": "new",
-            "context": {"default_delivery_id": self.id}
-        }
-        
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": _("İptal Edildi"),
-                "message": _("%s numaralı teslimat iptal edildi.") % self.name,
-                "type": "warning",
-            }
-        }
-        self.write({'state': 'cancel'})
-        # self._send_sms_notification('cancel')  # SMS pasif
-
-    def action_draft(self):
-        self.write({'state': 'draft'})
-
-    def action_open_in_maps(self):
-        """Haritada Aç butonu - Google Maps'te teslimat adresini açar"""
-        self.ensure_one()
-        
-        if not self.delivery_address:
-            raise UserError(_('Teslimat adresi bulunamadı.'))
-        
-        # Google Maps URL oluştur - adres ile
-        maps_url = f"https://www.google.com/maps?q={self.delivery_address}"
-        
-        # Yeni sekmede aç
-        return {
-            'type': 'ir.actions.act_url',
-            'url': maps_url,
-            'target': 'new',
-        }
-
-    # def _send_sms_notification(self, state):
-    #     """SMS gönderme - şimdilik pasif"""
-    #     if not self.partner_id.mobile:
-    #         return
-    #     
-    #     message = self._get_sms_message(state)
-    #     if message:
-    #         self.env['sms.api']._send_sms(
-    #             self.partner_id.mobile,
-    #             message
-    #         )
-
-    # def _get_sms_message(self, state):
-    #     """SMS mesajları - şimdilik pasif"""
-    #     messages = {
-    #         'ready': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız hazırlandı.',
-    #         'done': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız tamamlandı.',
-    #         'cancel': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız iptal edildi.',
-    #         'on_the_way': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız yola çıktı.'
-    #     }
-    #     return messages.get(state)
