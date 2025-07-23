@@ -94,15 +94,15 @@ class DeliveryCreateWizard(models.TransientModel):
             self.vehicle_info = f"{self.vehicle_id.name} - Bugünkü teslimat: {today_count}/{self.vehicle_id.daily_limit} (Kalan: {remaining})"
             
             if today_count >= self.vehicle_id.daily_limit:
-                # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                    # Teslimat yöneticisi için sadece uyarı ver, engelleme
+                    if not self.env.user.has_group('delivery_module.group_delivery_manager'):
                     return {
                         'warning': {
                             'title': 'Uyarı',
                             'message': f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş. İlave teslimat için yetkilendirme gerekli.'
                         }
                     }
-                else:
+                    else:
                     return {
                         'warning': {
                             'title': 'Uyarı - Teslimat Yöneticisi',
@@ -126,28 +126,51 @@ class DeliveryCreateWizard(models.TransientModel):
                 }
             
             if self.district_id and self.delivery_type == 'transfer':
-            # Sadece transfer teslimatları için tarih kontrolü yap
-            day_of_week = str(self.date.weekday())
+                # Sadece transfer teslimatları için tarih kontrolü yap
+                day_of_week = str(self.date.weekday())
+                
+                # Debug için gün bilgisini yazdır
+                day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+                selected_day_name = day_names[self.date.weekday()]
+                
+                available_day = self.env['delivery.day'].search([
+                    ('day_of_week', '=', day_of_week),
+                    ('active', '=', True),
+                    ('district_ids', 'in', self.district_id.id)
+                ], limit=1)
+                
+                if not available_day:
+                    day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+                    selected_day_name = day_names[self.date.weekday()]
+                    
+                    # Teslimat yöneticisi için sadece uyarı ver, engelleme
+                    if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                        raise UserError(_('Seçilen tarih ({}) bu ilçe için uygun bir teslimat günü değil.')).format(self.date.strftime('%d/%m/%Y') + ' - ' + selected_day_name))
+                    else:
+                        # Teslimat yöneticisi için uyarı ver ama devam et
+                        print('Teslimat yöneticisi uygun olmayan tarihte teslimat oluşturuyor: {} - {}'.format(self.date.strftime('%d/%m/%Y'), selected_day_name))
+                # Sadece transfer teslimatları için tarih kontrolü yap
+                day_of_week = str(self.date.weekday())
             
-            # Debug için gün bilgisini yazdır
-            day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
-            selected_day_name = day_names[self.date.weekday()]
+                # Debug için gün bilgisini yazdır
+                    day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+                    selected_day_name = day_names[self.date.weekday()]
             
-            available_day = self.env['delivery.day'].search([
+                available_day = self.env['delivery.day'].search([
                 ('day_of_week', '=', day_of_week),
                 ('active', '=', True),
                 ('district_ids', 'in', self.district_id.id)
             ], limit=1)
             
-            if not available_day:
-                day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
-                selected_day_name = day_names[self.date.weekday()]
+                if not available_day:
+                    day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+                    selected_day_name = day_names[self.date.weekday()]
                 
-                # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                    # Teslimat yöneticisi için sadece uyarı ver, engelleme
+                    if not self.env.user.has_group('delivery_module.group_delivery_manager'):
                     raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) bu ilçe için uygun bir teslimat günü değil.'))
-                else:
-                    # Teslimat yöneticisi için uyarı ver ama devam et
+                    else:
+                        # Teslimat yöneticisi için uyarı ver ama devam et
                     print(f"Teslimat yöneticisi uygun olmayan tarihte teslimat oluşturuyor: {self.date.strftime('%d/%m/%Y')} - {selected_day_name}")
 
     def action_create_delivery(self):
