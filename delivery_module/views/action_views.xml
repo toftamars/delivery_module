@@ -6,7 +6,6 @@
             <field name="name">Teslimat Belgeleri</field>
             <field name="res_model">delivery.document</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="delivery_module.view_delivery_document_tree_with_capacity"/>
             <field name="context">{'create': False}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
