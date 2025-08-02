@@ -73,5 +73,29 @@
             <field name="target">new</field>
             <field name="context">{'default_delivery_id': active_id}</field>
         </record>
+
+        <!-- Kapasite Kontrol Wizard Action -->
+        <record id="action_capacity_control_wizard" model="ir.actions.act_window">
+            <field name="name">Kapasite Kontrol</field>
+            <field name="res_model">capacity.control.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Teslimat Oluşturma Wizard Action -->
+        <record id="action_delivery_create_wizard" model="ir.actions.act_window">
+            <field name="name">Teslimat Belgesi Oluştur</field>
+            <field name="res_model">delivery.create.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Teslimat Programı Kurulumu Wizard Action -->
+        <record id="action_setup_delivery_schedule_wizard" model="ir.actions.act_window">
+            <field name="name">Teslimat Programı Kurulumu</field>
+            <field name="res_model">setup.delivery.schedule.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
     </data>
 </odoo>
