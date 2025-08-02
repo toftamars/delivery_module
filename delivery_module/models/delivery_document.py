@@ -183,6 +183,22 @@ class DeliveryDocument(models.Model):
             'context': {'default_delivery_id': self.id},
         }
 
+    def action_open_in_maps(self):
+        """Teslimat adresini haritada aç"""
+        self.ensure_one()
+        if not self.delivery_address:
+            raise UserError(_('Teslimat adresi bulunamadı.'))
+        
+        # Google Maps URL'si oluştur
+        address = self.delivery_address.replace(' ', '+')
+        maps_url = f"https://www.google.com/maps/search/?api=1&query={address}"
+        
+        return {
+            'type': 'ir.actions.act_url',
+            'url': maps_url,
+            'target': 'new',
+        }
+
     def action_view_pickings(self):
         return {
             'name': _('Transfer Belgeleri'),
