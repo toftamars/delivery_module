@@ -29,6 +29,44 @@
             </field>
         </record>
 
+        <!-- Teslimat Belgesi Tree Görünümü - Kapasite Kontrol ile -->
+        <record id="view_delivery_document_tree_with_capacity" model="ir.ui.view">
+            <field name="name">delivery.document.tree.with.capacity</field>
+            <field name="model">delivery.document</field>
+            <field name="arch" type="xml">
+                <tree string="Teslimat Belgeleri">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="vehicle_id"/>
+                    <field name="picking_count"/>
+                    <field name="delivery_photo_count"/>
+                    <field name="delivery_address"/>
+                    
+                    <!-- Kapasite Kontrol Alanları -->
+                    <field name="capacity_check_date" optional="show" string="Kapasite Tarihi"/>
+                    <field name="capacity_check_district_id" optional="show" string="Kapasite İlçesi"/>
+                    <field name="capacity_status" optional="show" string="Kapasite Durumu"/>
+                    <field name="total_capacity" optional="show" string="Toplam Kapasite"/>
+                    <field name="used_capacity" optional="show" string="Kullanılan"/>
+                    <field name="remaining_capacity" optional="show" string="Kalan"/>
+                    <field name="available_vehicles" optional="hide" string="Müsait Araçlar"/>
+                    
+                    <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda"  groups="delivery_module.group_delivery_manager"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_finish_delivery" type="object" icon="fa-check" string="Tamamla" 
+                            attrs="{'invisible': [('state', '!=', 'ready')]}"/>
+                    <button name="action_view_pickings" type="object" icon="fa-list" string="Transferler" 
+                            attrs="{'invisible': [('picking_count', '=', 0)]}"/>
+                    <button name="action_view_photos" type="object" icon="fa-camera" string="Fotoğraflar" 
+                            attrs="{'invisible': [('delivery_photo_count', '=', 0)]}"/>
+                    <button name="action_open_in_maps" type="object" icon="fa-map-marker" string="Haritada Aç" 
+                            attrs="{'invisible': [('delivery_address', '=', False)]}"/>
+                </tree>
+            </field>
+        </record>
+
         <!-- Teslimat Belgesi Form Görünümü -->
         <record id="view_delivery_document_form" model="ir.ui.view">
             <field name="name">delivery.document.form</field>
