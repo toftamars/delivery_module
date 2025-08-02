@@ -137,6 +137,52 @@ class DeliveryDocument(models.Model):
                 delivery.available_vehicles = 'Müsait araç bulunamadı'
                 delivery.capacity_status = 'full'
 
+    def action_on_the_way(self):
+        """Teslimatı yolda durumuna geçir"""
+        self.ensure_one()
+        if self.state != 'draft':
+            raise UserError(_('Sadece taslak durumundaki teslimatlar yolda durumuna geçirilebilir.'))
+        
+        self.write({'state': 'ready'})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Başarılı'),
+                'message': _('%s numaralı teslimat yolda durumuna geçirildi.') % self.name,
+                'type': 'success',
+            }
+        }
+
+    def action_finish_delivery(self):
+        """Teslimatı tamamla"""
+        self.ensure_one()
+        if self.state != 'ready':
+            raise UserError(_('Sadece yolda durumundaki teslimatlar tamamlanabilir.'))
+        
+        self.write({'state': 'done'})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Başarılı'),
+                'message': _('%s numaralı teslimat tamamlandı.') % self.name,
+                'type': 'success',
+            }
+        }
+
+    def action_cancel(self):
+        """Teslimatı iptal et"""
+        self.ensure_one()
+        return {
+            'name': _('İptal Onayı'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'cancel.confirmation.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_delivery_id': self.id},
+        }
+
     def action_view_pickings(self):
         return {
             'name': _('Transfer Belgeleri'),
