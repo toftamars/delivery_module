@@ -27,7 +27,9 @@ class DeliveryDay(models.Model):
     closed_by = fields.Many2one('res.users', string='Kapatan Kullanıcı', readonly=True)
     closed_date = fields.Datetime('Kapatma Tarihi', readonly=True)
     
-
+    # İlçe ilişkileri
+    district_ids = fields.Many2many('res.city.district', string='İlçeler')
+    district_count = fields.Integer('İlçe Sayısı', compute='_compute_district_count', store=True)
     
     # Yaka bazlı ilçe listeleri
     anatolian_districts = fields.Text('Anadolu Yakası İlçeleri', compute='_compute_anatolian_districts', readonly=True)
@@ -49,6 +51,11 @@ class DeliveryDay(models.Model):
                 day.status = 'temporarily_closed'
             else:
                 day.status = 'active'
+
+    @api.depends('district_ids')
+    def _compute_district_count(self):
+        for day in self:
+            day.district_count = len(day.district_ids)
 
 
 
