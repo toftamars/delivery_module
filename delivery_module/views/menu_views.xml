@@ -4,6 +4,7 @@
         <!-- Ana Teslimat Menüsü -->
         <menuitem id="menu_delivery_root"
                   name="Teslimat"
+                  action="delivery_module.action_availability_check"
                   sequence="10"
                   groups="base.group_user"/>
 
@@ -52,7 +53,7 @@
                   name="🔍 Uygunluk Kontrol"
                   parent="menu_delivery_root"
                   action="delivery_module.action_availability_check"
-                  sequence="50"
+                  sequence="1"
                   groups="base.group_user"/>
 
         <!-- Konfigürasyon Menüsü -->
