@@ -1,0 +1,213 @@
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+from datetime import datetime, timedelta
+import calendar
+
+class AvailabilityCheck(models.Model):
+    _name = 'availability.check'
+    _description = 'Uygunluk Kontrol'
+    _order = 'id desc'
+    _transient_max_hours = 1  # 1 saat sonra otomatik sil
+
+    vehicle_id = fields.Many2one('delivery.vehicle', string='Araç', required=True)
+    district_id = fields.Many2one('res.city.district', string='İlçe', required=False)
+    result_html = fields.Html(string='Sonuç', readonly=True)
+    check_date = fields.Datetime(string='Sorgulama Tarihi', default=fields.Datetime.now, readonly=True)
+    user_id = fields.Many2one('res.users', string='Sorgulayan', default=lambda self: self.env.user, readonly=True)
+
+    @api.onchange('vehicle_id')
+    def _onchange_vehicle(self):
+        """Araç değiştiğinde ilçe ve sonuç alanlarını temizle"""
+        if self.vehicle_id:
+            self.district_id = False
+            self.result_html = False
+
+    @api.onchange('district_id')
+    def _onchange_district(self):
+        """İlçe değiştiğinde sonuç alanını temizle"""
+        if self.district_id:
+            self.result_html = False
+
+    def action_check_availability(self):
+        """Uygunluk kontrolü yap"""
+        self.ensure_one()
+        
+        if not self.vehicle_id:
+            raise UserError(_('Lütfen araç seçin.'))
+        
+        # Küçük araçlar için ilçe kontrolü yapma
+        small_vehicles = ['Küçük Araç 1', 'Küçük Araç 2', 'Ek araç', 'Ek Araç']
+        is_small_vehicle = self.vehicle_id.name in small_vehicles
+        
+        if not is_small_vehicle and not self.district_id:
+            raise UserError(_('Lütfen ilçe seçin.'))
+        
+        # Araç ve ilçe uyumluluğu kontrolü
+        if not is_small_vehicle and self.district_id:
+            # Araç tipini kontrol et
+            vehicle_type = self.vehicle_id.vehicle_type
+            district_name = self.district_id.name
+            
+            # Avrupa yakası araçları için Avrupa ilçeleri
+            if vehicle_type == 'avrupa':
+                avrupa_ilceleri = ['Bağcılar', 'Bakırköy', 'Bayrampaşa', 'Beşiktaş', 'Beylikdüzü', 'Beyoğlu', 'Esenler', 'Esenyurt', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kağıthane', 'Küçükçekmece', 'Sarıyer', 'Silivri', 'Şişli', 'Zeytinburnu']
+                if district_name not in avrupa_ilceleri:
+                    raise UserError(_(f'"{district_name}" ilçesi Avrupa yakasında değil. "{self.vehicle_id.name}" aracı sadece Avrupa yakası ilçelerinde hizmet verebilir.'))
+            
+            # Anadolu yakası araçları için Anadolu ilçeleri
+            elif vehicle_type == 'anadolu':
+                anadolu_ilceleri = ['Ataşehir', 'Beykoz', 'Çekmeköy', 'Kadıköy', 'Kartal', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sultanbeyli', 'Şile', 'Tuzla', 'Ümraniye', 'Üsküdar']
+                if district_name not in anadolu_ilceleri:
+                    raise UserError(_(f'"{district_name}" ilçesi Anadolu yakasında değil. "{self.vehicle_id.name}" aracı sadece Anadolu yakası ilçelerinde hizmet verebilir.'))
+        
+        # Türkçe gün isimleri
+        turkish_days = {
+            'Monday': 'Pazartesi',
+            'Tuesday': 'Salı',
+            'Wednesday': 'Çarşamba',
+            'Thursday': 'Perşembe',
+            'Friday': 'Cuma',
+            'Saturday': 'Cumartesi',
+            'Sunday': 'Pazar'
+        }
+        
+        # Önümüzdeki 30 gün için uygun tarihleri bul
+        today = datetime.now().date()
+        suitable_dates = []
+        
+        for i in range(30):  # 30 gün kontrol et
+            check_date = today + timedelta(days=i)
+            day_of_week = str(check_date.weekday())
+            
+            # Teslimat günü kontrolü
+            delivery_day = self.env['delivery.day'].search([
+                ('day_of_week', '=', day_of_week),
+                ('active', '=', True),
+                ('is_temporarily_closed', '=', False)
+            ], limit=1)
+            
+            # Küçük araçlar için ilçe kontrolü yapma
+            if is_small_vehicle:
+                # Küçük araçlar için tüm günlerde kapasite kontrolü
+                # O tarih için teslimatları bul
+                deliveries = self.env['delivery.document'].search([
+                    ('vehicle_id', '=', self.vehicle_id.id),
+                    ('date', '=', check_date),
+                    ('state', '!=', 'cancel')
+                ])
+                
+                used_capacity = len(deliveries)
+                total_capacity = self.vehicle_id.daily_limit
+                remaining_capacity = total_capacity - used_capacity
+                
+                if remaining_capacity > 0:  # Sadece müsait olanları göster
+                    day_name_en = calendar.day_name[check_date.weekday()]
+                    day_name_tr = turkish_days.get(day_name_en, day_name_en)
+                    
+                    suitable_dates.append({
+                        'date': check_date,
+                        'day_name': day_name_tr,
+                        'remaining': remaining_capacity,
+                        'used': used_capacity,
+                        'total': total_capacity
+                    })
+            elif delivery_day and self.district_id in delivery_day.district_ids:
+                # O tarih için teslimatları bul
+                deliveries = self.env['delivery.document'].search([
+                    ('vehicle_id', '=', self.vehicle_id.id),
+                    ('date', '=', check_date),
+                    ('state', '!=', 'cancel')
+                ])
+                
+                used_capacity = len(deliveries)
+                total_capacity = self.vehicle_id.daily_limit
+                remaining_capacity = total_capacity - used_capacity
+                
+                if remaining_capacity > 0:  # Sadece müsait olanları göster
+                    day_name_en = calendar.day_name[check_date.weekday()]
+                    day_name_tr = turkish_days.get(day_name_en, day_name_en)
+                    
+                    suitable_dates.append({
+                        'date': check_date,
+                        'day_name': day_name_tr,
+                        'remaining': remaining_capacity,
+                        'used': used_capacity,
+                        'total': total_capacity
+                    })
+        
+        # HTML sonuç oluştur
+        result_html = f"""
+        <div style="padding: 10px;">
+            <h3 style="color: #2c3e50;">🚚 Araç: {self.vehicle_id.name}</h3>
+        """
+        
+        if not is_small_vehicle and self.district_id:
+            result_html += f'<h3 style="color: #2c3e50;">🏘️ İlçe: {self.district_id.name}</h3>'
+        elif is_small_vehicle:
+            result_html += '<h3 style="color: #2c3e50;">🏘️ İlçe: Kapasite Sorgulaması (İlçe Seçimi Gerekmez)</h3>'
+        
+        result_html += f"""
+            <hr/>
+            <h4 style="color: #34495e;">📅 Uygun Tarihler ve Kalan Teslimat Sayıları:</h4>
+        """
+        
+        if suitable_dates:
+            result_html += '<table class="table table-striped" style="margin-top: 10px;">'
+            result_html += '<thead><tr>'
+            result_html += '<th>Tarih</th>'
+            result_html += '<th>Gün</th>'
+            result_html += '<th>Kalan</th>'
+            result_html += '<th>Kullanılan</th>'
+            result_html += '<th>Toplam</th>'
+            result_html += '<th>İşlem</th>'
+            result_html += '</tr></thead><tbody>'
+            
+            for date_info in suitable_dates:
+                result_html += f"""
+                <tr>
+                    <td><strong>{date_info['date'].strftime('%d/%m/%Y')}</strong></td>
+                    <td>{date_info['day_name']}</td>
+                    <td><span class="badge badge-success">{date_info['remaining']}</span></td>
+                    <td><span class="badge badge-info">{date_info['used']}</span></td>
+                    <td><span class="badge badge-secondary">{date_info['total']}</span></td>
+                    <td>
+                        <button onclick="window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date'].strftime('%Y-%m-%d')}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'" 
+                                class="btn btn-sm btn-primary" 
+                                style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">
+                            ➕ Oluştur
+                        </button>
+                    </td>
+                </tr>
+                """
+            
+            result_html += '</tbody></table>'
+        else:
+            result_html += '<div class="alert alert-warning" style="margin-top: 10px;">❌ Önümüzdeki 30 gün içinde uygun tarih bulunamadı.</div>'
+        
+        result_html += '</div>'
+        
+        # Sonucu kaydet
+        self.result_html = result_html
+
+    def action_clear_form(self):
+        """Form alanlarını temizle"""
+        self.ensure_one()
+        # Sadece sonuç alanını temizle
+        self.result_html = False
+        # Sayfayı yeniden yükle
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+
+    def action_refresh_form(self):
+        """Formu yenile - yeni sorgulama ekranı getir"""
+        self.ensure_one()
+        # Tüm alanları temizle ve yeni kayıt oluştur
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'availability.check',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {'create': True},
+        } 

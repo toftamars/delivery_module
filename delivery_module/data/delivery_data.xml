@@ -8,17 +8,7 @@
             <field name="active">True</field>
         </record>
 
-        <record id="city_ankara" model="res.city">
-            <field name="name">Ankara</field>
-            <field name="state_id" ref="base.state_tr_06"/>
-            <field name="active">True</field>
-        </record>
 
-        <record id="city_izmir" model="res.city">
-            <field name="name">İzmir</field>
-            <field name="state_id" ref="base.state_tr_35"/>
-            <field name="active">True</field>
-        </record>
 
         <!-- İstanbul İlçeleri - Anadolu Yakası -->
         <record id="district_maltepe" model="res.city.district">
@@ -244,43 +234,7 @@
             <field name="active">True</field>
         </record>
 
-        <!-- Ankara İlçeleri -->
-        <record id="district_cankaya" model="res.city.district">
-            <field name="name">Çankaya</field>
-            <field name="city_id" ref="city_ankara"/>
-            <field name="active">True</field>
-        </record>
 
-        <record id="district_kecioren" model="res.city.district">
-            <field name="name">Keçiören</field>
-            <field name="city_id" ref="city_ankara"/>
-            <field name="active">True</field>
-        </record>
-
-        <record id="district_mamak" model="res.city.district">
-            <field name="name">Mamak</field>
-            <field name="city_id" ref="city_ankara"/>
-            <field name="active">True</field>
-        </record>
-
-        <!-- İzmir İlçeleri -->
-        <record id="district_konak" model="res.city.district">
-            <field name="name">Konak</field>
-            <field name="city_id" ref="city_izmir"/>
-            <field name="active">True</field>
-        </record>
-
-        <record id="district_bornova" model="res.city.district">
-            <field name="name">Bornova</field>
-            <field name="city_id" ref="city_izmir"/>
-            <field name="active">True</field>
-        </record>
-
-        <record id="district_karsiyaka" model="res.city.district">
-            <field name="name">Karşıyaka</field>
-            <field name="city_id" ref="city_izmir"/>
-            <field name="active">True</field>
-        </record>
 
         <!-- Teslimat Günleri -->
         <record id="delivery_day_monday" model="delivery.day">

@@ -27,10 +27,7 @@ class DeliveryDay(models.Model):
     closed_by = fields.Many2one('res.users', string='Kapatan Kullanıcı', readonly=True)
     closed_date = fields.Datetime('Kapatma Tarihi', readonly=True)
     
-    # İlçe ilişkisi (sadece görüntüleme amaçlı)
-    district_ids = fields.Many2many('res.city.district', string='Teslimat Yapılan İlçeler', readonly=True)
-    district_count = fields.Integer('İlçe Sayısı', compute='_compute_district_count')
-    district_list = fields.Text('Teslimat İlçeleri', compute='_compute_district_list', readonly=True)
+
     
     # Yaka bazlı ilçe listeleri
     anatolian_districts = fields.Text('Anadolu Yakası İlçeleri', compute='_compute_anatolian_districts', readonly=True)
@@ -53,39 +50,7 @@ class DeliveryDay(models.Model):
             else:
                 day.status = 'active'
 
-    def _compute_district_count(self):
-        for day in self:
-            day.district_count = len(day.district_ids)
 
-    def _compute_district_list(self):
-        for day in self:
-            if day.district_ids:
-                # Anadolu Yakası ilçeleri
-                anatolian_district_names = [
-                    'Maltepe', 'Kartal', 'Pendik', 'Tuzla', 'Üsküdar', 'Kadıköy', 
-                    'Ataşehir', 'Ümraniye', 'Sancaktepe', 'Çekmeköy', 'Beykoz', 
-                    'Şile', 'Sultanbeyli'
-                ]
-                
-                anatolian_count = 0
-                european_count = 0
-                
-                for district in day.district_ids:
-                    if district.name in anatolian_district_names:
-                        anatolian_count += 1
-                    else:
-                        european_count += 1
-                
-                # Kısa özet oluştur
-                parts = []
-                if anatolian_count > 0:
-                    parts.append(f"Anadolu: {anatolian_count} ilçe")
-                if european_count > 0:
-                    parts.append(f"Avrupa: {european_count} ilçe")
-                
-                day.district_list = " | ".join(parts)
-            else:
-                day.district_list = "Teslimat ilçesi tanımlanmamış"
 
     def _compute_anatolian_districts(self):
         """Anadolu Yakası ilçelerini hesaplar"""
