@@ -18,6 +18,7 @@ class DeliveryDocument(models.Model):
     
     # Yeni alanlar
     partner_id = fields.Many2one('res.partner', string='Müşteri', required=True)
+    delivery_day_id = fields.Many2one('delivery.day', string='Teslimat Günü', required=True)
 
     delivery_address = fields.Char('Teslimat Adresi', related='partner_id.street', readonly=True)
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')

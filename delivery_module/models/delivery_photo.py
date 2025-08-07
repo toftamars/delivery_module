@@ -17,7 +17,7 @@ class DeliveryPhoto(models.Model):
     
     # İlişkiler
     delivery_day_id = fields.Many2one('delivery.day', string='Teslimat Günü', related='delivery_document_id.delivery_day_id', store=True)
-    delivery_vehicle_id = fields.Many2one('delivery.vehicle', string='Teslimat Aracı', related='delivery_document_id.delivery_vehicle_id', store=True)
+    delivery_vehicle_id = fields.Many2one('delivery.vehicle', string='Teslimat Aracı', related='delivery_document_id.vehicle_id', store=True)
     partner_id = fields.Many2one('res.partner', string='Müşteri', related='delivery_document_id.partner_id', store=True)
     
     @api.constrains('photo')
