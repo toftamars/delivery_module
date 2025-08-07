@@ -104,3 +104,96 @@ class ManualSetupWizard(models.TransientModel):
             }
         except Exception as e:
             raise UserError(_(f'Araçlar oluşturulurken hata oluştu: {str(e)}'))
+
+    def action_create_districts(self):
+        """İlçeleri manuel olarak oluştur"""
+        try:
+            # İstanbul şehrini bul veya oluştur
+            istanbul = self.env['res.city'].search([('name', '=', 'İstanbul')], limit=1)
+            if not istanbul:
+                istanbul = self.env['res.city'].create({
+                    'name': 'İstanbul',
+                    'state_id': self.env.ref('base.state_tr_34').id,
+                    'active': True
+                })
+                print(f"İstanbul şehri oluşturuldu: {istanbul.name}")
+            
+            # Mevcut ilçeleri kontrol et
+            existing_districts = self.env['res.city.district'].search([])
+            if len(existing_districts) >= 35:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Bilgi'),
+                        'message': _('İlçeler zaten mevcut.'),
+                        'type': 'info',
+                    }
+                }
+            
+            # İlçeleri oluştur
+            districts_data = [
+                # Anadolu Yakası
+                {'name': 'Maltepe', 'city_id': istanbul.id},
+                {'name': 'Kartal', 'city_id': istanbul.id},
+                {'name': 'Pendik', 'city_id': istanbul.id},
+                {'name': 'Tuzla', 'city_id': istanbul.id},
+                {'name': 'Üsküdar', 'city_id': istanbul.id},
+                {'name': 'Kadıköy', 'city_id': istanbul.id},
+                {'name': 'Ataşehir', 'city_id': istanbul.id},
+                {'name': 'Ümraniye', 'city_id': istanbul.id},
+                {'name': 'Sancaktepe', 'city_id': istanbul.id},
+                {'name': 'Çekmeköy', 'city_id': istanbul.id},
+                {'name': 'Beykoz', 'city_id': istanbul.id},
+                {'name': 'Şile', 'city_id': istanbul.id},
+                {'name': 'Sultanbeyli', 'city_id': istanbul.id},
+                
+                # Avrupa Yakası
+                {'name': 'Beyoğlu', 'city_id': istanbul.id},
+                {'name': 'Şişli', 'city_id': istanbul.id},
+                {'name': 'Beşiktaş', 'city_id': istanbul.id},
+                {'name': 'Kağıthane', 'city_id': istanbul.id},
+                {'name': 'Sarıyer', 'city_id': istanbul.id},
+                {'name': 'Bakırköy', 'city_id': istanbul.id},
+                {'name': 'Bahçelievler', 'city_id': istanbul.id},
+                {'name': 'Güngören', 'city_id': istanbul.id},
+                {'name': 'Esenler', 'city_id': istanbul.id},
+                {'name': 'Bağcılar', 'city_id': istanbul.id},
+                {'name': 'Eyüpsultan', 'city_id': istanbul.id},
+                {'name': 'Gaziosmanpaşa', 'city_id': istanbul.id},
+                {'name': 'Küçükçekmece', 'city_id': istanbul.id},
+                {'name': 'Avcılar', 'city_id': istanbul.id},
+                {'name': 'Başakşehir', 'city_id': istanbul.id},
+                {'name': 'Sultangazi', 'city_id': istanbul.id},
+                {'name': 'Arnavutköy', 'city_id': istanbul.id},
+                {'name': 'Fatih', 'city_id': istanbul.id},
+                {'name': 'Zeytinburnu', 'city_id': istanbul.id},
+                {'name': 'Bayrampaşa', 'city_id': istanbul.id},
+                {'name': 'Esenyurt', 'city_id': istanbul.id},
+                {'name': 'Beylikdüzü', 'city_id': istanbul.id},
+                {'name': 'Silivri', 'city_id': istanbul.id},
+                {'name': 'Çatalca', 'city_id': istanbul.id},
+            ]
+            
+            created_districts = []
+            for district_data in districts_data:
+                # İlçe zaten var mı kontrol et
+                existing = self.env['res.city.district'].search([('name', '=', district_data['name'])], limit=1)
+                if not existing:
+                    district = self.env['res.city.district'].create(district_data)
+                    created_districts.append(district.name)
+                    print(f"İlçe oluşturuldu: {district.name}")
+                else:
+                    print(f"İlçe zaten mevcut: {existing.name}")
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Başarılı'),
+                    'message': _('İlçeler başarıyla oluşturuldu!'),
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            raise UserError(_(f'İlçeler oluşturulurken hata oluştu: {str(e)}'))
