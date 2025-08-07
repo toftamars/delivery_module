@@ -62,7 +62,7 @@ class DeliveryDay(models.Model):
     def _compute_district_list(self):
         for day in self:
             if day.district_ids:
-                district_names = [f"{district.name} ({district.city_id.name})" for district in day.district_ids.sorted('name')]
+                district_names = [district.name for district in day.district_ids.sorted('name')]
                 day.district_list = ", ".join(district_names)
             else:
                 day.district_list = "İlçe tanımlanmamış"
@@ -81,7 +81,7 @@ class DeliveryDay(models.Model):
             anatolian_districts = []
             for district in day.district_ids.sorted('name'):
                 if district.name in anatolian_district_names:
-                    anatolian_districts.append(f"{district.name} ({district.city_id.name})")
+                    anatolian_districts.append(district.name)
             
             if anatolian_districts:
                 day.anatolian_districts = ", ".join(anatolian_districts)
@@ -102,7 +102,7 @@ class DeliveryDay(models.Model):
             european_districts = []
             for district in day.district_ids.sorted('name'):
                 if district.name in european_district_names:
-                    european_districts.append(f"{district.name} ({district.city_id.name})")
+                    european_districts.append(district.name)
             
             if european_districts:
                 day.european_districts = ", ".join(european_districts)
