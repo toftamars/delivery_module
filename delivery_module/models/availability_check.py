@@ -38,6 +38,8 @@ class AvailabilityCheck(models.Model):
         # Küçük araçlar için ilçe kontrolü yapma
         small_vehicles = ['Küçük Araç 1', 'Küçük Araç 2', 'Ek araç', 'Ek Araç']
         is_small_vehicle = self.vehicle_id.name in small_vehicles
+        # Yönetici, kısıtlamalardan muaf
+        is_manager = self.env.user.has_group('delivery_module.group_delivery_manager')
         today = datetime.now().date()
         for i in range(30):
             check_date = today + timedelta(days=i)
@@ -55,8 +57,8 @@ class AvailabilityCheck(models.Model):
                 ])
                 used_capacity = len(deliveries)
                 total_capacity = self.vehicle_id.daily_limit
-                remaining_capacity = total_capacity - used_capacity
-                if remaining_capacity > 0:
+                remaining_capacity = max(total_capacity - used_capacity, 0)
+                if remaining_capacity > 0 or is_manager:
                     suitable_dates.append({
                         'date': check_date.strftime('%Y-%m-%d'),
                         'day_name': calendar.day_name[check_date.weekday()],
@@ -64,7 +66,7 @@ class AvailabilityCheck(models.Model):
                         'used': used_capacity,
                         'total': total_capacity,
                     })
-            elif delivery_day and (not self.district_id or self.district_id in delivery_day.district_ids):
+            elif (delivery_day and (not self.district_id or self.district_id in delivery_day.district_ids)) or is_manager:
                 deliveries = self.env['delivery.document'].search([
                     ('vehicle_id', '=', self.vehicle_id.id),
                     ('date', '=', check_date),
@@ -72,8 +74,8 @@ class AvailabilityCheck(models.Model):
                 ])
                 used_capacity = len(deliveries)
                 total_capacity = self.vehicle_id.daily_limit
-                remaining_capacity = total_capacity - used_capacity
-                if remaining_capacity > 0:
+                remaining_capacity = max(total_capacity - used_capacity, 0)
+                if remaining_capacity > 0 or is_manager:
                     suitable_dates.append({
                         'date': check_date.strftime('%Y-%m-%d'),
                         'day_name': calendar.day_name[check_date.weekday()],
