@@ -18,7 +18,7 @@ class DeliveryDocument(models.Model):
     
     # Yeni alanlar
     partner_id = fields.Many2one('res.partner', string='Müşteri', required=True)
-    district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
+
     delivery_address = fields.Char('Teslimat Adresi', related='partner_id.street', readonly=True)
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')
     picking_count = fields.Integer(compute='_compute_picking_count', string='Transfer Sayısı')

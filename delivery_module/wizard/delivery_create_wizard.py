@@ -9,7 +9,7 @@ class DeliveryCreateWizard(models.TransientModel):
     vehicle_id = fields.Many2one('delivery.vehicle', string='Araç', required=True)
     picking_name = fields.Char('Transfer Numarası', required=True, help='Transfer numarasını girin (örn: WH/OUT/00001)')
     picking_id = fields.Many2one('stock.picking', string='Seçilen Transfer', readonly=True)
-    district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
+
     available_dates = fields.Text('Uygun Teslimat Günleri', readonly=True)
     vehicle_info = fields.Text('Araç Bilgileri', readonly=True)
 
@@ -36,23 +36,7 @@ class DeliveryCreateWizard(models.TransientModel):
                     }
                 }
 
-    @api.onchange('district_id')
-    def _onchange_district_id(self):
-        if self.district_id:
-            # İlçeye göre uygun teslimat günlerini getir
-            # Teslimat günlerinde bu ilçenin olup olmadığını kontrol et
-            delivery_days = self.env['delivery.day'].search([
-                ('active', '=', True),
-                ('district_ids', 'in', self.district_id.id)
-            ])
-            
-            if delivery_days:
-                days_text = ', '.join([day.name for day in delivery_days.sorted('sequence')])
-                self.available_dates = f"Bu ilçede teslimat yapılabilecek günler: {days_text}"
-            else:
-                self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
-        else:
-            self.available_dates = ''
+
 
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):
@@ -88,7 +72,7 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
-        if self.date and self.district_id:
+        if self.date:
             # Seçilen tarihin uygun bir gün olup olmadığını kontrol et
             day_of_week = str(self.date.weekday())
             
@@ -98,8 +82,7 @@ class DeliveryCreateWizard(models.TransientModel):
             
             available_day = self.env['delivery.day'].search([
                 ('day_of_week', '=', day_of_week),
-                ('active', '=', True),
-                ('district_ids', 'in', self.district_id.id)
+                ('active', '=', True)
             ], limit=1)
             
             if not available_day:
@@ -108,7 +91,7 @@ class DeliveryCreateWizard(models.TransientModel):
                 
                 # Teslimat yöneticisi için sadece uyarı ver, engelleme
                 if not self.env.user.has_group('delivery_module.group_delivery_manager'):
-                    raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) bu ilçe için uygun bir teslimat günü değil.'))
+                    raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) uygun bir teslimat günü değil.'))
                 else:
                     # Teslimat yöneticisi için uyarı ver ama devam et
                     print(f"Teslimat yöneticisi uygun olmayan tarihte teslimat oluşturuyor: {self.date.strftime('%d/%m/%Y')} - {selected_day_name}")
@@ -128,8 +111,7 @@ class DeliveryCreateWizard(models.TransientModel):
         if not picking:
             raise UserError(_(f'"{picking_name_clean}" numaralı transfer bulunamadı veya uygun durumda değil. Lütfen transfer numarasını kontrol edin.'))
 
-        if not self.district_id:
-            raise UserError(_('Lütfen ilçe seçin.'))
+
 
         if not self.vehicle_id:
             raise UserError(_('Lütfen araç seçin.'))
@@ -161,7 +143,7 @@ class DeliveryCreateWizard(models.TransientModel):
             'date': self.date,
             'vehicle_id': self.vehicle_id.id,
             'partner_id': picking.partner_id.id,
-            'district_id': self.district_id.id,
+
             'picking_ids': [(4, picking.id)],
         })
 

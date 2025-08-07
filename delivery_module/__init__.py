@@ -10,6 +10,16 @@ def post_init_hook(cr, registry):
     
     env = api.Environment(cr, SUPERUSER_ID, {})
     
+    # Veritabanı şemasını güncelle
+    try:
+        from .data.database_migration import migrate_database_schema
+        _logger.info("Veritabanı şeması güncelleniyor...")
+        migrate_database_schema(cr)
+        _logger.info("Veritabanı şeması başarıyla güncellendi!")
+    except Exception as e:
+        _logger.error(f"Veritabanı şeması güncellenirken hata: {e}")
+        raise e
+    
     # Teslimat programını ayarla
     try:
         from .data.setup_delivery_schedule import setup_delivery_schedule

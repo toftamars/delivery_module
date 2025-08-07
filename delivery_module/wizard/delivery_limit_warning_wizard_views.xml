@@ -14,7 +14,7 @@
                         <field name="vehicle_id" readonly="1"/>
                         <field name="date" readonly="1"/>
                         <field name="picking_id" readonly="1"/>
-                        <field name="district_id" readonly="1"/>
+        
                     </group>
                     <group>
                         <field name="confirm_override"/>

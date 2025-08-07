@@ -8,7 +8,7 @@ class DeliveryLimitWarningWizard(models.TransientModel):
     vehicle_id = fields.Many2one('delivery.vehicle', string='Araç', readonly=True)
     date = fields.Date('Teslimat Tarihi', readonly=True)
     picking_id = fields.Many2one('stock.picking', string='Transfer', readonly=True)
-    district_id = fields.Many2one('res.city.district', string='İlçe', readonly=True)
+
     warning_message = fields.Text('Uyarı Mesajı', readonly=True)
     confirm_override = fields.Boolean('Limiti Aşmayı Onaylıyorum')
 
@@ -41,7 +41,7 @@ class DeliveryLimitWarningWizard(models.TransientModel):
             'date': self.date,
             'vehicle_id': self.vehicle_id.id,
             'partner_id': self.picking_id.partner_id.id,
-            'district_id': self.district_id.id,
+
             'picking_ids': [(4, self.picking_id.id)],
         })
 

@@ -13,7 +13,7 @@
                     <group>
                         <field name="picking_name" placeholder="Örn: WH/OUT/00001"/>
                         <field name="picking_id" readonly="1"/>
-                        <field name="district_id"/>
+        
                         <field name="available_dates" readonly="1"/>
                         <field name="vehicle_id"/>
                         <field name="vehicle_info" readonly="1"/>
