@@ -10,14 +10,21 @@ def post_init_hook(cr, registry):
     
     env = api.Environment(cr, SUPERUSER_ID, {})
     
-    # Veritabanı şemasını güncelle
+    # Acil durum düzeltmesi
     try:
-        from .data.database_migration import migrate_database_schema
-        _logger.info("Veritabanı şeması güncelleniyor...")
-        migrate_database_schema(cr)
-        _logger.info("Veritabanı şeması başarıyla güncellendi!")
+        from .data.emergency_fix import emergency_database_fix, check_fix_status
+        _logger.info("🚨 Acil durum düzeltmesi başlatılıyor...")
+        emergency_database_fix(cr)
+        
+        # Düzeltme durumunu kontrol et
+        if check_fix_status(cr):
+            _logger.info("✅ Acil durum düzeltmesi başarılı!")
+        else:
+            _logger.error("❌ Acil durum düzeltmesi başarısız!")
+            raise Exception("Acil durum düzeltmesi başarısız!")
+            
     except Exception as e:
-        _logger.error(f"Veritabanı şeması güncellenirken hata: {e}")
+        _logger.error(f"❌ Acil durum düzeltmesi sırasında hata: {e}")
         raise e
     
     # Teslimat programını ayarla
