@@ -56,3 +56,51 @@ class ManualSetupWizard(models.TransientModel):
             }
         except Exception as e:
             raise UserError(_(f'Kontrol sırasında hata oluştu: {str(e)}'))
+
+    def action_create_vehicles(self):
+        """Araçları manuel olarak oluştur"""
+        try:
+            # Mevcut araçları kontrol et
+            existing_vehicles = self.env['delivery.vehicle'].search([])
+            if len(existing_vehicles) >= 5:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Bilgi'),
+                        'message': _('Araçlar zaten mevcut.'),
+                        'type': 'info',
+                    }
+                }
+            
+            # Araçları oluştur
+            vehicles_data = [
+                {'name': 'Anadolu Yakası', 'vehicle_type': 'anadolu', 'daily_limit': 7},
+                {'name': 'Avrupa Yakası', 'vehicle_type': 'avrupa', 'daily_limit': 7},
+                {'name': 'Küçük Araç 1', 'vehicle_type': 'kucuk_arac_1', 'daily_limit': 7},
+                {'name': 'Küçük Araç 2', 'vehicle_type': 'kucuk_arac_2', 'daily_limit': 7},
+                {'name': 'Ek Araç', 'vehicle_type': 'ek_arac', 'daily_limit': 7},
+            ]
+            
+            created_vehicles = []
+            for vehicle_data in vehicles_data:
+                # Araç zaten var mı kontrol et
+                existing = self.env['delivery.vehicle'].search([('name', '=', vehicle_data['name'])], limit=1)
+                if not existing:
+                    vehicle = self.env['delivery.vehicle'].create(vehicle_data)
+                    created_vehicles.append(vehicle.name)
+                    print(f"Araç oluşturuldu: {vehicle.name}")
+                else:
+                    print(f"Araç zaten mevcut: {existing.name}")
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Başarılı'),
+                    'message': _('Araçlar başarıyla oluşturuldu!'),
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            raise UserError(_(f'Araçlar oluşturulurken hata oluştu: {str(e)}'))

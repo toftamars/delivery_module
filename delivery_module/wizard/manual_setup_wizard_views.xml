@@ -14,6 +14,7 @@
                     </sheet>
                     <footer>
                         <button name="action_setup_delivery_schedule" string="Teslimat Programını Ayarla" type="object" class="btn-primary"/>
+                        <button name="action_create_vehicles" string="Araçları Oluştur" type="object" class="btn-secondary"/>
                         <button name="action_check_data" string="Verileri Kontrol Et" type="object" class="btn-secondary"/>
                         <button string="İptal" class="btn-secondary" special="cancel"/>
                     </footer>
