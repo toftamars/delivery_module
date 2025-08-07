@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_delivery_planning_user,delivery.planning.user,model_delivery_planning,base.group_user,1,1,1,0
+access_delivery_planning_manager,delivery.planning.manager,model_delivery_planning,base.group_system,1,1,1,1
+access_delivery_point_user,delivery.point.user,model_delivery_point,base.group_user,1,1,1,0
+access_delivery_point_manager,delivery.point.manager,model_delivery_point,base.group_system,1,1,1,1
+access_delivery_region_user,delivery.region.user,model_delivery_region,base.group_user,1,1,1,0
+access_delivery_region_manager,delivery.region.manager,model_delivery_region,base.group_system,1,1,1,1
+access_delivery_schedule_day_user,delivery.schedule.day.user,model_delivery_schedule_day,base.group_user,1,1,1,0
+access_delivery_schedule_day_manager,delivery.schedule.day.manager,model_delivery_schedule_day,base.group_system,1,1,1,1
+access_delivery_vehicle_close_wizard_user,delivery.vehicle.close.wizard.user,model_delivery_vehicle_close_wizard,base.group_user,1,0,0,0
+access_delivery_document_user,delivery.document.user,model_delivery_document,delivery_planning.group_delivery_user,1,1,1,0
+access_delivery_document_manager,delivery.document.manager,model_delivery_document,delivery_planning.group_delivery_manager,1,1,1,1

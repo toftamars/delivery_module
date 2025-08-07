@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Teslimat Yöneticisi Grubu -->
+        <record id="group_delivery_manager" model="res.groups">
+            <field name="name">Teslimat Yöneticisi</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Teslimat yöneticileri tüm işlemleri yapabilir, limit aşımında teslimat oluşturabilir ve geçici kapatma yapabilir.</field>
+        </record>
+
+        <!-- Normal Teslimat Kullanıcısı Grubu -->
+        <record id="group_delivery_user" model="res.groups">
+            <field name="name">Teslimat Kullanıcısı</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Normal teslimat kullanıcıları kapasite kontrolüne tabi ve sadece uygun tarihlerde teslimat oluşturabilir.</field>
+        </record>
+    </data>
+</odoo>

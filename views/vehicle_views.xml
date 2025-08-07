@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Araç Form View -->
+        <record id="view_delivery_vehicle_form" model="ir.ui.view">
+            <field name="name">delivery.vehicle.delivery.form</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="inherit_id" ref="fleet.delivery.vehicle_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Teslimat Bilgileri" name="delivery_info">
+                        <group>
+                            <group string="Araç Tipi ve Bölge">
+                                <field name="vehicle_type"/>
+                                <field name="assigned_continent"/>
+                            </group>
+                            <group string="Kapasite Yönetimi">
+                                <field name="daily_delivery_limit"/>
+                                <field name="current_daily_deliveries"/>
+                                <field name="remaining_capacity"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Durum">
+                                <field name="is_available"/>
+                                <field name="is_temporarily_closed"/>
+                            </group>
+                            <group string="Kapatma Bilgileri" attrs="{'invisible': [('is_temporarily_closed', '=', False)]}">
+                                <field name="closed_reason" readonly="1"/>
+                                <field name="closed_by" readonly="1"/>
+                                <field name="closed_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Fiziksel Özellikler">
+                                <field name="delivery_capacity"/>
+                                <field name="fuel_type"/>
+                                <field name="current_location"/>
+                            </group>
+                            <group string="İstatistikler">
+                                <field name="total_deliveries"/>
+                                <field name="total_distance"/>
+                                <field name="average_delivery_time"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="action_temporarily_close" string="Geçici Kapat" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('is_temporarily_closed', '=', True)]}"/>
+                    <button name="action_reopen_vehicle" string="Tekrar Aç" type="object" 
+                            attrs="{'invisible': [('is_temporarily_closed', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Araç Tree View -->
+        <record id="view_delivery_vehicle_tree" model="ir.ui.view">
+            <field name="name">delivery.vehicle.delivery.tree</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="inherit_id" ref="fleet.delivery.vehicle_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_id']" position="after">
+                    <field name="vehicle_type"/>
+                    <field name="assigned_continent"/>
+                    <field name="remaining_capacity"/>
+                    <field name="is_available"/>
+                    <field name="is_temporarily_closed"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Araç Search View -->
+        <record id="view_delivery_vehicle_search" model="ir.ui.view">
+            <field name="name">delivery.vehicle.delivery.search</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="inherit_id" ref="fleet.delivery.vehicle_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_id']" position="after">
+                    <field name="vehicle_type"/>
+                    <field name="assigned_continent"/>
+                </xpath>
+                <xpath expr="//filter[@name='available']" position="after">
+                    <filter string="Müsait" name="available" domain="[('is_available', '=', True)]"/>
+                    <filter string="Geçici Kapatılmış" name="temporarily_closed" domain="[('is_temporarily_closed', '=', True)]"/>
+                </xpath>
+                <xpath expr="//group[@name='group_by']" position="inside">
+                    <filter string="Araç Tipi" name="vehicle_type" context="{'group_by':'vehicle_type'}"/>
+                    <filter string="Atanan Kıta" name="assigned_continent" context="{'group_by':'assigned_continent'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Araç Action -->
+        <record id="action_delivery_vehicles" model="ir.actions.act_window">
+            <field name="name">Teslimat Araçları</field>
+            <field name="res_model">delivery.vehicle</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_delivery_vehicle_tree"/>
+            <field name="search_view_id" ref="view_delivery_vehicle_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat aracınızı oluşturun!
+                </p>
+                <p>
+                    Teslimat araçlarını tanımlayarak kapasite yönetimi yapabilir,
+                    bölge atamaları yapabilir ve araç durumlarını takip edebilirsiniz.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -7,76 +7,16 @@
         <record id="delivery_planning_manager_rule" model="ir.rule">
             <field name="name">Teslimat Yöneticisi - Tüm Kayıtlar</field>
             <field name="model_id" ref="model_delivery_planning"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
+            <field name="domain_force">[(1, "=", 1)]</field>
+            <field name="groups" eval="[(4, ref("group_delivery_manager"))]"/>
         </record>
 
         <!-- Normal Kullanıcı - Sadece kendi kayıtları -->
         <record id="delivery_planning_user_rule" model="ir.rule">
             <field name="name">Teslimat Kullanıcısı - Kendi Kayıtları</field>
             <field name="model_id" ref="model_delivery_planning"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_user'))]"/>
-        </record>
-
-        <!-- Teslimat Noktası Güvenlik Kuralları -->
-        <record id="delivery_point_manager_rule" model="ir.rule">
-            <field name="name">Teslimat Noktası Yöneticisi - Tüm Kayıtlar</field>
-            <field name="model_id" ref="model_delivery_point"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
-        </record>
-
-        <record id="delivery_point_user_rule" model="ir.rule">
-            <field name="name">Teslimat Noktası Kullanıcısı - Kendi Kayıtları</field>
-            <field name="model_id" ref="model_delivery_point"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_user'))]"/>
-        </record>
-
-        <!-- Araç Güvenlik Kuralları -->
-        <record id="delivery_vehicle_manager_rule" model="ir.rule">
-            <field name="name">Araç Yöneticisi - Tüm Kayıtlar</field>
-            <field name="model_id" ref="model_delivery_vehicle"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
-        </record>
-
-        <record id="delivery_vehicle_user_rule" model="ir.rule">
-            <field name="name">Araç Kullanıcısı - Sadece Müsait Araçlar</field>
-            <field name="model_id" ref="model_delivery_vehicle"/>
-            <field name="domain_force">[('is_available', '=', True), ('is_temporarily_closed', '=', False)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_user'))]"/>
-        </record>
-
-        <!-- Bölge Güvenlik Kuralları -->
-        <record id="delivery_region_manager_rule" model="ir.rule">
-            <field name="name">Bölge Yöneticisi - Tüm Kayıtlar</field>
-            <field name="model_id" ref="model_delivery_region"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
-        </record>
-
-        <record id="delivery_region_user_rule" model="ir.rule">
-            <field name="name">Bölge Kullanıcısı - Aktif Bölgeler</field>
-            <field name="model_id" ref="model_delivery_region"/>
-            <field name="domain_force">[('is_active', '=', True)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_user'))]"/>
-        </record>
-
-        <!-- Teslimat Belgesi Güvenlik Kuralları -->
-        <record id="delivery_document_manager_rule" model="ir.rule">
-            <field name="name">Teslimat Belgesi Yöneticisi - Tüm Kayıtlar</field>
-            <field name="model_id" ref="model_delivery_document"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
-        </record>
-
-        <record id="delivery_document_user_rule" model="ir.rule">
-            <field name="name">Teslimat Belgesi Kullanıcısı - Kendi Kayıtları</field>
-            <field name="model_id" ref="model_delivery_document"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_user'))]"/>
+            <field name="domain_force">[("create_uid", "=", user.id)]</field>
+            <field name="groups" eval="[(4, ref("group_delivery_user"))]"/>
         </record>
     </data>
 </odoo>
