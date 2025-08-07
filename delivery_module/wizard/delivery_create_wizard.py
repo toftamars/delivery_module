@@ -75,15 +75,15 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('delivery_type')
     def _onchange_delivery_type(self):
-        """Teslimat türü değiştiğinde alanları ve araç domainini güncelle"""
+        """Teslimat türü değiştiğinde alanları güncelle"""
         if self.delivery_type == 'manual':
             # Manuel teslimat seçildiğinde transfer alanlarını temizle
             self.picking_name = False
             self.picking_id = False
-            # Araç domainini Anadolu ve Avrupa dışı ile sınırla
-            return {'domain': {'vehicle_id': [('vehicle_type', 'not in', ['anadolu', 'avrupa'])]}}
+            # Tüm araçları göster
+            return {'domain': {'vehicle_id': []}}
         else:
-            # Transfer seçildiğinde manuel alanları temizle ve domaini kaldır
+            # Transfer seçildiğinde manuel alanları temizle
             self.manual_task = False
             self.manual_partner_id = False
             return {'domain': {'vehicle_id': []}}
