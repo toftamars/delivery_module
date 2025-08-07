@@ -59,7 +59,9 @@
                                  <field name="delivery_address"/>
                                  <field name="phone" widget="phone"/>
                                  <field name="note" placeholder="Teslimat hakkında ek notlar..."/>
-                                 <button name="action_open_navigation" type="object" string="Navigasyon" class="btn-secondary" groups="delivery_module.group_delivery_driver"/>
+                                 <button name="action_open_navigation" type="object" string="Navigasyon" class="btn-secondary" 
+                                         groups="delivery_module.group_delivery_driver"
+                                         attrs="{'invisible': [('delivery_address', '=', False)]}"/>
                             </group>
                         </group>
                         <notebook>
