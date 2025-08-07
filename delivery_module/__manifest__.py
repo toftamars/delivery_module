@@ -1,6 +1,6 @@
 {
     'name': 'Teslimat Modülü',
-    'version': '1.0',
+    'version': '1.0.3',
     'category': 'Inventory',
     'summary': 'Teslimat yönetimi için modül',
     'description': """

@@ -128,15 +128,22 @@ class DeliveryDocument(models.Model):
         self.write({'state': 'draft'})
 
     def _send_sms_notification(self, state):
+        """SMS bildirimi gönder"""
         if not self.partner_id.mobile:
             return
         
-        message = self._get_sms_message(state)
-        if message:
-            self.env['sms.api']._send_sms(
-                self.partner_id.mobile,
-                message
-            )
+        try:
+            message = self._get_sms_message(state)
+            if message:
+                self.env['sms.api']._send_sms(
+                    self.partner_id.mobile,
+                    message
+                )
+        except Exception as e:
+            # SMS gönderimi başarısız olsa bile teslimat işlemi devam etsin
+            _logger = logging.getLogger(__name__)
+            _logger.warning(f"SMS gönderilemedi: {e}")
+            return
 
     def _get_sms_message(self, state):
         messages = {
