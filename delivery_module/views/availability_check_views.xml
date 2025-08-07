@@ -62,16 +62,6 @@
                                 class="btn-success"
                                 icon="fa-bolt"
                                 attrs="{'invisible': [('result_html', '=', False)]}"/>
-                        <button name="action_export_csv"
-                                string="⬇️ CSV"
-                                type="object"
-                                class="btn-secondary"
-                                attrs="{'invisible': [('result_html', '=', False)]}"/>
-                        <button name="action_export_pdf"
-                                string="🖨️ PDF"
-                                type="object"
-                                class="btn-secondary"
-                                attrs="{'invisible': [('result_html', '=', False)]}"/>
                         <button string="🔄 Yenile" 
                                 type="object" 
                                 name="action_refresh_form" 

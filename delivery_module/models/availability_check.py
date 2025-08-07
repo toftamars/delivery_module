@@ -3,7 +3,6 @@ from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 import calendar
 import json
-import base64
 
 class AvailabilityCheck(models.Model):
     _name = 'availability.check'
@@ -231,60 +230,7 @@ class AvailabilityCheck(models.Model):
             }
         }
 
-    def action_export_csv(self):
-        self.ensure_one()
-        dates = self._get_suitable_dates()
-        if not dates:
-            return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': _('Uyarı'), 'message': _('Dışa aktarılacak veri yok.'), 'type': 'warning'}}
-        # CSV metni hazırla
-        lines = ['Tarih,Gün,Kalan,Kullanılan,Toplam']
-        turkish_days = {
-            'Monday': 'Pazartesi', 'Tuesday': 'Salı', 'Wednesday': 'Çarşamba',
-            'Thursday': 'Perşembe', 'Friday': 'Cuma', 'Saturday': 'Cumartesi', 'Sunday': 'Pazar'
-        }
-        for r in dates:
-            day_tr = turkish_days.get(r['day_name'], r['day_name'])
-            lines.append(f"{datetime.strptime(r['date'], '%Y-%m-%d').strftime('%d/%m/%Y')},{day_tr},{r['remaining']},{r['used']},{r['total']}")
-        csv_text = '\n'.join(lines)
-        attachment = self.env['ir.attachment'].create({
-            'name': f"uygunluk_{self.vehicle_id.name.replace(' ', '_')}_{fields.Datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-            'res_model': self._name,
-            'res_id': self.id,
-            'type': 'binary',
-            'datas': base64.b64encode(csv_text.encode('utf-8')),
-            'mimetype': 'text/csv',
-        })
-        return {
-            'type': 'ir.actions.act_url',
-            'url': f"/web/content/{attachment.id}?download=true",
-            'target': 'self',
-        }
-
-    def action_export_pdf(self):
-        self.ensure_one()
-        dates = self._get_suitable_dates()
-        if not dates:
-            return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': _('Uyarı'), 'message': _('Dışa aktarılacak veri yok.'), 'type': 'warning'}}
-        return self.env.ref('delivery_module.action_report_availability_check').report_action(self)
-
-    # Rapor yardımcıları
-    def get_report_lines(self):
-        self.ensure_one()
-        turkish_days = {
-            'Monday': 'Pazartesi', 'Tuesday': 'Salı', 'Wednesday': 'Çarşamba',
-            'Thursday': 'Perşembe', 'Friday': 'Cuma', 'Saturday': 'Cumartesi', 'Sunday': 'Pazar'
-        }
-        lines = []
-        for r in self._get_suitable_dates():
-            lines.append({
-                'date_display': datetime.strptime(r['date'], '%Y-%m-%d').strftime('%d/%m/%Y'),
-                'day_name': turkish_days.get(r['day_name'], r['day_name']),
-                'remaining': r['remaining'],
-                'used': r['used'],
-                'total': r['total'],
-                'percent_used': int((r['used'] / r['total']) * 100) if r['total'] else 0,
-            })
-        return lines
+    # CSV/PDF dışa aktarma ve rapor kaldırıldı
 
     def action_clear_form(self):
         """Form alanlarını temizle"""

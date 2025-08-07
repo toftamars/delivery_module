@@ -104,13 +104,6 @@
             </field>
         </record>
 
-        <!-- Uygunluk Kontrol PDF Rapor Action -->
-        <record id="action_report_availability_check" model="ir.actions.report">
-            <field name="name">Uygunluk Kontrol</field>
-            <field name="model">availability.check</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="report_name">delivery_module.report_availability_check_document</field>
-            <field name="report_file">delivery_module.report_availability_check_document</field>
-        </record>
+        
     </data>
 </odoo>
