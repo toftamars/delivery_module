@@ -174,8 +174,8 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
-        if self.date and self.district_id and self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
-            # Sadece transfer teslimatları için tarih kontrolü yap
+        if self.date and self.district_id and not self.env.user.has_group('delivery_module.group_delivery_manager'):
+            # Tüm teslimat türleri için tarih kontrolü yap
             day_of_week = str(self.date.weekday())
             
             # Debug için gün bilgisini yazdır
