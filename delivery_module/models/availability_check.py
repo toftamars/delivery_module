@@ -159,6 +159,7 @@ class AvailabilityCheck(models.Model):
         if suitable_dates:
             result_html += '<table class="table table-striped" style="margin-top: 10px;">'
             result_html += '<thead><tr>'
+            result_html += '<th>Oluştur</th>'
             result_html += '<th>Tarih</th>'
             result_html += '<th>Gün</th>'
             result_html += '<th>Kalan</th>'
@@ -173,6 +174,11 @@ class AvailabilityCheck(models.Model):
                 percent_used = int((date_info['used'] / date_info['total']) * 100) if date_info['total'] else 0
                 result_html += f"""
                 <tr>
+                    <td>
+                        <button onclick=\"window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'\" 
+                                class=\"btn btn-sm btn-secondary\" 
+                                style=\"margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;\">Oluştur</button>
+                    </td>
                     <td><strong>{datetime.strptime(date_info['date'], '%Y-%m-%d').strftime('%d/%m/%Y')}</strong></td>
                     <td>{day_name_tr}</td>
                     <td><span class="badge badge-success">{date_info['remaining']}</span></td>
