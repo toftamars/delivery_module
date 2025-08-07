@@ -2,6 +2,8 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 import calendar
+import json
+import base64
 
 class AvailabilityCheck(models.Model):
     _name = 'availability.check'
@@ -14,6 +16,7 @@ class AvailabilityCheck(models.Model):
     result_html = fields.Html(string='Sonuç', readonly=True)
     check_date = fields.Datetime(string='Sorgulama Tarihi', default=fields.Datetime.now, readonly=True)
     user_id = fields.Many2one('res.users', string='Sorgulayan', default=lambda self: self.env.user, readonly=True)
+    result_json = fields.Text(string='Sonuç (JSON)', readonly=True)
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle(self):
@@ -27,6 +30,67 @@ class AvailabilityCheck(models.Model):
         """İlçe değiştiğinde sonuç alanını temizle"""
         if self.district_id:
             self.result_html = False
+
+    def _compute_suitable_dates(self):
+        """Önümüzdeki 30 gün için uygun tarihleri hesaplar ve liste döner"""
+        self.ensure_one()
+        suitable_dates = []
+        # Küçük araçlar için ilçe kontrolü yapma
+        small_vehicles = ['Küçük Araç 1', 'Küçük Araç 2', 'Ek araç', 'Ek Araç']
+        is_small_vehicle = self.vehicle_id.name in small_vehicles
+        today = datetime.now().date()
+        for i in range(30):
+            check_date = today + timedelta(days=i)
+            day_of_week = str(check_date.weekday())
+            delivery_day = self.env['delivery.day'].search([
+                ('day_of_week', '=', day_of_week),
+                ('active', '=', True),
+                ('is_temporarily_closed', '=', False)
+            ], limit=1)
+            if is_small_vehicle:
+                deliveries = self.env['delivery.document'].search([
+                    ('vehicle_id', '=', self.vehicle_id.id),
+                    ('date', '=', check_date),
+                    ('state', '!=', 'cancel')
+                ])
+                used_capacity = len(deliveries)
+                total_capacity = self.vehicle_id.daily_limit
+                remaining_capacity = total_capacity - used_capacity
+                if remaining_capacity > 0:
+                    suitable_dates.append({
+                        'date': check_date.strftime('%Y-%m-%d'),
+                        'day_name': calendar.day_name[check_date.weekday()],
+                        'remaining': remaining_capacity,
+                        'used': used_capacity,
+                        'total': total_capacity,
+                    })
+            elif delivery_day and (not self.district_id or self.district_id in delivery_day.district_ids):
+                deliveries = self.env['delivery.document'].search([
+                    ('vehicle_id', '=', self.vehicle_id.id),
+                    ('date', '=', check_date),
+                    ('state', '!=', 'cancel')
+                ])
+                used_capacity = len(deliveries)
+                total_capacity = self.vehicle_id.daily_limit
+                remaining_capacity = total_capacity - used_capacity
+                if remaining_capacity > 0:
+                    suitable_dates.append({
+                        'date': check_date.strftime('%Y-%m-%d'),
+                        'day_name': calendar.day_name[check_date.weekday()],
+                        'remaining': remaining_capacity,
+                        'used': used_capacity,
+                        'total': total_capacity,
+                    })
+        return suitable_dates
+
+    def _get_suitable_dates(self):
+        self.ensure_one()
+        if self.result_json:
+            try:
+                return json.loads(self.result_json)
+            except Exception:
+                return []
+        return []
 
     def action_check_availability(self):
         """Uygunluk kontrolü yap"""
@@ -60,6 +124,11 @@ class AvailabilityCheck(models.Model):
                 if district_name not in anadolu_ilceleri:
                     raise UserError(_(f'"{district_name}" ilçesi Anadolu yakasında değil. "{self.vehicle_id.name}" aracı sadece Anadolu yakası ilçelerinde hizmet verebilir.'))
         
+        # Uygun tarihleri hesapla ve JSON olarak sakla
+        suitable_dates = self._compute_suitable_dates()
+        self.result_json = json.dumps(suitable_dates)
+        
+        # HTML sonuç oluştur
         # Türkçe gün isimleri
         turkish_days = {
             'Monday': 'Pazartesi',
@@ -70,72 +139,7 @@ class AvailabilityCheck(models.Model):
             'Saturday': 'Cumartesi',
             'Sunday': 'Pazar'
         }
-        
-        # Önümüzdeki 30 gün için uygun tarihleri bul
-        today = datetime.now().date()
-        suitable_dates = []
-        
-        for i in range(30):  # 30 gün kontrol et
-            check_date = today + timedelta(days=i)
-            day_of_week = str(check_date.weekday())
-            
-            # Teslimat günü kontrolü
-            delivery_day = self.env['delivery.day'].search([
-                ('day_of_week', '=', day_of_week),
-                ('active', '=', True),
-                ('is_temporarily_closed', '=', False)
-            ], limit=1)
-            
-            # Küçük araçlar için ilçe kontrolü yapma
-            if is_small_vehicle:
-                # Küçük araçlar için tüm günlerde kapasite kontrolü
-                # O tarih için teslimatları bul
-                deliveries = self.env['delivery.document'].search([
-                    ('vehicle_id', '=', self.vehicle_id.id),
-                    ('date', '=', check_date),
-                    ('state', '!=', 'cancel')
-                ])
-                
-                used_capacity = len(deliveries)
-                total_capacity = self.vehicle_id.daily_limit
-                remaining_capacity = total_capacity - used_capacity
-                
-                if remaining_capacity > 0:  # Sadece müsait olanları göster
-                    day_name_en = calendar.day_name[check_date.weekday()]
-                    day_name_tr = turkish_days.get(day_name_en, day_name_en)
-                    
-                    suitable_dates.append({
-                        'date': check_date,
-                        'day_name': day_name_tr,
-                        'remaining': remaining_capacity,
-                        'used': used_capacity,
-                        'total': total_capacity
-                    })
-            elif delivery_day and self.district_id in delivery_day.district_ids:
-                # O tarih için teslimatları bul
-                deliveries = self.env['delivery.document'].search([
-                    ('vehicle_id', '=', self.vehicle_id.id),
-                    ('date', '=', check_date),
-                    ('state', '!=', 'cancel')
-                ])
-                
-                used_capacity = len(deliveries)
-                total_capacity = self.vehicle_id.daily_limit
-                remaining_capacity = total_capacity - used_capacity
-                
-                if remaining_capacity > 0:  # Sadece müsait olanları göster
-                    day_name_en = calendar.day_name[check_date.weekday()]
-                    day_name_tr = turkish_days.get(day_name_en, day_name_en)
-                    
-                    suitable_dates.append({
-                        'date': check_date,
-                        'day_name': day_name_tr,
-                        'remaining': remaining_capacity,
-                        'used': used_capacity,
-                        'total': total_capacity
-                    })
-        
-        # HTML sonuç oluştur
+
         result_html = f"""
         <div style="padding: 10px;">
             <h3 style="color: #2c3e50;">🚚 Araç: {self.vehicle_id.name}</h3>
@@ -148,7 +152,7 @@ class AvailabilityCheck(models.Model):
         
         result_html += f"""
             <hr/>
-            <h4 style="color: #34495e;">📅 Uygun Tarihler ve Kalan Teslimat Sayıları:</h4>
+            <h4 style=\"color: #34495e;\">📅 Uygun Tarihler ve Kalan Teslimat Sayıları:</h4>
         """
         
         if suitable_dates:
@@ -159,19 +163,28 @@ class AvailabilityCheck(models.Model):
             result_html += '<th>Kalan</th>'
             result_html += '<th>Kullanılan</th>'
             result_html += '<th>Toplam</th>'
+            result_html += '<th>Doluluk</th>'
             result_html += '<th>İşlem</th>'
             result_html += '</tr></thead><tbody>'
             
             for date_info in suitable_dates:
+                day_name_tr = turkish_days.get(date_info['day_name'], date_info['day_name'])
+                percent_used = int((date_info['used'] / date_info['total']) * 100) if date_info['total'] else 0
                 result_html += f"""
                 <tr>
-                    <td><strong>{date_info['date'].strftime('%d/%m/%Y')}</strong></td>
-                    <td>{date_info['day_name']}</td>
+                    <td><strong>{datetime.strptime(date_info['date'], '%Y-%m-%d').strftime('%d/%m/%Y')}</strong></td>
+                    <td>{day_name_tr}</td>
                     <td><span class="badge badge-success">{date_info['remaining']}</span></td>
                     <td><span class="badge badge-info">{date_info['used']}</span></td>
                     <td><span class="badge badge-secondary">{date_info['total']}</span></td>
                     <td>
-                        <button onclick="window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date'].strftime('%Y-%m-%d')}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'" 
+                        <div style=\"width:120px;background:#eee;border-radius:6px;overflow:hidden;\">
+                            <div style=\"height:10px;width:{percent_used}%;background:#3498db;\"></div>
+                        </div>
+                        <small>{percent_used}%</small>
+                    </td>
+                    <td>
+                        <button onclick=\"window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'\" 
                                 class="btn btn-sm btn-primary" 
                                 style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">
                             ➕ Oluştur
@@ -188,6 +201,88 @@ class AvailabilityCheck(models.Model):
         
         # Sonucu kaydet
         self.result_html = result_html
+
+    def action_create_earliest(self):
+        self.ensure_one()
+        dates = self._get_suitable_dates()
+        if not dates:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Uyarı'),
+                    'message': _('Uygun tarih bulunamadı.'),
+                    'type': 'warning',
+                }
+            }
+        earliest = sorted(dates, key=lambda d: d['date'])[0]
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'delivery.create.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_date': earliest['date'],
+                'default_vehicle_id': self.vehicle_id.id,
+                'default_district_id': self.district_id.id if self.district_id else False,
+                'default_delivery_type': 'transfer',
+            }
+        }
+
+    def action_export_csv(self):
+        self.ensure_one()
+        dates = self._get_suitable_dates()
+        if not dates:
+            return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': _('Uyarı'), 'message': _('Dışa aktarılacak veri yok.'), 'type': 'warning'}}
+        # CSV metni hazırla
+        lines = ['Tarih,Gün,Kalan,Kullanılan,Toplam']
+        turkish_days = {
+            'Monday': 'Pazartesi', 'Tuesday': 'Salı', 'Wednesday': 'Çarşamba',
+            'Thursday': 'Perşembe', 'Friday': 'Cuma', 'Saturday': 'Cumartesi', 'Sunday': 'Pazar'
+        }
+        for r in dates:
+            day_tr = turkish_days.get(r['day_name'], r['day_name'])
+            lines.append(f"{datetime.strptime(r['date'], '%Y-%m-%d').strftime('%d/%m/%Y')},{day_tr},{r['remaining']},{r['used']},{r['total']}")
+        csv_text = '\n'.join(lines)
+        attachment = self.env['ir.attachment'].create({
+            'name': f"uygunluk_{self.vehicle_id.name.replace(' ', '_')}_{fields.Datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            'res_model': self._name,
+            'res_id': self.id,
+            'type': 'binary',
+            'datas': base64.b64encode(csv_text.encode('utf-8')),
+            'mimetype': 'text/csv',
+        })
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f"/web/content/{attachment.id}?download=true",
+            'target': 'self',
+        }
+
+    def action_export_pdf(self):
+        self.ensure_one()
+        dates = self._get_suitable_dates()
+        if not dates:
+            return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': _('Uyarı'), 'message': _('Dışa aktarılacak veri yok.'), 'type': 'warning'}}
+        return self.env.ref('delivery_module.action_report_availability_check').report_action(self)
+
+    # Rapor yardımcıları
+    def get_report_lines(self):
+        self.ensure_one()
+        turkish_days = {
+            'Monday': 'Pazartesi', 'Tuesday': 'Salı', 'Wednesday': 'Çarşamba',
+            'Thursday': 'Perşembe', 'Friday': 'Cuma', 'Saturday': 'Cumartesi', 'Sunday': 'Pazar'
+        }
+        lines = []
+        for r in self._get_suitable_dates():
+            lines.append({
+                'date_display': datetime.strptime(r['date'], '%Y-%m-%d').strftime('%d/%m/%Y'),
+                'day_name': turkish_days.get(r['day_name'], r['day_name']),
+                'remaining': r['remaining'],
+                'used': r['used'],
+                'total': r['total'],
+                'percent_used': int((r['used'] / r['total']) * 100) if r['total'] else 0,
+            })
+        return lines
 
     def action_clear_form(self):
         """Form alanlarını temizle"""

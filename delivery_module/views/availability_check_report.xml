@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_availability_check" model="ir.actions.report">
+            <field name="name">Uygunluk Kontrol</field>
+            <field name="model">availability.check</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">delivery_module.report_availability_check_document</field>
+            <field name="report_file">delivery_module.report_availability_check_document</field>
+            <field name="print_report_name">(object.vehicle_id.name or '') + ' - Uygunluk'</field>
+        </record>
+
+        <template id="report_availability_check_document">
+            <t t-call="web.external_layout">
+                <t t-set="o" t-value="doc"/>
+                <div class="page">
+                    <h2>Uygunluk Kontrol</h2>
+                    <p><strong>Araç:</strong> <t t-esc="o.vehicle_id.name"/></p>
+                    <p>
+                        <strong>İlçe:</strong>
+                        <t t-esc="o.district_id and o.district_id.name or '-'"/>
+                    </p>
+                    <hr/>
+                    <table class="table table-sm o_main_table">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Gün</th>
+                                <th>Kalan</th>
+                                <th>Kullanılan</th>
+                                <th>Toplam</th>
+                                <th>Doluluk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.get_report_lines()" t-as="l">
+                                <tr>
+                                    <td><t t-esc="l['date_display']"/></td>
+                                    <td><t t-esc="l['day_name']"/></td>
+                                    <td><t t-esc="l['remaining']"/></td>
+                                    <td><t t-esc="l['used']"/></td>
+                                    <td><t t-esc="l['total']"/></td>
+                                    <td><t t-esc="str(l['percent_used']) + '%'"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
+
