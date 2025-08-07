@@ -27,7 +27,7 @@
                         </div>
                         
                         <group>
-                            <group string="Seçimler" required="1">
+                            <group string="🔍 Sorgulama Kriterleri" required="1">
                                 <field name="vehicle_id" 
                                        placeholder="Araç seçin..."
                                        options="{'no_create': True, 'no_create_edit': True}"
@@ -36,7 +36,7 @@
                                        placeholder="İlçe seçin (Küçük araçlar için gerekmez)..."
                                        options="{'no_create': True, 'no_create_edit': True}"/>
                             </group>
-                            <group string="Bilgiler">
+                            <group string="📋 Bilgiler">
                                 <field name="check_date" readonly="1"/>
                                 <field name="user_id" readonly="1"/>
                             </group>

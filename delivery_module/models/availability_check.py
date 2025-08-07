@@ -10,7 +10,7 @@ class AvailabilityCheck(models.Model):
     _transient_max_hours = 1  # 1 saat sonra otomatik sil
 
     vehicle_id = fields.Many2one('delivery.vehicle', string='Araç', required=True)
-    district_id = fields.Many2one('res.city.district', string='İlçe', required=False)
+    district_id = fields.Many2one('res.city.district', string='İlçe', required=False, help='Küçük araçlar için ilçe seçimi gerekmez')
     result_html = fields.Html(string='Sonuç', readonly=True)
     check_date = fields.Datetime(string='Sorgulama Tarihi', default=fields.Datetime.now, readonly=True)
     user_id = fields.Many2one('res.users', string='Sorgulayan', default=lambda self: self.env.user, readonly=True)

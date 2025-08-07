@@ -127,50 +127,18 @@ class DeliveryCreateWizard(models.TransientModel):
             else:
                 self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
             
-            # Transfer teslimat için ilçeye uygun araç domainini güncelle
-            if self.delivery_type == 'transfer':
-                district_name = self.district_id.name
-                
-                # Avrupa yakası ilçeleri
-                avrupa_ilceleri = ['Bağcılar', 'Bakırköy', 'Bayrampaşa', 'Beşiktaş', 'Beylikdüzü', 'Beyoğlu', 'Esenler', 'Esenyurt', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kağıthane', 'Küçükçekmece', 'Sarıyer', 'Silivri', 'Şişli', 'Zeytinburnu']
-                
-                # Anadolu yakası ilçeleri
-                anadolu_ilceleri = ['Ataşehir', 'Beykoz', 'Çekmeköy', 'Kadıköy', 'Kartal', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sultanbeyli', 'Şile', 'Tuzla', 'Ümraniye', 'Üsküdar']
-                
-                if district_name in avrupa_ilceleri:
-                    return {'domain': {'vehicle_id': [('vehicle_type', '=', 'avrupa')]}}
-                elif district_name in anadolu_ilceleri:
-                    return {'domain': {'vehicle_id': [('vehicle_type', '=', 'anadolu')]}}
-                else:
-                    return {'domain': {'vehicle_id': [('vehicle_type', 'not in', ['anadolu', 'avrupa'])]}}
+            # Tüm araçlar her ilçe için görünür olsun
+            return {'domain': {'vehicle_id': []}}
         else:
             self.available_dates = ''
             # İlçe seçilmediğinde domaini kaldır
-            if self.delivery_type == 'transfer':
-                return {'domain': {'vehicle_id': []}}
+            return {'domain': {'vehicle_id': []}}
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle_id(self):
         """Araç değiştiğinde ilçe domainini güncelle"""
-        if self.vehicle_id and self.delivery_type == 'transfer':
-            vehicle_type = self.vehicle_id.vehicle_type
-            
-            # Avrupa yakası araçları için Avrupa ilçeleri
-            if vehicle_type == 'avrupa':
-                avrupa_ilceleri = ['Bağcılar', 'Bakırköy', 'Bayrampaşa', 'Beşiktaş', 'Beylikdüzü', 'Beyoğlu', 'Esenler', 'Esenyurt', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kağıthane', 'Küçükçekmece', 'Sarıyer', 'Silivri', 'Şişli', 'Zeytinburnu']
-                return {'domain': {'district_id': [('name', 'in', avrupa_ilceleri)]}}
-            
-            # Anadolu yakası araçları için Anadolu ilçeleri
-            elif vehicle_type == 'anadolu':
-                anadolu_ilceleri = ['Ataşehir', 'Beykoz', 'Çekmeköy', 'Kadıköy', 'Kartal', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sultanbeyli', 'Şile', 'Tuzla', 'Ümraniye', 'Üsküdar']
-                return {'domain': {'district_id': [('name', 'in', anadolu_ilceleri)]}}
-            
-            # Küçük araçlar için tüm ilçeler
-            else:
-                return {'domain': {'district_id': []}}
-        else:
-            # Araç seçilmediğinde domaini kaldır
-            return {'domain': {'district_id': []}}
+        # Tüm ilçeler her araç için görünür olsun
+        return {'domain': {'district_id': []}}
 
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):

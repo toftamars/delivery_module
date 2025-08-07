@@ -47,6 +47,14 @@
                   sequence="45"
                   groups="base.group_user"/>
 
+        <!-- Uygunluk Kontrol Menüsü -->
+        <menuitem id="menu_availability_check"
+                  name="🔍 Uygunluk Kontrol"
+                  parent="menu_delivery_root"
+                  action="delivery_module.action_availability_check"
+                  sequence="50"
+                  groups="base.group_user"/>
+
         <!-- Konfigürasyon Menüsü -->
         <menuitem id="menu_delivery_config"
                   name="Konfigürasyon"
