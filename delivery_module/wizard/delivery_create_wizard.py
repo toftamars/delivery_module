@@ -246,16 +246,32 @@ class DeliveryCreateWizard(models.TransientModel):
         # İlçe-gün uyumluluğu kontrolü
         if not self.env.user.has_group('delivery_module.group_delivery_manager'):
             day_of_week = str(self.date.weekday())
+            day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+            selected_day_name = day_names[self.date.weekday()]
+            
+            # Debug için log ekle
+            print(f"=== İLÇE-GÜN KONTROLÜ ===")
+            print(f"Seçilen tarih: {self.date} ({selected_day_name})")
+            print(f"Seçilen ilçe: {self.district_id.name}")
+            print(f"Gün numarası: {day_of_week}")
+            
             available_day = self.env['delivery.day'].search([
                 ('day_of_week', '=', day_of_week),
                 ('active', '=', True),
                 ('district_ids', 'in', self.district_id.id)
             ], limit=1)
             
+            print(f"Bulunan teslimat günü: {available_day.name if available_day else 'BULUNAMADI'}")
+            print(f"Bu günün ilçeleri: {[d.name for d in available_day.district_ids] if available_day else 'YOK'}")
+            print(f"İlçe bu günde var mı: {self.district_id in available_day.district_ids if available_day else False}")
+            print(f"=== KONTROL SONU ===")
+            
             if not available_day:
-                day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
-                selected_day_name = day_names[self.date.weekday()]
                 raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) bu ilçe için uygun bir teslimat günü değil.'))
+            
+            # İlçe bu günde var mı kontrol et
+            if self.district_id not in available_day.district_ids:
+                raise UserError(_(f'"{self.district_id.name}" ilçesi {selected_day_name} gününde teslimat yapılamaz. Uygun günler: {", ".join([d.name for d in available_day.district_ids])}'))
 
         # Aracın günlük limitini kontrol et
         today_count = self.env['delivery.document'].search_count([
