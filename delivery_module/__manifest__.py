@@ -23,6 +23,7 @@
         'security/ir.model.access.csv',
         'data/delivery_data.xml',
         'data/ir_sequence_data.xml',
+        'data/setup_delivery_schedule_data.xml',
         'views/action_views.xml',
         'views/delivery_views.xml',
         'views/delivery_day_views.xml',
