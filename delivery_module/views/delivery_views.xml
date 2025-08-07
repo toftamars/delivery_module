@@ -14,6 +14,7 @@
                     <field name="vehicle_id"/>
                     <field name="picking_count"/>
                     <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
+                            groups="delivery_module.group_delivery_driver"
                             attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     <button name="action_finish_delivery" type="object" icon="fa-check" string="Tamamla" 
                             attrs="{'invisible': [('state', '!=', 'ready')]}"/>
@@ -31,7 +32,8 @@
                 <form string="Teslimat Belgesi">
                     <header>
                         <button name="action_on_the_way" string="Yolda" type="object" 
-                                class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                                class="btn-primary" groups="delivery_module.group_delivery_driver"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                         <button name="action_finish_delivery" string="Tamamla" type="object" 
                                 class="btn-success" attrs="{'invisible': [('state', '!=', 'ready')]}"/>
                         <button name="action_cancel" string="İptal" type="object" 
