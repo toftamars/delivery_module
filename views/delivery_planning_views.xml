@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Teslimat Planlama Tree View -->
+        <record id="view_delivery_planning_tree" model="ir.ui.view">
+            <field name="name">delivery.planning.tree</field>
+            <field name="model">delivery.planning</field>
+            <field name="arch" type="xml">
+                <tree string="Teslimat Planları">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="vehicle_id"/>
+                    <field name="driver_id"/>
+                    <field name="total_distance"/>
+                    <field name="estimated_duration"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Teslimat Planlama Form View -->
+        <record id="view_delivery_planning_form" model="ir.ui.view">
+            <field name="name">delivery.planning.form</field>
+            <field name="model">delivery.planning</field>
+            <field name="arch" type="xml">
+                <form string="Teslimat Planı">
+                    <header>
+                        <button name="action_confirm" string="Onayla" type="object" 
+                                states="draft" class="oe_highlight"/>
+                        <button name="action_start" string="Başlat" type="object" 
+                                states="confirmed" class="oe_highlight"/>
+                        <button name="action_complete" string="Tamamla" type="object" 
+                                states="in_progress" class="oe_highlight"/>
+                        <button name="action_cancel" string="İptal Et" type="object" 
+                                states="draft,confirmed,in_progress"/>
+                        <button name="action_reset_draft" string="Taslağa Döndür" type="object" 
+                                states="cancelled"/>
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,confirmed,in_progress,completed"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="vehicle_id" domain="[('is_available', '=', True), ('is_temporarily_closed', '=', False)]"/>
+                                <field name="driver_id"/>
+                            </group>
+                            <group>
+                                <field name="total_distance"/>
+                                <field name="estimated_duration"/>
+                            </group>
+                        </group>
+                        <group string="SMS Bildirimleri">
+                            <field name="sms_sent_on_way"/>
+                            <field name="sms_sent_completed"/>
+                            <field name="sms_sent_cancelled"/>
+                        </group>
+                        <notebook>
+                            <page string="Teslimat Noktaları">
+                                <field name="delivery_point_ids">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="district"/>
+                                        <field name="address"/>
+                                        <field name="region_id"/>
+                                        <field name="distance_from_previous"/>
+                                        <field name="estimated_time"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notlar">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Teslimat Planlama Search View -->
+        <record id="view_delivery_planning_search" model="ir.ui.view">
+            <field name="name">delivery.planning.search</field>
+            <field name="model">delivery.planning</field>
+            <field name="arch" type="xml">
+                <search string="Teslimat Planı Ara">
+                    <field name="name"/>
+                    <field name="vehicle_id"/>
+                    <field name="driver_id"/>
+                    <filter string="Taslak" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="Onaylandı" name="confirmed" domain="[('state','=','confirmed')]"/>
+                    <filter string="Devam Ediyor" name="in_progress" domain="[('state','=','in_progress')]"/>
+                    <filter string="Tamamlandı" name="completed" domain="[('state','=','completed')]"/>
+                    <group expand="0" string="Grupla">
+                        <filter string="Durum" name="state" context="{'group_by':'state'}"/>
+                        <filter string="Araç" name="vehicle" context="{'group_by':'vehicle_id'}"/>
+                        <filter string="Sürücü" name="driver" context="{'group_by':'driver_id'}"/>
+                        <filter string="Tarih" name="date" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Teslimat Planlama Action -->
+        <record id="action_delivery_planning" model="ir.actions.act_window">
+            <field name="name">Teslimat Planları</field>
+            <field name="res_model">delivery.planning</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_delivery_planning_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat planınızı oluşturun!
+                </p>
+                <p>
+                    Teslimat planları oluşturarak araç ve sürücü ataması yapabilir,
+                    teslimat noktalarını belirleyebilir ve rota optimizasyonu yapabilirsiniz.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
