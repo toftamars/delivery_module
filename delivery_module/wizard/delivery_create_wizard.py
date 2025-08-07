@@ -290,11 +290,22 @@ class DeliveryCreateWizard(models.TransientModel):
                 # Teslimat yöneticisi için uyarı ver ama devam et
                 print(f"Teslimat yöneticisi limit aşımında teslimat oluşturuyor: {self.vehicle_id.name} - {today_count}/{self.vehicle_id.daily_limit}")
 
+        # Teslimat gününü belirle
+        day_of_week = str(self.date.weekday())
+        delivery_day = self.env['delivery.day'].search([
+            ('day_of_week', '=', day_of_week),
+            ('active', '=', True)
+        ], limit=1)
+        
+        if not delivery_day:
+            raise UserError(_('Seçilen tarih için teslimat günü bulunamadı.'))
+        
         delivery = self.env['delivery.document'].create({
             'date': self.date,
             'vehicle_id': self.vehicle_id.id,
             'partner_id': partner_id,
             'district_id': self.district_id.id,
+            'delivery_day_id': delivery_day.id,
             'picking_ids': picking_ids,
         })
 
