@@ -275,6 +275,8 @@ class DeliveryCreateWizard(models.TransientModel):
             'district_id': self.district_id.id,
             'delivery_day_id': delivery_day.id,
             'picking_ids': picking_ids,
+            'note': self.note,
+            'state': 'ready',
         })
 
         return {

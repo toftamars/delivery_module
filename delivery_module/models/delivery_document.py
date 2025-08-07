@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from urllib.parse import quote
 
 class DeliveryDocument(models.Model):
     _name = 'delivery.document'
@@ -21,13 +22,37 @@ class DeliveryDocument(models.Model):
     delivery_day_id = fields.Many2one('delivery.day', string='Teslimat Günü', required=True)
     district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
 
-    delivery_address = fields.Char('Teslimat Adresi', related='partner_id.street', readonly=True)
+    delivery_address = fields.Char('Teslimat Adresi', compute='_compute_delivery_address', store=True, readonly=True)
+    phone = fields.Char('Telefon', compute='_compute_phone', store=True, readonly=True)
+    note = fields.Text('Not')
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')
     picking_count = fields.Integer(compute='_compute_picking_count', string='Transfer Sayısı')
 
     def _compute_picking_count(self):
         for delivery in self:
             delivery.picking_count = len(delivery.picking_ids)
+
+    @api.depends('partner_id', 'partner_id.street', 'partner_id.street2', 'district_id', 'district_id.city_id')
+    def _compute_delivery_address(self):
+        for rec in self:
+            parts = []
+            if rec.partner_id and rec.partner_id.street:
+                parts.append(rec.partner_id.street)
+            if rec.partner_id and rec.partner_id.street2:
+                parts.append(rec.partner_id.street2)
+            if rec.district_id and rec.district_id.name:
+                parts.append(rec.district_id.name)
+            if rec.district_id and rec.district_id.city_id and rec.district_id.city_id.name:
+                parts.append(rec.district_id.city_id.name)
+            rec.delivery_address = ', '.join([p for p in parts if p])
+
+    @api.depends('partner_id')
+    def _compute_phone(self):
+        for rec in self:
+            phone = ''
+            if rec.partner_id:
+                phone = rec.partner_id.mobile or rec.partner_id.phone or ''
+            rec.phone = phone
 
     def action_view_pickings(self):
         return {
@@ -133,6 +158,18 @@ class DeliveryDocument(models.Model):
 
     def action_draft(self):
         self.write({'state': 'draft'})
+
+    def action_open_navigation(self):
+        self.ensure_one()
+        address = self.delivery_address or (self.partner_id and self.partner_id.contact_address) or ''
+        if not address:
+            raise UserError(_('Navigasyon için adres bulunamadı.'))
+        url = f"https://www.google.com/maps?q={quote(address)}"
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'new',
+        }
 
     def _send_sms_notification(self, state):
         """SMS bildirimi gönder"""

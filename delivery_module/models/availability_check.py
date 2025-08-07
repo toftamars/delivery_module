@@ -175,9 +175,9 @@ class AvailabilityCheck(models.Model):
                 result_html += f"""
                 <tr>
                     <td>
-                        <button onclick=\"window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'\" 
-                                class=\"btn btn-sm btn-secondary\" 
-                                style=\"margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;\">Oluştur</button>
+                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}" 
+                           class="btn btn-sm btn-secondary" 
+                           style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">Oluştur</a>
                     </td>
                     <td><strong>{datetime.strptime(date_info['date'], '%Y-%m-%d').strftime('%d/%m/%Y')}</strong></td>
                     <td>{day_name_tr}</td>
@@ -185,17 +185,15 @@ class AvailabilityCheck(models.Model):
                     <td><span class="badge badge-info">{date_info['used']}</span></td>
                     <td><span class="badge badge-secondary">{date_info['total']}</span></td>
                     <td>
-                        <div style=\"width:120px;background:#eee;border-radius:6px;overflow:hidden;\">
-                            <div style=\"height:10px;width:{percent_used}%;background:#3498db;\"></div>
+                        <div style="width:120px;background:#eee;border-radius:6px;overflow:hidden;">
+                            <div style="height:10px;width:{percent_used}%;background:#3498db;"></div>
                         </div>
                         <small>{percent_used}%</small>
                     </td>
                     <td>
-                        <button onclick=\"window.location.href='/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}'\" 
-                                class="btn btn-sm btn-primary" 
-                                style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">
-                            ➕ Oluştur
-                        </button>
+                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}" 
+                           class="btn btn-sm btn-primary" 
+                           style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">➕ Oluştur</a>
                     </td>
                 </tr>
                 """
