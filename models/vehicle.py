@@ -2,7 +2,8 @@ from odoo import models, fields, api, _
 
 
 class DeliveryVehicle(models.Model):
-    _inherit = 'fleet.vehicle'
+    _name = 'delivery.vehicle'
+    _description = 'Teslimat Aracı'
     
     # Araç tipi ve bölge ataması
     vehicle_type = fields.Selection([
