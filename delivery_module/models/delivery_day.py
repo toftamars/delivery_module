@@ -30,6 +30,7 @@ class DeliveryDay(models.Model):
     # İlçe ilişkileri
     district_ids = fields.Many2many('res.city.district', string='İlçeler')
     district_count = fields.Integer('İlçe Sayısı', compute='_compute_district_count', store=True)
+    district_list = fields.Text('İlçe Özeti', compute='_compute_district_list', readonly=True)
     
     # Yaka bazlı ilçe listeleri
     anatolian_districts = fields.Text('Anadolu Yakası İlçeleri', compute='_compute_anatolian_districts', readonly=True)
@@ -56,6 +57,15 @@ class DeliveryDay(models.Model):
     def _compute_district_count(self):
         for day in self:
             day.district_count = len(day.district_ids)
+
+    @api.depends('district_ids')
+    def _compute_district_list(self):
+        for day in self:
+            if day.district_ids:
+                district_names = [f"{district.name} ({district.city_id.name})" for district in day.district_ids.sorted('name')]
+                day.district_list = ", ".join(district_names)
+            else:
+                day.district_list = "İlçe tanımlanmamış"
 
 
 
