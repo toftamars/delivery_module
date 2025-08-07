@@ -41,6 +41,7 @@
         'wizard/delivery_vehicle_closure_wizard_views.xml',
         'wizard/delivery_limit_warning_wizard_views.xml',
         'wizard/setup_delivery_schedule_wizard_views.xml',
+        'wizard/manual_setup_wizard_views.xml',
     ],
     'demo': [],
     'installable': True,

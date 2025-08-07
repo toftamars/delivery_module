@@ -28,3 +28,5 @@ access_cancel_confirmation_wizard_user,cancel.confirmation.wizard.user,model_can
 access_cancel_confirmation_wizard_manager,cancel.confirmation.wizard.manager,model_cancel_confirmation_wizard,group_delivery_manager,1,1,1,1
 access_availability_check_user,availability.check.user,model_availability_check,base.group_user,1,1,1,0
 access_availability_check_manager,availability.check.manager,model_availability_check,group_delivery_manager,1,1,1,1
+access_manual_setup_wizard_user,manual.setup.wizard.user,model_manual_setup_wizard,base.group_user,1,1,1,0
+access_manual_setup_wizard_manager,manual.setup.wizard.manager,model_manual_setup_wizard,group_delivery_manager,1,1,1,1
