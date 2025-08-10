@@ -183,8 +183,8 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
+        # Sadece transfer teslimatları için tarih kontrolü yap (manuel teslimatlar için kontrol yok)
         if self.date and self.district_id and self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
-            # Sadece transfer teslimatları için tarih kontrolü yap
             day_of_week = str(self.date.weekday())
             
             # Debug için gün bilgisini yazdır
@@ -304,15 +304,19 @@ class DeliveryCreateWizard(models.TransientModel):
             ('active', '=', True)
         ], limit=1)
         
-        if not delivery_day:
+        # Manuel teslimatlar için teslimat günü kontrolü yapma
+        if self.delivery_type == 'transfer' and not delivery_day:
             raise UserError(_('Seçilen tarih için teslimat günü bulunamadı.'))
         
+        # Manuel teslimatlar için teslimat günü yoksa None olarak bırak
+        delivery_day_id = delivery_day.id if delivery_day else False
+
         delivery = self.env['delivery.document'].create({
             'date': self.date,
             'vehicle_id': self.vehicle_id.id,
             'partner_id': partner_id,
             'district_id': self.district_id.id,
-            'delivery_day_id': delivery_day.id,
+            'delivery_day_id': delivery_day_id,
             'picking_ids': picking_ids,
             'note': self.note,
             'state': 'ready',
