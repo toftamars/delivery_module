@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    
         <!-- İlçe Tree Görünümü -->
         <record id="view_res_city_district_tree" model="ir.ui.view">
             <field name="name">res.city.district.tree</field>
@@ -94,5 +94,5 @@
                 </p>
             </field>
         </record>
-    </data>
+    
 </odoo> 

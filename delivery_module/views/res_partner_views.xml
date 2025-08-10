@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    
         <!-- Müşteri Form Görünümü -->
         <record id="view_partner_form_inherit_delivery" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.delivery</field>
@@ -16,5 +16,5 @@
                 </xpath>
             </field>
         </record>
-    </data>
+    
 </odoo> 

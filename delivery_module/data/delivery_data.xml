@@ -319,5 +319,5 @@
         
         <!-- İlçe-gün eşleşmesini otomatik ayarla -->
         <function model="setup.delivery.schedule.wizard" name="action_setup_schedule"/>
-    </data>
+    
 </odoo> 

@@ -3,5 +3,5 @@
     <data noupdate="1">
         <!-- Teslimat programını ayarla -->
         <function model="setup.delivery.schedule.wizard" name="action_setup_schedule"/>
-    </data>
+    
 </odoo>

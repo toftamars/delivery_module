@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    
         <!-- Limit Uyarı Sihirbazı Form Görünümü -->
         <record id="view_delivery_limit_warning_wizard_form" model="ir.ui.view">
             <field name="name">delivery.limit.warning.wizard.form</field>
@@ -26,5 +26,5 @@
                 </form>
             </field>
         </record>
-    </data>
+    
 </odoo> 

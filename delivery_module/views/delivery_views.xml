@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    
         <!-- Teslimat Belgesi Tree Görünümü -->
         <record id="view_delivery_document_tree" model="ir.ui.view">
             <field name="name">delivery.document.tree</field>
@@ -127,5 +127,5 @@
                 </search>
             </field>
         </record>
-    </data>
+    
 </odoo> 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    
         <!-- Teslimat Oluşturma Sihirbazı Form Görünümü -->
         <record id="view_delivery_create_wizard_form" model="ir.ui.view">
             <field name="name">delivery.create.wizard.form</field>
@@ -48,5 +48,5 @@
             <field name="target">new</field>
             <field name="context">{}</field>
         </record>
-    </data>
+    
 </odoo>
