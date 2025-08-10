@@ -193,10 +193,22 @@ class AvailabilityCheck(models.Model):
             for date_info in suitable_dates:
                 day_name_tr = turkish_days.get(date_info['day_name'], date_info['day_name'])
                 percent_used = int((date_info['used'] / date_info['total']) * 100) if date_info['total'] else 0
+                
+                # Context parametrelerini hazırla
+                context_params = {
+                    'default_date': date_info['date'],
+                    'default_vehicle_id': self.vehicle_id.id,
+                    'default_district_id': self.district_id.id if self.district_id else False,
+                    'default_delivery_type': 'transfer'
+                }
+                
+                # Context'i JSON formatında string'e çevir
+                context_str = json.dumps(context_params).replace('"', '&quot;')
+                
                 result_html += f"""
                 <tr>
                     <td>
-                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}" 
+                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={context_str}" 
                            class="btn btn-sm btn-secondary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">Oluştur</a>
                     </td>
@@ -212,7 +224,7 @@ class AvailabilityCheck(models.Model):
                         <small>{percent_used}%</small>
                     </td>
                     <td>
-                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={{'default_date': '{date_info['date']}', 'default_vehicle_id': {self.vehicle_id.id}, 'default_district_id': {self.district_id.id if self.district_id else 'False'}, 'default_delivery_type': 'transfer'}}" 
+                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={context_str}" 
                            class="btn btn-sm btn-primary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">➕ Oluştur</a>
                     </td>
