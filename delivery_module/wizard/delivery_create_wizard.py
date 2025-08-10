@@ -122,8 +122,17 @@ class DeliveryCreateWizard(models.TransientModel):
             ])
             
             if delivery_days:
-                days_text = ', '.join([day.name for day in delivery_days.sorted('sequence')])
-                self.available_dates = f"Bu ilçede teslimat yapılabilecek günler: {days_text}"
+                # Sadece bu ilçe için uygun olan günleri göster
+                available_days = []
+                for day in delivery_days.sorted('sequence'):
+                    if self.district_id in day.district_ids:
+                        available_days.append(day.name)
+                
+                if available_days:
+                    days_text = ', '.join(available_days)
+                    self.available_dates = f"Bu ilçede teslimat yapılabilecek günler: {days_text}"
+                else:
+                    self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
             else:
                 self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
             
