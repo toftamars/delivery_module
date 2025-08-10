@@ -13,6 +13,7 @@ class DeliveryDocument(models.Model):
     state = fields.Selection([
         ('draft', 'Taslak'),
         ('ready', 'Hazır'),
+        ('on_the_way', 'Yolda'),
         ('done', 'Teslim Edildi'),
         ('cancel', 'İptal')
     ], string='Durum', default='draft', tracking=True)
@@ -26,10 +27,15 @@ class DeliveryDocument(models.Model):
     phone = fields.Char('Telefon', compute='_compute_phone', store=True, readonly=True)
     note = fields.Text('Not')
     manual_task = fields.Text('Yapılacak İş', help='Manuel teslimat için yapılacak iş açıklaması')
+
+    # İlişkiler
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')
     picking_count = fields.Integer(compute='_compute_picking_count', string='Transfer Sayısı')
+
+    photo_ids = fields.One2many('delivery.photo', 'delivery_document_id', string='Fotoğraflar')
+    photo_count = fields.Integer(compute='_compute_photo_count', string='Fotoğraf Sayısı')
     
-    # Harita ve rota desteği için yeni alanlar
+    # Harita ve rota desteği için alanlar (tutarlılık için korunuyor)
     is_on_the_way = fields.Boolean('Yolda', default=False, tracking=True)
     current_location = fields.Char('Mevcut Konum', help='Sürücünün mevcut konumu')
     estimated_arrival = fields.Datetime('Tahmini Varış', help='Tahmini varış zamanı')
@@ -38,6 +44,10 @@ class DeliveryDocument(models.Model):
     def _compute_picking_count(self):
         for delivery in self:
             delivery.picking_count = len(delivery.picking_ids)
+
+    def _compute_photo_count(self):
+        for delivery in self:
+            delivery.photo_count = len(delivery.photo_ids)
 
     @api.depends('partner_id', 'partner_id.street', 'partner_id.street2', 'district_id', 'district_id.city_id')
     def _compute_delivery_address(self):
@@ -69,6 +79,17 @@ class DeliveryDocument(models.Model):
             'view_mode': 'tree,form',
             'domain': [('id', 'in', self.picking_ids.ids)],
             'context': {'default_partner_id': self.partner_id.id},
+        }
+
+    def action_view_photos(self):
+        self.ensure_one()
+        return {
+            'name': _('Teslimat Fotoğrafları'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'delivery.photo',
+            'view_mode': 'tree,form',
+            'domain': [('delivery_document_id', '=', self.id)],
+            'context': {'default_delivery_document_id': self.id},
         }
 
     def action_view_picking_count(self):
@@ -112,35 +133,32 @@ class DeliveryDocument(models.Model):
 
     def action_approve(self):
         self.write({'state': 'ready'})
-        # SMS gönderimi deaktif edildi
-        # self._send_sms_notification('ready')
 
     def action_on_the_way(self):
-        """Yolda butonu - (Taslak/Hazır) durumunda çalışır, harita desteğini aktif eder"""
-        if self.state not in ('draft', 'ready'):
-            raise UserError(_('Sadece taslak veya hazır durumundaki teslimatlar yola çıkabilir.'))
+        """Yolda butonu - Hazır durumundan 'Yolda' durumuna geçer"""
+        if self.state != 'ready':
+            raise UserError(_('Sadece hazır durumundaki teslimatlar yola çıkabilir.'))
         
-        values = {'is_on_the_way': True}
-        if self.state == 'draft':
-            values['state'] = 'ready'
-        self.write(values)
+        self.write({
+            'state': 'on_the_way',
+            'is_on_the_way': True
+        })
         
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _('Başarılı'),
-                'message': _('%s numaralı teslimat yola çıktı. Harita ve rota desteği aktif edildi.') % self.name,
+                'message': _('%s numaralı teslimat yola çıktı.') % self.name,
                 'type': 'success',
             }
         }
 
     def action_complete(self):
-        """Tamamla butonu - Hazır durumundan Teslim Edildi durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
-        if self.state != 'ready':
-            raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
+        """Tamamla butonu - 'Yolda' durumundan Teslim Edildi durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
+        if self.state != 'on_the_way':
+            raise UserError(_('Sadece yolda durumundaki teslimatlar tamamlanabilir.'))
         
-        # Fotoğraf ekleme wizard'ını aç
         return {
             'type': 'ir.actions.act_window',
             'name': _('Teslimat Fotoğrafı Ekle'),
@@ -176,10 +194,10 @@ class DeliveryDocument(models.Model):
         self.write({'state': 'draft'})
 
     def action_open_navigation(self):
-        """Navigasyon butonu - Sadece yolda olan teslimatlar için rota talimatlarını açar"""
+        """Navigasyon butonu - Sadece 'Yolda' durumundaki teslimatlar için rota talimatlarını açar"""
         self.ensure_one()
         
-        if not self.is_on_the_way:
+        if self.state != 'on_the_way':
             raise UserError(_('Harita sadece yolda olan teslimatlar için açılabilir.'))
         
         address = self.delivery_address or (self.partner_id and self.partner_id.contact_address) or ''
@@ -198,7 +216,7 @@ class DeliveryDocument(models.Model):
     def action_update_location(self):
         """Mevcut konum güncelleme"""
         self.ensure_one()
-        if not self.is_on_the_way:
+        if self.state != 'on_the_way':
             raise UserError(_('Konum güncellemesi sadece yolda olan teslimatlar için yapılabilir.'))
         
         return {
@@ -217,7 +235,7 @@ class DeliveryDocument(models.Model):
     def action_view_route(self):
         """Rota bilgilerini görüntüleme"""
         self.ensure_one()
-        if not self.is_on_the_way:
+        if self.state != 'on_the_way':
             raise UserError(_('Rota bilgileri sadece yolda olan teslimatlar için görüntülenebilir.'))
         
         return {
