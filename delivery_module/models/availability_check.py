@@ -191,6 +191,7 @@ class AvailabilityCheck(models.Model):
             result_html += '<th>İşlem</th>'
             result_html += '</tr></thead><tbody>'
             
+            action_id = self.env.ref('delivery_module.action_delivery_create_wizard').id
             for date_info in suitable_dates:
                 day_name_tr = turkish_days.get(date_info['day_name'], date_info['day_name'])
                 percent_used = int((date_info['used'] / date_info['total']) * 100) if date_info['total'] else 0
@@ -203,14 +204,13 @@ class AvailabilityCheck(models.Model):
                     'default_delivery_type': 'transfer'
                 }
 
-                # Context'i URL için encode et
-                context_qs = quote(json.dumps(context_params))
-                action_id = self.env.ref('delivery_module.action_delivery_create_wizard').id
+                # Context'i HTML için güvenli hale getir (URL-encode etme!)
+                context_str = json.dumps(context_params).replace('"', '&quot;')
                 
                 result_html += f"""
                 <tr>
                     <td>
-                        <a href="/web#action={action_id}&amp;context={context_qs}" 
+                        <a href="/web#action={action_id}&amp;context={context_str}" 
                            class="btn btn-sm btn-secondary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">Oluştur</a>
                     </td>
@@ -226,7 +226,7 @@ class AvailabilityCheck(models.Model):
                         <small>{percent_used}%</small>
                     </td>
                     <td>
-                        <a href="/web#action={action_id}&amp;context={context_qs}" 
+                        <a href="/web#action={action_id}&amp;context={context_str}" 
                            class="btn btn-sm btn-primary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">➕ Oluştur</a>
                     </td>
