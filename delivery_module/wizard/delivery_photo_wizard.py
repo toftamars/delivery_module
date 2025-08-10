@@ -44,12 +44,5 @@ class DeliveryPhotoWizard(models.TransientModel):
             subject=_('Teslimat Tamamlandı')
         )
         
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Başarılı'),
-                'message': _('Fotoğraf eklendi ve teslimat tamamlandı.'),
-                'type': 'success',
-            }
-        }
+        # Wizard'ı kapat
+        return {'type': 'ir.actions.act_window_close'}
