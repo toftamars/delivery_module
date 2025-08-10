@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 import calendar
 import json
+from urllib.parse import quote
 
 class AvailabilityCheck(models.Model):
     _name = 'availability.check'
@@ -202,13 +203,14 @@ class AvailabilityCheck(models.Model):
                     'default_delivery_type': 'transfer'
                 }
 
-                # Context'i JSON formatında string'e çevir
-                context_str = json.dumps(context_params).replace('"', '&quot;')
+                # Context'i URL için encode et
+                context_qs = quote(json.dumps(context_params))
+                action_id = self.env.ref('delivery_module.action_delivery_create_wizard').id
                 
                 result_html += f"""
                 <tr>
                     <td>
-                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={context_str}" 
+                        <a href="/web#action={action_id}&amp;context={context_qs}" 
                            class="btn btn-sm btn-secondary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">Oluştur</a>
                     </td>
@@ -224,7 +226,7 @@ class AvailabilityCheck(models.Model):
                         <small>{percent_used}%</small>
                     </td>
                     <td>
-                        <a href="/web#action={self.env.ref('delivery_module.action_delivery_create_wizard').id}&amp;context={context_str}" 
+                        <a href="/web#action={action_id}&amp;context={context_qs}" 
                            class="btn btn-sm btn-primary" 
                            style="margin: 2px; text-decoration: none; color: white; display: inline-block; padding: 5px 10px; border: none; cursor: pointer;">➕ Oluştur</a>
                     </td>
