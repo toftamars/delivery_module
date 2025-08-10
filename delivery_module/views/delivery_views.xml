@@ -20,6 +20,9 @@
                     <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
                             groups="delivery_module.group_delivery_driver"
                             attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_complete" type="object" icon="fa-check" string="Tamamla" 
+                            groups="delivery_module.group_delivery_driver"
+                            attrs="{'invisible': [('state', '!=', 'ready')]}"/>
                     <button name="action_view_pickings" type="object" icon="fa-list" string="Transferler" 
                             attrs="{'invisible': [('picking_count', '=', 0)]}"/>
                 </tree>
@@ -36,6 +39,9 @@
                         <button name="action_on_the_way" string="Yolda" type="object" 
                                 class="btn-primary" groups="delivery_module.group_delivery_driver"
                                 attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_complete" string="Tamamla" type="object" 
+                                class="btn-success" groups="delivery_module.group_delivery_driver"
+                                attrs="{'invisible': [('state', '!=', 'ready')]}"/>
                         <button name="action_open_navigation" string="Haritada Aç" type="object" 
                                 class="btn-info" groups="delivery_module.group_delivery_driver"
                                 attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>

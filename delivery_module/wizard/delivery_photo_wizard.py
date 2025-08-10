@@ -18,7 +18,7 @@ class DeliveryPhotoWizard(models.TransientModel):
                 raise ValidationError(_('Fotoğraf alanı zorunludur.'))
     
     def action_create_photo(self):
-        """Fotoğraf oluştur"""
+        """Fotoğraf oluştur ve teslimatı tamamla"""
         self.ensure_one()
         
         # Fotoğraf kaydını oluştur
@@ -32,10 +32,16 @@ class DeliveryPhotoWizard(models.TransientModel):
         
         photo = self.env['delivery.photo'].create(photo_vals)
         
+        # Teslimat belgesini "done" durumuna geçir
+        self.delivery_document_id.write({
+            'state': 'done',
+            'is_on_the_way': False  # Artık yolda değil
+        })
+        
         # Teslimat belgesine fotoğraf eklendi mesajı
         self.delivery_document_id.message_post(
-            body=_('Fotoğraf eklendi: %s') % photo.name,
-            subject=_('Fotoğraf Eklendi')
+            body=_('Fotoğraf eklendi ve teslimat tamamlandı: %s') % photo.name,
+            subject=_('Teslimat Tamamlandı')
         )
         
         return {
@@ -43,7 +49,7 @@ class DeliveryPhotoWizard(models.TransientModel):
             'tag': 'display_notification',
             'params': {
                 'title': _('Başarılı'),
-                'message': _('Fotoğraf başarıyla eklendi.'),
+                'message': _('Fotoğraf eklendi ve teslimat tamamlandı.'),
                 'type': 'success',
             }
         }

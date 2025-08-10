@@ -140,9 +140,21 @@ class DeliveryDocument(models.Model):
         }
 
     def action_complete(self):
-        self.write({'state': 'done'})
-        # SMS gönderimi deaktif edildi
-        # self._send_sms_notification('done')
+        """Tamamla butonu - Hazır durumundan Tamamlandı durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
+        if self.state != 'ready':
+            raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
+        
+        # Fotoğraf ekleme wizard'ını aç
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Teslimat Fotoğrafı Ekle'),
+            'res_model': 'delivery.photo.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_delivery_document_id': self.id,
+            }
+        }
 
     def action_finish_delivery(self):
         """Tamamla butonu - Hazır durumundan Tamamlandı durumuna geçer"""
