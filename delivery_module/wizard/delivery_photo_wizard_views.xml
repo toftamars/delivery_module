@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
     
         <!-- Form View -->
         <record id="view_delivery_photo_wizard_form" model="ir.ui.view">
@@ -40,4 +41,5 @@
             <field name="context">{}</field>
         </record>
     
+    </data>
 </odoo>

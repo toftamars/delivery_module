@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
     
         <!-- Setup Wizard Form Görünümü -->
         <record id="view_setup_delivery_schedule_wizard_form" model="ir.ui.view">
@@ -59,4 +60,5 @@
             <field name="target">new</field>
         </record>
     
+    </data>
 </odoo> 

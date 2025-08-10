@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
         
         <!-- Ana Teslimat Menüsü -->
         <menuitem id="menu_delivery_root"
@@ -109,4 +110,5 @@
                   sequence="100"
                   groups="base.group_user"
                   domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+    </data>
 </odoo> 

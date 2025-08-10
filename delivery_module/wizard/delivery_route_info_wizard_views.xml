@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
     <record id="view_delivery_route_info_wizard_form" model="ir.ui.view">
         <field name="name">delivery.route.info.wizard.form</field>
         <field name="model">delivery.route.info.wizard</field>
@@ -27,4 +28,5 @@
         <field name="target">new</field>
         <field name="context">{}</field>
     </record>
+    </data>
 </odoo>
