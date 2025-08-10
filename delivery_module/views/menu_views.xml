@@ -2,62 +2,55 @@
 <odoo>
     <data>
         
-        <!-- Ana Teslimat Menüsü -->
-        <menuitem id="menu_delivery_root"
-                  name="Teslimat"
-                  action="delivery_module.action_delivery_document"
-                  sequence="10"
-                  groups="delivery_module.group_delivery_driver"/>
-
-        <!-- Ana Teslimat Menüsü (Yönetici ve Diğer Kullanıcılar) -->
+        <!-- Ana Teslimat Menüsü (Tek kök) -->
         <menuitem id="menu_delivery_root_manager"
                   name="Teslimat"
                   action="delivery_module.action_availability_check"
                   sequence="10"
-                  groups="delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
-        <!-- Teslimat Oluştur Menüsü -->
+        <!-- Teslimat Oluştur Menüsü (Sürücü) -->
         <menuitem id="menu_delivery_create"
                   name="Teslimat Belgesi Oluştur"
-                  parent="menu_delivery_root"
+                  parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_create_wizard"
                   sequence="20"
                   groups="delivery_module.group_delivery_driver"/>
 
-        <!-- Teslimat Araçları Menüsü -->
+        <!-- Teslimat Araçları Menüsü (Sürücü) -->
         <menuitem id="menu_delivery_vehicle"
                   name="Teslimat Araçları"
-                  parent="menu_delivery_root"
+                  parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_vehicle"
                   sequence="30"
                   groups="delivery_module.group_delivery_driver"/>
 
-        <!-- Teslimat Günleri Menüsü -->
+        <!-- Teslimat Günleri Menüsü (Sürücü) -->
         <menuitem id="menu_delivery_day"
                   name="Teslimat Günleri"
-                  parent="menu_delivery_root"
+                  parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_day"
                   sequence="40"
                   groups="delivery_module.group_delivery_driver"/>
 
-        <!-- Teslimat Programı Kurulumu Menüsü -->
+        <!-- Teslimat Programı Kurulumu Menüsü (Sürücü) -->
         <menuitem id="menu_setup_delivery_schedule"
                   name="Teslimat Programı Kurulumu"
-                  parent="menu_delivery_root"
+                  parent="menu_delivery_root_manager"
                   action="delivery_module.action_setup_delivery_schedule_wizard"
                   sequence="45"
                   groups="delivery_module.group_delivery_driver"/>
 
-        <!-- Konfigürasyon Menüsü -->
+        <!-- Konfigürasyon Menüsü (Sürücü) -->
         <menuitem id="menu_delivery_config"
                   name="Konfigürasyon"
-                  parent="menu_delivery_root"
+                  parent="menu_delivery_root_manager"
                   sequence="100"
                   groups="delivery_module.group_delivery_driver"/>
 
         <!-- Yönetici ve Diğer Kullanıcılar için Menüler -->
         
-        <!-- Uygunluk Kontrol Menüsü (Sadece Yönetici) -->
+        <!-- Uygunluk Kontrol Menüsü (Yönetici) -->
         <menuitem id="menu_availability_check"
                   name="🔍 Uygunluk Kontrol"
                   parent="menu_delivery_root_manager"
@@ -65,7 +58,7 @@
                   sequence="1"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Oluştur Menüsü (Sadece Yönetici) -->
+        <!-- Teslimat Oluştur Menüsü (Yönetici) -->
         <menuitem id="menu_delivery_create_manager"
                   name="Teslimat Belgesi Oluştur"
                   parent="menu_delivery_root_manager"
@@ -73,7 +66,7 @@
                   sequence="20"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Araçları Menüsü (Sadece Yönetici) -->
+        <!-- Teslimat Araçları Menüsü (Yönetici) -->
         <menuitem id="menu_delivery_vehicle_manager"
                   name="Teslimat Araçları"
                   parent="menu_delivery_root_manager"
@@ -81,7 +74,7 @@
                   sequence="30"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Günleri Menüsü (Sadece Yönetici) -->
+        <!-- Teslimat Günleri Menüsü (Yönetici) -->
         <menuitem id="menu_delivery_day_manager"
                   name="Teslimat Günleri"
                   parent="menu_delivery_root_manager"
@@ -89,7 +82,7 @@
                   sequence="40"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Programı Kurulumu Menüsü (Sadece Yönetici) -->
+        <!-- Teslimat Programı Kurulumu Menüsü (Yönetici) -->
         <menuitem id="menu_setup_delivery_schedule_manager"
                   name="Teslimat Programı Kurulumu"
                   parent="menu_delivery_root_manager"
@@ -97,7 +90,7 @@
                   sequence="45"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Konfigürasyon Menüsü (Sadece Yönetici) -->
+        <!-- Konfigürasyon Menüsü (Yönetici) -->
         <menuitem id="menu_delivery_config_manager"
                   name="Konfigürasyon"
                   parent="menu_delivery_root_manager"
