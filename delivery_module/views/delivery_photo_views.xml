@@ -92,11 +92,6 @@
             </field>
         </record>
 
-        <!-- Menu Item -->
-        <menuitem id="menu_delivery_photo"
-                  name="Teslimat Fotoğrafları"
-                  parent="menu_delivery_root"
-                  action="action_delivery_photo"
-                  sequence="50"/>
+        <!-- Menü kaldırıldı: Teslimat Fotoğrafları uygulama girişi oluşturmasın -->
     </data>
 </odoo>
