@@ -176,7 +176,7 @@ class DeliveryDocument(models.Model):
         self.write({'state': 'draft'})
 
     def action_open_navigation(self):
-        """Navigasyon butonu - Sadece yolda olan teslimatlar için harita açar"""
+        """Navigasyon butonu - Sadece yolda olan teslimatlar için rota talimatlarını açar"""
         self.ensure_one()
         
         if not self.is_on_the_way:
@@ -186,7 +186,8 @@ class DeliveryDocument(models.Model):
         if not address:
             raise UserError(_('Navigasyon için adres bulunamadı.'))
         
-        url = f"https://www.google.com/maps?q={quote(address)}"
+        # Google Maps Directions (rota) URL'i oluştur
+        url = f"https://www.google.com/maps/dir/?api=1&destination={quote(address)}"
         
         return {
             'type': 'ir.actions.act_url',
