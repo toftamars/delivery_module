@@ -28,6 +28,12 @@ class DeliveryDocument(models.Model):
     manual_task = fields.Text('Yapılacak İş', help='Manuel teslimat için yapılacak iş açıklaması')
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')
     picking_count = fields.Integer(compute='_compute_picking_count', string='Transfer Sayısı')
+    
+    # Harita ve rota desteği için yeni alanlar
+    is_on_the_way = fields.Boolean('Yolda', default=False, tracking=True)
+    current_location = fields.Char('Mevcut Konum', help='Sürücünün mevcut konumu')
+    estimated_arrival = fields.Datetime('Tahmini Varış', help='Tahmini varış zamanı')
+    route_info = fields.Text('Rota Bilgisi', help='Rota detayları ve notlar')
 
     def _compute_picking_count(self):
         for delivery in self:
@@ -110,11 +116,16 @@ class DeliveryDocument(models.Model):
         # self._send_sms_notification('ready')
 
     def action_on_the_way(self):
-        """Yolda butonu - Taslaktan Hazır durumuna geçer"""
+        """Yolda butonu - Taslaktan Hazır durumuna geçer ve harita desteği aktif eder"""
         if self.state != 'draft':
             raise UserError(_('Sadece taslak durumundaki teslimatlar yola çıkabilir.'))
         
-        self.write({'state': 'ready'})
+        # Durumu güncelle
+        self.write({
+            'state': 'ready',
+            'is_on_the_way': True
+        })
+        
         # SMS gönderimi deaktif edildi
         # self._send_sms_notification('on_the_way')
         
@@ -123,7 +134,7 @@ class DeliveryDocument(models.Model):
             'tag': 'display_notification',
             'params': {
                 'title': _('Başarılı'),
-                'message': _('%s numaralı teslimat yola çıktı.') % self.name,
+                'message': _('%s numaralı teslimat yola çıktı. Harita ve rota desteği aktif edildi.') % self.name,
                 'type': 'success',
             }
         }
@@ -161,15 +172,60 @@ class DeliveryDocument(models.Model):
         self.write({'state': 'draft'})
 
     def action_open_navigation(self):
+        """Navigasyon butonu - Sadece yolda olan teslimatlar için harita açar"""
         self.ensure_one()
+        
+        if not self.is_on_the_way:
+            raise UserError(_('Harita sadece yolda olan teslimatlar için açılabilir.'))
+        
         address = self.delivery_address or (self.partner_id and self.partner_id.contact_address) or ''
         if not address:
             raise UserError(_('Navigasyon için adres bulunamadı.'))
+        
+        # Google Maps URL'i oluştur
         url = f"https://www.google.com/maps?q={quote(address)}"
+        
         return {
             'type': 'ir.actions.act_url',
             'url': url,
             'target': 'new',
+        }
+
+    def action_update_location(self):
+        """Mevcut konum güncelleme"""
+        self.ensure_one()
+        if not self.is_on_the_way:
+            raise UserError(_('Konum güncellemesi sadece yolda olan teslimatlar için yapılabilir.'))
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Konum Güncelle'),
+            'res_model': 'delivery.location.update.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_delivery_id': self.id,
+                'default_current_location': self.current_location or '',
+                'default_estimated_arrival': self.estimated_arrival or False,
+            }
+        }
+
+    def action_view_route(self):
+        """Rota bilgilerini görüntüleme"""
+        self.ensure_one()
+        if not self.is_on_the_way:
+            raise UserError(_('Rota bilgileri sadece yolda olan teslimatlar için görüntülenebilir.'))
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Rota Bilgileri'),
+            'res_model': 'delivery.route.info.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_delivery_id': self.id,
+                'default_route_info': self.route_info or '',
+            }
         }
 
     def _send_sms_notification(self, state):

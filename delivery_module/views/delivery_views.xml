@@ -14,6 +14,9 @@
                     <field name="vehicle_id"/>
                     <field name="picking_count"/>
                     <field name="manual_task" attrs="{'invisible': [('picking_count', '>', 0)]}"/>
+                    <field name="is_on_the_way" invisible="1"/>
+                    <field name="current_location" attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
+                    <field name="estimated_arrival" attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
                     <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
                             groups="delivery_module.group_delivery_driver"
                             attrs="{'invisible': [('state', '!=', 'draft')]}"/>
@@ -33,6 +36,15 @@
                         <button name="action_on_the_way" string="Yolda" type="object" 
                                 class="btn-primary" groups="delivery_module.group_delivery_driver"
                                 attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_open_navigation" string="Haritada Aç" type="object" 
+                                class="btn-info" groups="delivery_module.group_delivery_driver"
+                                attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
+                        <button name="action_update_location" string="Konum Güncelle" type="object" 
+                                class="btn-warning" groups="delivery_module.group_delivery_driver"
+                                attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
+                        <button name="action_view_route" string="Rota Bilgileri" type="object" 
+                                class="btn-secondary" groups="delivery_module.group_delivery_driver"
+                                attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
                         <button name="action_cancel" string="İptal" type="object" 
                                 class="btn-danger" attrs="{'invisible': [('state', 'in', ['cancel', 'done'])]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,ready,done"/>
@@ -60,6 +72,16 @@
                                  <button name="action_open_navigation" type="object" string="Navigasyon" class="btn-secondary" 
                                          groups="delivery_module.group_delivery_driver"
                                          attrs="{'invisible': [('delivery_address', '=', False)]}"/>
+                            </group>
+                        </group>
+                        
+                        <!-- Harita ve Rota Bilgileri (Sadece Yolda Olan Teslimatlar) -->
+                        <group attrs="{'invisible': [('is_on_the_way', '=', False)]}" groups="delivery_module.group_delivery_driver">
+                            <group string="Harita ve Rota Bilgileri">
+                                <field name="is_on_the_way" invisible="1"/>
+                                <field name="current_location" placeholder="Mevcut konumunuzu girin..."/>
+                                <field name="estimated_arrival" placeholder="Tahmini varış zamanı"/>
+                                <field name="route_info" placeholder="Rota detayları ve notlar..."/>
                             </group>
                         </group>
                         <notebook>
