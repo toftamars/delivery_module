@@ -27,6 +27,7 @@
                         
                         <field name="district_id"/>
                         <field name="available_dates" readonly="1" attrs="{'invisible': [('delivery_type', '=', 'manual')]}"/>
+                        <field name="available_date_ids" invisible="1"/>
                         <field name="vehicle_id"/>
                         <field name="vehicle_info" readonly="1"/>
                         <field name="date" attrs="{'readonly': [('available_date_ids', '=', '')]}"/>
