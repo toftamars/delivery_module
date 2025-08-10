@@ -16,7 +16,7 @@ class DeliveryDocument(models.Model):
         ('on_the_way', 'Yolda'),
         ('done', 'Teslim Edildi'),
         ('cancel', 'İptal')
-    ], string='Durum', default='draft', tracking=True)
+    ], string='Durum', default='ready', tracking=True)
     
     # Yeni alanlar
     partner_id = fields.Many2one('res.partner', string='Müşteri', required=True)
@@ -71,6 +71,12 @@ class DeliveryDocument(models.Model):
                 phone = rec.partner_id.mobile or rec.partner_id.phone or ''
             rec.phone = phone
 
+    def write(self, vals):
+        # Taslak dışındaki kayıtlar kilitli; sadece sistem aksiyonları context ile izin verir
+        if not self.env.context.get('bypass_lock') and any(rec.state in ('ready', 'on_the_way', 'done') for rec in self):
+            raise UserError(_('Bu teslimat belgesi kilitlidir (durum: Hazır/Yolda/Teslim Edildi). Düzenleme yapılamaz.'))
+        return super().write(vals)
+
     def action_view_pickings(self):
         return {
             'name': _('Transfer Belgeleri'),
@@ -93,7 +99,6 @@ class DeliveryDocument(models.Model):
         }
 
     def action_view_picking_count(self):
-        """Transfer sayısına tıklandığında transferleri göster"""
         return self.action_view_pickings()
 
     @api.model_create_multi
@@ -106,16 +111,13 @@ class DeliveryDocument(models.Model):
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):
         if self.vehicle_id and self.date:
-            # Aracın o günkü teslimat sayısını kontrol et
             today_count = self.env['delivery.document'].search_count([
                 ('vehicle_id', '=', self.vehicle_id.id),
                 ('date', '=', self.date),
-                ('state', 'in', ['draft', 'ready']),
+                ('state', 'in', ['ready']),
                 ('id', '!=', self.id)
             ])
-            
             if today_count >= self.vehicle_id.daily_limit:
-                # Teslimat yöneticisi için sadece uyarı ver, engelleme
                 if not self.env.user.has_group('delivery_module.group_delivery_manager'):
                     return {
                         'warning': {
@@ -132,18 +134,15 @@ class DeliveryDocument(models.Model):
                     }
 
     def action_approve(self):
-        self.write({'state': 'ready'})
+        self.with_context(bypass_lock=True).write({'state': 'ready'})
 
     def action_on_the_way(self):
-        """Yolda butonu - Hazır durumundan 'Yolda' durumuna geçer"""
         if self.state != 'ready':
             raise UserError(_('Sadece hazır durumundaki teslimatlar yola çıkabilir.'))
-        
-        self.write({
+        self.with_context(bypass_lock=True).write({
             'state': 'on_the_way',
             'is_on_the_way': True
         })
-        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -155,10 +154,8 @@ class DeliveryDocument(models.Model):
         }
 
     def action_complete(self):
-        """Tamamla butonu - 'Yolda' durumundan Teslim Edildi durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
         if self.state != 'on_the_way':
             raise UserError(_('Sadece yolda durumundaki teslimatlar tamamlanabilir.'))
-        
         return {
             'type': 'ir.actions.act_window',
             'name': _('Teslimat Fotoğrafı Ekle'),
@@ -171,12 +168,9 @@ class DeliveryDocument(models.Model):
         }
 
     def action_finish_delivery(self):
-        """Tamamla butonu - Hazır durumundan Teslim Edildi durumuna geçer"""
         if self.state != 'ready':
             raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
-        
-        self.write({'state': 'done'})
-        
+        self.with_context(bypass_lock=True).write({'state': 'done'})
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -188,25 +182,19 @@ class DeliveryDocument(models.Model):
         }
 
     def action_cancel(self):
-        self.write({'state': 'cancel'})
+        self.with_context(bypass_lock=True).write({'state': 'cancel'})
 
     def action_draft(self):
-        self.write({'state': 'draft'})
+        self.with_context(bypass_lock=True).write({'state': 'draft'})
 
     def action_open_navigation(self):
-        """Navigasyon butonu - Sadece 'Yolda' durumundaki teslimatlar için rota talimatlarını açar"""
         self.ensure_one()
-        
         if self.state != 'on_the_way':
             raise UserError(_('Harita sadece yolda olan teslimatlar için açılabilir.'))
-        
         address = self.delivery_address or (self.partner_id and self.partner_id.contact_address) or ''
         if not address:
             raise UserError(_('Navigasyon için adres bulunamadı.'))
-        
-        # Google Maps Directions (rota) URL'i oluştur
         url = f"https://www.google.com/maps/dir/?api=1&destination={quote(address)}"
-        
         return {
             'type': 'ir.actions.act_url',
             'url': url,
