@@ -2,55 +2,61 @@
 <odoo>
     <data>
         
-        <!-- Ana Teslimat Menüsü (Tek kök) -->
+        <!-- Tek kök menü -->
         <menuitem id="menu_delivery_root_manager"
                   name="Teslimat"
                   action="delivery_module.action_availability_check"
                   sequence="10"
                   groups="base.group_user"/>
 
-        <!-- Teslimat Oluştur Menüsü (Sürücü) -->
+        <!-- Teslimat Belgeleri (herkese görünür: sürücü + yönetici) -->
+        <menuitem id="menu_delivery_document"
+                  name="Teslimat Belgeleri"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_delivery_document"
+                  sequence="10"
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+
+        <!-- Teslimat Belgesi Oluştur (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_delivery_create"
                   name="Teslimat Belgesi Oluştur"
                   parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_create_wizard"
                   sequence="20"
-                  groups="delivery_module.group_delivery_driver"/>
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Araçları Menüsü (Sürücü) -->
+        <!-- Teslimat Araçları (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_delivery_vehicle"
                   name="Teslimat Araçları"
                   parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_vehicle"
                   sequence="30"
-                  groups="delivery_module.group_delivery_driver"/>
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Günleri Menüsü (Sürücü) -->
+        <!-- Teslimat Günleri (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_delivery_day"
                   name="Teslimat Günleri"
                   parent="menu_delivery_root_manager"
                   action="delivery_module.action_delivery_day"
                   sequence="40"
-                  groups="delivery_module.group_delivery_driver"/>
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Programı Kurulumu Menüsü (Sürücü) -->
+        <!-- Teslimat Programı Kurulumu (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_setup_delivery_schedule"
                   name="Teslimat Programı Kurulumu"
                   parent="menu_delivery_root_manager"
                   action="delivery_module.action_setup_delivery_schedule_wizard"
                   sequence="45"
-                  groups="delivery_module.group_delivery_driver"/>
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
-        <!-- Konfigürasyon Menüsü (Sürücü) -->
+        <!-- Konfigürasyon (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_delivery_config"
                   name="Konfigürasyon"
                   parent="menu_delivery_root_manager"
                   sequence="100"
-                  groups="delivery_module.group_delivery_driver"/>
+                  groups="delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
-        <!-- Yönetici ve Diğer Kullanıcılar için Menüler -->
-        
-        <!-- Uygunluk Kontrol Menüsü (Yönetici) -->
+        <!-- Yalnızca yönetici: Uygunluk Kontrol -->
         <menuitem id="menu_availability_check"
                   name="🔍 Uygunluk Kontrol"
                   parent="menu_delivery_root_manager"
@@ -58,43 +64,5 @@
                   sequence="1"
                   groups="delivery_module.group_delivery_manager"/>
 
-        <!-- Teslimat Oluştur Menüsü (Yönetici) -->
-        <menuitem id="menu_delivery_create_manager"
-                  name="Teslimat Belgesi Oluştur"
-                  parent="menu_delivery_root_manager"
-                  action="delivery_module.action_delivery_create_wizard"
-                  sequence="20"
-                  groups="delivery_module.group_delivery_manager"/>
-
-        <!-- Teslimat Araçları Menüsü (Yönetici) -->
-        <menuitem id="menu_delivery_vehicle_manager"
-                  name="Teslimat Araçları"
-                  parent="menu_delivery_root_manager"
-                  action="delivery_module.action_delivery_vehicle"
-                  sequence="30"
-                  groups="delivery_module.group_delivery_manager"/>
-
-        <!-- Teslimat Günleri Menüsü (Yönetici) -->
-        <menuitem id="menu_delivery_day_manager"
-                  name="Teslimat Günleri"
-                  parent="menu_delivery_root_manager"
-                  action="delivery_module.action_delivery_day"
-                  sequence="40"
-                  groups="delivery_module.group_delivery_manager"/>
-
-        <!-- Teslimat Programı Kurulumu Menüsü (Yönetici) -->
-        <menuitem id="menu_setup_delivery_schedule_manager"
-                  name="Teslimat Programı Kurulumu"
-                  parent="menu_delivery_root_manager"
-                  action="delivery_module.action_setup_delivery_schedule_wizard"
-                  sequence="45"
-                  groups="delivery_module.group_delivery_manager"/>
-
-        <!-- Konfigürasyon Menüsü (Yönetici) -->
-        <menuitem id="menu_delivery_config_manager"
-                  name="Konfigürasyon"
-                  parent="menu_delivery_root_manager"
-                  sequence="100"
-                  groups="delivery_module.group_delivery_manager"/>
     </data>
 </odoo> 
