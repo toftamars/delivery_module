@@ -57,7 +57,7 @@
                                 icon="fa-search"
                                 attrs="{'invisible': [('vehicle_id', '=', False)]}"/>
                         <button name="action_create_earliest"
-                                string="⚡ En Erken Tarihte Oluştur" 
+                                string="⚡ En Erken Tarihe Oluştur" 
                                 type="object" 
                                 class="btn-success"
                                 icon="fa-bolt"
