@@ -65,23 +65,44 @@ class AvailabilityCheck(models.Model):
                         'used': used_capacity,
                         'total': total_capacity,
                     })
-            elif (delivery_day and (not self.district_id or self.district_id in delivery_day.district_ids)) or is_manager:
-                deliveries = self.env['delivery.document'].search([
-                    ('vehicle_id', '=', self.vehicle_id.id),
-                    ('date', '=', check_date),
-                    ('state', '!=', 'cancel')
-                ])
-                used_capacity = len(deliveries)
-                total_capacity = self.vehicle_id.daily_limit
-                remaining_capacity = max(total_capacity - used_capacity, 0)
-                if remaining_capacity > 0 or is_manager:
-                    suitable_dates.append({
-                        'date': check_date.strftime('%Y-%m-%d'),
-                        'day_name': calendar.day_name[check_date.weekday()],
-                        'remaining': remaining_capacity,
-                        'used': used_capacity,
-                        'total': total_capacity,
-                    })
+            elif delivery_day:
+                # İlçe seçildiyse, sadece o ilçede teslimat yapılan günleri göster
+                if self.district_id:
+                    if self.district_id in delivery_day.district_ids:
+                        deliveries = self.env['delivery.document'].search([
+                            ('vehicle_id', '=', self.vehicle_id.id),
+                            ('date', '=', check_date),
+                            ('state', '!=', 'cancel')
+                        ])
+                        used_capacity = len(deliveries)
+                        total_capacity = self.vehicle_id.daily_limit
+                        remaining_capacity = max(total_capacity - used_capacity, 0)
+                        if remaining_capacity > 0 or is_manager:
+                            suitable_dates.append({
+                                'date': check_date.strftime('%Y-%m-%d'),
+                                'day_name': calendar.day_name[check_date.weekday()],
+                                'remaining': remaining_capacity,
+                                'used': used_capacity,
+                                'total': total_capacity,
+                            })
+                # İlçe seçilmediyse, tüm günleri göster (yönetici için)
+                elif is_manager:
+                    deliveries = self.env['delivery.document'].search([
+                        ('vehicle_id', '=', self.vehicle_id.id),
+                        ('date', '=', check_date),
+                        ('state', '!=', 'cancel')
+                    ])
+                    used_capacity = len(deliveries)
+                    total_capacity = self.vehicle_id.daily_limit
+                    remaining_capacity = max(total_capacity - used_capacity, 0)
+                    if remaining_capacity > 0 or is_manager:
+                        suitable_dates.append({
+                            'date': check_date.strftime('%Y-%m-%d'),
+                            'day_name': calendar.day_name[check_date.weekday()],
+                            'remaining': remaining_capacity,
+                            'used': used_capacity,
+                            'total': total_capacity,
+                        })
         return suitable_dates
 
     def _get_suitable_dates(self):
