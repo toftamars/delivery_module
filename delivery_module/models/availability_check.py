@@ -201,7 +201,7 @@ class AvailabilityCheck(models.Model):
                     'default_district_id': self.district_id.id if self.district_id else False,
                     'default_delivery_type': 'transfer'
                 }
-                
+
                 # Context'i JSON formatında string'e çevir
                 context_str = json.dumps(context_params).replace('"', '&quot;')
                 
