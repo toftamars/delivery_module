@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+
         <!-- Örnek İller -->
         <record id="city_istanbul" model="res.city">
             <field name="name">İstanbul</field>

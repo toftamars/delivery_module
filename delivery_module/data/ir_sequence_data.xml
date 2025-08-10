@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+
         <!-- Teslimat Belgesi Sıra Numarası -->
         <record id="seq_delivery_document" model="ir.sequence">
             <field name="name">Teslimat Belgesi</field>
