@@ -140,7 +140,7 @@ class DeliveryDocument(models.Model):
         }
 
     def action_complete(self):
-        """Tamamla butonu - Hazır durumundan Tamamlandı durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
+        """Tamamla butonu - Hazır durumundan Teslim Edildi durumuna geçer ve fotoğraf ekleme wizard'ını açar"""
         if self.state != 'ready':
             raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
         
@@ -157,7 +157,7 @@ class DeliveryDocument(models.Model):
         }
 
     def action_finish_delivery(self):
-        """Tamamla butonu - Hazır durumundan Tamamlandı durumuna geçer"""
+        """Tamamla butonu - Hazır durumundan Teslim Edildi durumuna geçer"""
         if self.state != 'ready':
             raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
         
@@ -170,7 +170,7 @@ class DeliveryDocument(models.Model):
             'tag': 'display_notification',
             'params': {
                 'title': _('Başarılı'),
-                'message': _('%s numaralı teslimat tamamlandı.') % self.name,
+                'message': _('%s numaralı teslimat TESLİM EDİLDİ.') % self.name,
                 'type': 'success',
             }
         }
@@ -261,7 +261,7 @@ class DeliveryDocument(models.Model):
     def _get_sms_message(self, state):
         messages = {
             'ready': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız hazırlandı.',
-            'done': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız tamamlandı.',
+            'done': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız teslim edildi.',
             'cancel': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız iptal edildi.',
             'on_the_way': f'Sayın {self.partner_id.name}, {self.name} numaralı teslimatınız yola çıktı.'
         }

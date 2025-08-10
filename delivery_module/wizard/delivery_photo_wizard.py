@@ -40,8 +40,8 @@ class DeliveryPhotoWizard(models.TransientModel):
         
         # Teslimat belgesine fotoğraf eklendi mesajı
         self.delivery_document_id.message_post(
-            body=_('Fotoğraf eklendi ve teslimat tamamlandı: %s') % photo.name,
-            subject=_('Teslimat Tamamlandı')
+            body=_('Fotoğraf eklendi ve teslimat TESLİM EDİLDİ: %s') % photo.name,
+            subject=_('Teslim Edildi')
         )
         
         # Wizard'ı kapat
