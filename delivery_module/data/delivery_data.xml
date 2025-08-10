@@ -317,7 +317,6 @@
             <field name="daily_limit">7</field>
         </record>
         
-        <!-- İlçe-gün eşleşmesini otomatik ayarla -->
-        <function model="setup.delivery.schedule.wizard" name="action_setup_schedule"/>
+
     
 </odoo> 

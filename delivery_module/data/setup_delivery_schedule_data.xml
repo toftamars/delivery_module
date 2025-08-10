@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-        <!-- Teslimat programını ayarla -->
-        <function model="setup.delivery.schedule.wizard" name="action_setup_schedule"/>
+
     
 </odoo>
