@@ -319,6 +319,7 @@ class DeliveryCreateWizard(models.TransientModel):
             'delivery_day_id': delivery_day_id,
             'picking_ids': picking_ids,
             'note': self.note,
+            'manual_task': self.manual_task if self.delivery_type == 'manual' else False,
             'state': 'ready',
         })
 

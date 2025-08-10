@@ -25,6 +25,7 @@ class DeliveryDocument(models.Model):
     delivery_address = fields.Char('Teslimat Adresi', compute='_compute_delivery_address', store=True, readonly=True)
     phone = fields.Char('Telefon', compute='_compute_phone', store=True, readonly=True)
     note = fields.Text('Not')
+    manual_task = fields.Text('Yapılacak İş', help='Manuel teslimat için yapılacak iş açıklaması')
     picking_ids = fields.Many2many('stock.picking', string='Transfer Belgeleri')
     picking_count = fields.Integer(compute='_compute_picking_count', string='Transfer Sayısı')
 

@@ -13,6 +13,7 @@
                     <field name="state"/>
                     <field name="vehicle_id"/>
                     <field name="picking_count"/>
+                    <field name="manual_task" attrs="{'invisible': [('picking_count', '>', 0)]}"/>
                     <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
                             groups="delivery_module.group_delivery_driver"
                             attrs="{'invisible': [('state', '!=', 'draft')]}"/>
@@ -54,6 +55,7 @@
                                 <button name="action_view_pickings" type="object" string="Transferleri Görüntüle" attrs="{'invisible': [('picking_count', '=', 0)]}"/>
                                  <field name="delivery_address"/>
                                  <field name="phone" widget="phone"/>
+                                 <field name="manual_task" placeholder="Manuel teslimat için yapılacak iş açıklaması..." attrs="{'invisible': [('picking_count', '>', 0)]}"/>
                                  <field name="note" placeholder="Teslimat hakkında ek notlar..."/>
                                  <button name="action_open_navigation" type="object" string="Navigasyon" class="btn-secondary" 
                                          groups="delivery_module.group_delivery_driver"
