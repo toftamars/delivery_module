@@ -20,7 +20,7 @@
                     <field name="estimated_arrival" attrs="{'invisible': [('is_on_the_way', '=', False)]}"/>
                     <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
                             groups="delivery_module.group_delivery_driver"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            attrs="{'invisible': ['|', ('is_on_the_way', '=', True), ('state', 'not in', ['draft','ready'])]}"/>
                     <button name="action_complete" type="object" icon="fa-check" string="Tamamla" 
                             groups="delivery_module.group_delivery_driver"
                             attrs="{'invisible': [('state', '!=', 'ready')]}"/>
@@ -39,7 +39,7 @@
                     <header>
                         <button name="action_on_the_way" string="Yolda" type="object" 
                                 class="btn-primary" groups="delivery_module.group_delivery_driver"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                                attrs="{'invisible': ['|', ('is_on_the_way', '=', True), ('state', 'not in', ['draft','ready'])]}"/>
                         <button name="action_complete" string="Tamamla" type="object" 
                                 class="btn-success" groups="delivery_module.group_delivery_driver"
                                 attrs="{'invisible': [('state', '!=', 'ready')]}"/>

@@ -116,18 +116,14 @@ class DeliveryDocument(models.Model):
         # self._send_sms_notification('ready')
 
     def action_on_the_way(self):
-        """Yolda butonu - Taslaktan Hazır durumuna geçer ve harita desteği aktif eder"""
-        if self.state != 'draft':
-            raise UserError(_('Sadece taslak durumundaki teslimatlar yola çıkabilir.'))
+        """Yolda butonu - (Taslak/Hazır) durumunda çalışır, harita desteğini aktif eder"""
+        if self.state not in ('draft', 'ready'):
+            raise UserError(_('Sadece taslak veya hazır durumundaki teslimatlar yola çıkabilir.'))
         
-        # Durumu güncelle
-        self.write({
-            'state': 'ready',
-            'is_on_the_way': True
-        })
-        
-        # SMS gönderimi deaktif edildi
-        # self._send_sms_notification('on_the_way')
+        values = {'is_on_the_way': True}
+        if self.state == 'draft':
+            values['state'] = 'ready'
+        self.write(values)
         
         return {
             'type': 'ir.actions.client',
@@ -162,8 +158,6 @@ class DeliveryDocument(models.Model):
             raise UserError(_('Sadece hazır durumundaki teslimatlar tamamlanabilir.'))
         
         self.write({'state': 'done'})
-        # SMS gönderimi deaktif edildi
-        # self._send_sms_notification('done')
         
         return {
             'type': 'ir.actions.client',
@@ -177,8 +171,6 @@ class DeliveryDocument(models.Model):
 
     def action_cancel(self):
         self.write({'state': 'cancel'})
-        # SMS gönderimi deaktif edildi
-        # self._send_sms_notification('cancel')
 
     def action_draft(self):
         self.write({'state': 'draft'})
@@ -194,7 +186,6 @@ class DeliveryDocument(models.Model):
         if not address:
             raise UserError(_('Navigasyon için adres bulunamadı.'))
         
-        # Google Maps URL'i oluştur
         url = f"https://www.google.com/maps?q={quote(address)}"
         
         return {
