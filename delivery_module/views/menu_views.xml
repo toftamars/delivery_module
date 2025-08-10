@@ -2,12 +2,19 @@
 <odoo>
     <data>
         
-        <!-- Tek kök menü -->
+        <!-- Kök menü (Sürücü): doğrudan Teslimat Belgeleri -->
+        <menuitem id="menu_delivery_root_driver"
+                  name="Teslimat"
+                  action="delivery_module.action_delivery_document"
+                  sequence="10"
+                  groups="delivery_module.group_delivery_driver"/>
+
+        <!-- Tek kök menü (Yönetici): Uygunluk Kontrolü -->
         <menuitem id="menu_delivery_root_manager"
                   name="Teslimat"
                   action="delivery_module.action_availability_check"
                   sequence="10"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_manager"/>
 
         <!-- Teslimat Belgeleri (herkese görünür: sürücü + yönetici) -->
         <menuitem id="menu_delivery_document"
