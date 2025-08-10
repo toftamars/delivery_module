@@ -9,7 +9,7 @@ class DeliveryPhotoWizard(models.TransientModel):
     delivery_document_id = fields.Many2one('delivery.document', string='Teslimat Belgesi', required=True)
     photo = fields.Binary('Fotoğraf', required=True)
     photo_filename = fields.Char('Fotoğraf Dosya Adı')
-    description = fields.Text('Açıklama')
+    description = fields.Text('Not (Opsiyonel)')
     
     @api.constrains('photo')
     def _check_photo(self):
@@ -27,7 +27,7 @@ class DeliveryPhotoWizard(models.TransientModel):
             'delivery_document_id': self.delivery_document_id.id,
             'photo': self.photo,
             'photo_filename': self.photo_filename,
-            'description': self.description,
+            'description': self.description or False,
         }
         
         photo = self.env['delivery.photo'].create(photo_vals)

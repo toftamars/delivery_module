@@ -31,3 +31,23 @@ class DeliveryPhoto(models.Model):
         if not vals.get('name'):
             vals['name'] = f"Fotoğraf - {fields.Datetime.now().strftime('%Y-%m-%d %H:%M')}"
         return super().create(vals)
+
+    def action_preview_photo(self):
+        self.ensure_one()
+        filename = self.photo_filename or 'photo.jpg'
+        url = f"/web/content?model=delivery.photo&id={self.id}&field=photo&filename_field=photo_filename&filename={filename}"
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'new',
+        }
+
+    def action_download_photo(self):
+        self.ensure_one()
+        filename = self.photo_filename or 'photo.jpg'
+        url = f"/web/content?model=delivery.photo&id={self.id}&field=photo&filename_field=photo_filename&filename={filename}&download=true"
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'self',
+        }

@@ -21,7 +21,7 @@
                             <field name="photo" widget="image" class="oe_avatar"/>
                         </group>
                         <group>
-                            <field name="description" placeholder="Fotoğraf hakkında açıklama..."/>
+                            <field name="description" placeholder="Not (opsiyonel)"/>
                         </group>
                     </sheet>
                     <footer>
