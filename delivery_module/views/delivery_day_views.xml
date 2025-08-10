@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
     
         <!-- Teslimat Günü Tree Görünümü -->
         <record id="view_delivery_day_tree" model="ir.ui.view">
@@ -109,4 +110,5 @@
             </field>
         </record>
     
+    </data>
 </odoo> 

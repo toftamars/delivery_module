@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
 
         <!-- Teslimat Belgesi Sıra Numarası -->
         <record id="seq_delivery_document" model="ir.sequence">
@@ -11,4 +12,5 @@
             <field name="number_increment">1</field>
         </record>
     
+    </data>
 </odoo> 

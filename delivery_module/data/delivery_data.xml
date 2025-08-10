@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
 
         <!-- Örnek İller -->
         <record id="city_istanbul" model="res.city">
@@ -319,4 +320,5 @@
         
 
     
+    </data>
 </odoo> 
