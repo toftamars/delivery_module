@@ -4,9 +4,17 @@
         <!-- Ana Teslimat Menüsü -->
         <menuitem id="menu_delivery_root"
                   name="Teslimat"
+                  action="delivery_module.action_delivery_document"
+                  sequence="10"
+                  groups="delivery_module.group_delivery_driver"/>
+
+        <!-- Ana Teslimat Menüsü (Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_root_manager"
+                  name="Teslimat"
                   action="delivery_module.action_availability_check"
                   sequence="10"
-                  groups="base.group_user"/>
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
 
         <!-- Teslimat Belgeleri Menüsü -->
         <menuitem id="menu_delivery_document"
@@ -14,7 +22,16 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_document"
                   sequence="10"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
+
+        <!-- Teslimat Belgeleri Menüsü (Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_document_manager"
+                  name="Teslimat Belgeleri"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_delivery_document"
+                  sequence="10"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
 
         <!-- Teslimat Oluştur Menüsü -->
         <menuitem id="menu_delivery_create"
@@ -22,7 +39,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_create_wizard"
                   sequence="20"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
 
         <!-- Teslimat Araçları Menüsü -->
         <menuitem id="menu_delivery_vehicle"
@@ -30,7 +47,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_vehicle"
                   sequence="30"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
 
         <!-- Teslimat Günleri Menüsü -->
         <menuitem id="menu_delivery_day"
@@ -38,7 +55,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_day"
                   sequence="40"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
 
         <!-- Teslimat Programı Kurulumu Menüsü -->
         <menuitem id="menu_setup_delivery_schedule"
@@ -46,21 +63,68 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_setup_delivery_schedule_wizard"
                   sequence="45"
-                  groups="base.group_user"/>
-
-        <!-- Uygunluk Kontrol Menüsü -->
-        <menuitem id="menu_availability_check"
-                  name="🔍 Uygunluk Kontrol"
-                  parent="menu_delivery_root"
-                  action="delivery_module.action_availability_check"
-                  sequence="1"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
 
         <!-- Konfigürasyon Menüsü -->
         <menuitem id="menu_delivery_config"
                   name="Konfigürasyon"
                   parent="menu_delivery_root"
                   sequence="100"
-                  groups="base.group_user"/>
+                  groups="delivery_module.group_delivery_driver"/>
+
+        <!-- Yönetici ve Diğer Kullanıcılar için Menüler -->
+        
+        <!-- Uygunluk Kontrol Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_availability_check"
+                  name="🔍 Uygunluk Kontrol"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_availability_check"
+                  sequence="1"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+
+        <!-- Teslimat Oluştur Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_create_manager"
+                  name="Teslimat Belgesi Oluştur"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_delivery_create_wizard"
+                  sequence="20"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+
+        <!-- Teslimat Araçları Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_vehicle_manager"
+                  name="Teslimat Araçları"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_delivery_vehicle"
+                  sequence="30"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+
+        <!-- Teslimat Günleri Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_day_manager"
+                  name="Teslimat Günleri"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_delivery_day"
+                  sequence="40"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+
+        <!-- Teslimat Programı Kurulumu Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_setup_delivery_schedule_manager"
+                  name="Teslimat Programı Kurulumu"
+                  parent="menu_delivery_root_manager"
+                  action="delivery_module.action_setup_delivery_schedule_wizard"
+                  sequence="45"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
+
+        <!-- Konfigürasyon Menüsü (Sadece Yönetici ve Diğer Kullanıcılar) -->
+        <menuitem id="menu_delivery_config_manager"
+                  name="Konfigürasyon"
+                  parent="menu_delivery_root_manager"
+                  sequence="100"
+                  groups="base.group_user"
+                  domain="[('id', 'not in', [ref('delivery_module.group_delivery_driver')])]"/>
     </data>
 </odoo> 
