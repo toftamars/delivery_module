@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="view_delivery_location_update_wizard_form" model="ir.ui.view">
-            <field name="name">delivery.location.update.wizard.form</field>
-            <field name="model">delivery.location.update.wizard</field>
-            <field name="arch" type="xml">
-                <form string="Konum Güncelle">
-                    <group>
-                        <field name="delivery_id" readonly="1"/>
-                        <field name="current_location" placeholder="Örn: Kadıköy, İstanbul"/>
-                        <field name="estimated_arrival" placeholder="Tahmini varış zamanı"/>
-                        <field name="note" placeholder="Konum güncellemesi hakkında ek notlar..."/>
-                    </group>
-                    <footer>
-                        <button name="action_update_location" string="Konumu Güncelle" type="object" class="btn-primary"/>
-                        <button string="İptal" class="btn-secondary" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
+    <record id="view_delivery_location_update_wizard_form" model="ir.ui.view">
+        <field name="name">delivery.location.update.wizard.form</field>
+        <field name="model">delivery.location.update.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Konum Güncelle">
+                <group>
+                    <field name="delivery_id" readonly="1"/>
+                    <field name="current_location" placeholder="Örn: Kadıköy, İstanbul"/>
+                    <field name="estimated_arrival" placeholder="Tahmini varış zamanı"/>
+                    <field name="note" placeholder="Konum güncellemesi hakkında ek notlar..."/>
+                </group>
+                <footer>
+                    <button name="action_update_location" string="Konumu Güncelle" type="object" class="btn-primary"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
-        <record id="action_delivery_location_update_wizard" model="ir.actions.act_window">
-            <field name="name">Konum Güncelle</field>
-            <field name="res_model">delivery.location.update.wizard</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-            <field name="context">{}</field>
-        </record>
-    </data>
+    <record id="action_delivery_location_update_wizard" model="ir.actions.act_window">
+        <field name="name">Konum Güncelle</field>
+        <field name="res_model">delivery.location.update.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
 </odoo>
