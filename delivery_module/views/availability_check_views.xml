@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
     
         <!-- Uygunluk Kontrol Tree View -->
         <record id="view_availability_check_tree" model="ir.ui.view">
@@ -95,5 +94,4 @@
             </field>
         </record>
     
-    </data>
 </odoo> 

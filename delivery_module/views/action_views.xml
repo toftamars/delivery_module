@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
     
         <!-- Teslimat Belgesi Action -->
         <record id="action_delivery_document" model="ir.actions.act_window">
@@ -107,5 +106,4 @@
 
         
     
-    </data>
 </odoo>

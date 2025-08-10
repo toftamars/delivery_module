@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
     
         <!-- İl Tree Görünümü -->
         <record id="view_res_city_tree" model="ir.ui.view">
@@ -84,5 +83,4 @@
             </field>
         </record>
     
-    </data>
 </odoo> 
