@@ -112,43 +112,25 @@ class DeliveryCreateWizard(models.TransientModel):
                     }
                 }
 
+    @api.onchange('vehicle_id')
+    def _onchange_vehicle_id(self):
+        if self.vehicle_id:
+            # Araç bilgilerini güncelle
+            self.vehicle_info = f"{self.vehicle_id.name} - Günlük limit: {self.vehicle_id.daily_limit}"
+            
+            # Uygun tarihleri yeniden hesapla
+            self._compute_available_date_ids()
+        else:
+            self.vehicle_info = ''
+            self.available_date_ids = ''
+
     @api.onchange('district_id')
     def _onchange_district_id(self):
         if self.district_id:
-            # İlçeye göre uygun teslimat günlerini getir
-            # Teslimat günlerinde bu ilçenin olup olmadığını kontrol et
-            delivery_days = self.env['delivery.day'].search([
-                ('active', '=', True),
-                ('district_ids', 'in', self.district_id.id)
-            ])
-            
-            if delivery_days:
-                # Sadece bu ilçe için uygun olan günleri göster
-                available_days = []
-                for day in delivery_days.sorted('sequence'):
-                    if self.district_id in day.district_ids:
-                        available_days.append(day.name)
-                
-                if available_days:
-                    days_text = ', '.join(available_days)
-                    self.available_dates = f"Bu ilçede teslimat yapılabilecek günler: {days_text}"
-                else:
-                    self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
-            else:
-                self.available_dates = "Bu ilçe için teslimat günü tanımlanmamış."
-            
-            # Tüm araçlar her ilçe için görünür olsun
-            return {'domain': {'vehicle_id': []}}
+            # Uygun tarihleri yeniden hesapla
+            self._compute_available_date_ids()
         else:
-            self.available_dates = ''
-            # İlçe seçilmediğinde domaini kaldır
-            return {'domain': {'vehicle_id': []}}
-
-    @api.onchange('vehicle_id')
-    def _onchange_vehicle_id(self):
-        """Araç değiştiğinde ilçe domainini güncelle"""
-        # Tüm ilçeler her araç için görünür olsun
-        return {'domain': {'district_id': []}}
+            self.available_date_ids = ''
 
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):
@@ -215,6 +197,10 @@ class DeliveryCreateWizard(models.TransientModel):
             
             # Tarihleri string olarak kaydet
             record.available_date_ids = ','.join(available_dates)
+            
+            # Eğer seçili tarih uygun değilse, tarihi temizle
+            if record.date and record.date.strftime('%Y-%m-%d') not in available_dates:
+                record.date = False
 
     @api.onchange('date')
     def _onchange_date(self):

@@ -29,7 +29,7 @@
                         <field name="available_dates" readonly="1" attrs="{'invisible': [('delivery_type', '=', 'manual')]}"/>
                         <field name="vehicle_id"/>
                         <field name="vehicle_info" readonly="1"/>
-                        <field name="date"/>
+                        <field name="date" attrs="{'readonly': [('available_date_ids', '=', '')]}"/>
                     </group>
                     <footer>
                         <button name="action_create_delivery" string="Teslimat Belgesi Oluştur" type="object" class="btn-primary"/>
