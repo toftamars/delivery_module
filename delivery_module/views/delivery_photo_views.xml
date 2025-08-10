@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-    <data>
     
         <!-- Tree View -->
         <record id="view_delivery_photo_tree" model="ir.ui.view">
