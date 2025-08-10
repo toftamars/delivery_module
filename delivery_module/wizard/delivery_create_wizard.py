@@ -65,6 +65,7 @@ class DeliveryCreateWizard(models.TransientModel):
     picking_id = fields.Many2one('stock.picking', string='Seçilen Transfer', readonly=True)
     district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
     available_dates = fields.Text('Uygun Teslimat Günleri', readonly=True)
+    available_date_ids = fields.Text(string='Uygun Tarih ID\'leri', compute='_compute_available_date_ids', store=False)
     vehicle_info = fields.Text('Araç Bilgileri', readonly=True)
     
     # Manuel teslimat alanları
@@ -151,16 +152,14 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('vehicle_id', 'date')
     def _onchange_vehicle_date(self):
-        if self.vehicle_id and self.date and not self.env.user.has_group('delivery_module.group_delivery_manager'):
+        if self.vehicle_id and self.date:
             # Aracın o günkü teslimat sayısını kontrol et
             today_count = self.env['delivery.document'].search_count([
                 ('vehicle_id', '=', self.vehicle_id.id),
                 ('date', '=', self.date),
-                ('state', 'in', ['draft', 'ready'])
+                ('state', 'in', ['draft', 'ready']),
+                ('id', '!=', self.id)
             ])
-            
-            remaining = self.vehicle_id.daily_limit - today_count
-            self.vehicle_info = f"{self.vehicle_id.name} - Bugünkü teslimat: {today_count}/{self.vehicle_id.daily_limit} (Kalan: {remaining})"
             
             if today_count >= self.vehicle_id.daily_limit:
                 # Teslimat yöneticisi için sadece uyarı ver, engelleme
@@ -174,23 +173,61 @@ class DeliveryCreateWizard(models.TransientModel):
                 else:
                     return {
                         'warning': {
-                            'title': 'Uyarı - Teslimat Yöneticisi',
-                            'message': f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş, ancak teslimat yöneticisi olarak ilave teslimat oluşturabilirsiniz.'
+                            'title': 'Uyarı',
+                            'message': f'{self.vehicle_id.name} aracının günlük limiti ({self.vehicle_id.daily_limit}) dolmuş. Teslimat yöneticisi olarak devam edebilirsiniz.'
                         }
                     }
-        else:
-            self.vehicle_info = ''
+
+    @api.depends('vehicle_id', 'district_id')
+    def _compute_available_date_ids(self):
+        """Uygun ve kapasitesi olan tarihleri hesapla"""
+        for record in self:
+            if not record.vehicle_id or not record.district_id:
+                record.available_date_ids = ''
+                continue
+            
+            # Önümüzdeki 30 gün için uygun tarihleri hesapla
+            from datetime import datetime, timedelta
+            today = datetime.now().date()
+            available_dates = []
+            
+            for i in range(30):
+                check_date = today + timedelta(days=i)
+                day_of_week = str(check_date.weekday())
+                
+                # Teslimat günü var mı kontrol et
+                delivery_day = self.env['delivery.day'].search([
+                    ('day_of_week', '=', day_of_week),
+                    ('active', '=', True),
+                    ('district_ids', 'in', record.district_id.id)
+                ], limit=1)
+                
+                if delivery_day:
+                    # O günkü teslimat sayısını kontrol et
+                    today_count = self.env['delivery.document'].search_count([
+                        ('vehicle_id', '=', record.vehicle_id.id),
+                        ('date', '=', check_date),
+                        ('state', 'in', ['draft', 'ready'])
+                    ])
+                    
+                    # Kapasite dolmamışsa ekle
+                    if today_count < record.vehicle_id.daily_limit:
+                        available_dates.append(check_date.strftime('%Y-%m-%d'))
+            
+            # Tarihleri string olarak kaydet
+            record.available_date_ids = ','.join(available_dates)
 
     @api.onchange('date')
     def _onchange_date(self):
         # Sadece transfer teslimatları için tarih kontrolü yap (manuel teslimatlar için kontrol yok)
-        if self.date and self.district_id and self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
+        if self.date and self.district_id and self.vehicle_id and self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
             day_of_week = str(self.date.weekday())
             
             # Debug için gün bilgisini yazdır
             day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
             selected_day_name = day_names[self.date.weekday()]
             
+            # İlçe-gün uyumluluğu kontrol et
             available_day = self.env['delivery.day'].search([
                 ('day_of_week', '=', day_of_week),
                 ('active', '=', True),
@@ -198,15 +235,27 @@ class DeliveryCreateWizard(models.TransientModel):
             ], limit=1)
             
             if not available_day:
-                day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
-                selected_day_name = day_names[self.date.weekday()]
-                
-                # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
-                    raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) bu ilçe için uygun bir teslimat günü değil.'))
-                else:
-                    # Teslimat yöneticisi için uyarı ver ama devam et
-                    print(f"Teslimat yöneticisi uygun olmayan tarihte teslimat oluşturuyor: {self.date.strftime('%d/%m/%Y')} - {selected_day_name}")
+                return {
+                    'warning': {
+                        'title': 'Uygun Olmayan Tarih',
+                        'message': f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) bu ilçe için uygun bir teslimat günü değil.'
+                    }
+                }
+            
+            # Kapasite kontrolü
+            today_count = self.env['delivery.document'].search_count([
+                ('vehicle_id', '=', self.vehicle_id.id),
+                ('date', '=', self.date),
+                ('state', 'in', ['draft', 'ready'])
+            ])
+            
+            if today_count >= self.vehicle_id.daily_limit:
+                return {
+                    'warning': {
+                        'title': 'Kapasite Dolu',
+                        'message': f'{self.vehicle_id.name} aracının bu tarihteki kapasitesi ({self.vehicle_id.daily_limit}) dolmuş.'
+                    }
+                }
 
     def action_create_delivery(self):
         if self.delivery_type == 'transfer':
