@@ -183,8 +183,8 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.onchange('date')
     def _onchange_date(self):
-        if self.date and self.district_id and not self.env.user.has_group('delivery_module.group_delivery_manager'):
-            # Tüm teslimat türleri için tarih kontrolü yap
+        if self.date and self.district_id and self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
+            # Sadece transfer teslimatları için tarih kontrolü yap
             day_of_week = str(self.date.weekday())
             
             # Debug için gün bilgisini yazdır
@@ -252,14 +252,14 @@ class DeliveryCreateWizard(models.TransientModel):
         if not self.vehicle_id:
             raise UserError(_('Lütfen araç seçin.'))
 
-        # İlçe-gün uyumluluğu kontrolü
-        if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+        # İlçe-gün uyumluluğu kontrolü (sadece transfer teslimatları için)
+        if self.delivery_type == 'transfer' and not self.env.user.has_group('delivery_module.group_delivery_manager'):
             day_of_week = str(self.date.weekday())
             day_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
             selected_day_name = day_names[self.date.weekday()]
             
             # Debug için log ekle
-            print(f"=== İLÇE-GÜN KONTROLÜ ===")
+            print(f"=== İLÇE-GÜN KONTROLÜ (TRANSFER) ===")
             print(f"Seçilen tarih: {self.date} ({selected_day_name})")
             print(f"Seçilen ilçe: {self.district_id.name}")
             print(f"Gün numarası: {day_of_week}")
