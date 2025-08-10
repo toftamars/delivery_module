@@ -157,8 +157,7 @@ class DeliveryCreateWizard(models.TransientModel):
             today_count = self.env['delivery.document'].search_count([
                 ('vehicle_id', '=', self.vehicle_id.id),
                 ('date', '=', self.date),
-                ('state', 'in', ['draft', 'ready']),
-                ('id', '!=', self.id)
+                ('state', 'in', ['draft', 'ready'])
             ])
             
             if today_count >= self.vehicle_id.daily_limit:
