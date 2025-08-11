@@ -2,6 +2,23 @@
 <odoo>
     <data>
     
+        <!-- Teslimat Giriş Server Action -->
+        <record id="action_delivery_entrypoint" model="ir.actions.server">
+            <field name="name">Teslimat Girişi</field>
+            <field name="model_id" ref="delivery_module.model_delivery_document"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+# Kullanıcı grubuna göre uygun ekrana yönlendir
+action_doc = env.ref('delivery_module.action_delivery_document').read()[0]
+action_av = env.ref('delivery_module.action_availability_check').read()[0]
+if env.user.has_group('delivery_module.group_delivery_driver'):
+    action = action_doc
+else:
+    action = action_av
+action
+            ]]></field>
+        </record>
+
         <!-- Teslimat Belgesi Action -->
         <record id="action_delivery_document" model="ir.actions.act_window">
             <field name="name">Teslimat Belgeleri</field>
@@ -34,7 +51,7 @@
             </field>
         </record>
 
-        <!-- Teslimat Günü Action (view_id forward ref kaldırıldı) -->
+        <!-- Teslimat Günü Action -->
         <record id="action_delivery_day" model="ir.actions.act_window">
             <field name="name">Teslimat Günleri</field>
             <field name="res_model">delivery.day</field>
