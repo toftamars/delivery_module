@@ -64,7 +64,7 @@ class DeliveryCreateWizard(models.TransientModel):
     picking_name = fields.Char('Transfer Numarası', help='Transfer numarasını girin (örn: WH/OUT/00001)')
     picking_id = fields.Many2one('stock.picking', string='Seçilen Transfer', readonly=True)
     district_id = fields.Many2one('res.city.district', string='İlçe', required=True)
-    available_dates = fields.Text('Uygun Teslimat Günleri', readonly=True)
+    available_dates = fields.Text('Uygun Gün İsimleri', readonly=True)
     available_date_ids = fields.Text(string='Uygun Tarih ID\'leri', compute='_compute_available_date_ids', store=False)
     vehicle_info = fields.Text('Araç Bilgileri', readonly=True)
     
@@ -149,21 +149,21 @@ class DeliveryCreateWizard(models.TransientModel):
 
     @api.depends('vehicle_id', 'district_id')
     def _compute_available_date_ids(self):
-        """Uygun ve kapasitesi olan tarihleri hesapla ve kullanıcıya okunur bir liste hazırla"""
+        """Uygun ve kapasitesi olan tarihleri hesapla; ekranda sadece benzersiz gün isimlerini göster"""
         for record in self:
             if not record.vehicle_id or not record.district_id:
                 record.available_date_ids = ''
                 record.available_dates = ''
                 continue
             from datetime import datetime, timedelta
-            import calendar as cal
             today = datetime.now().date()
             available_dates_list = []
-            readable_lines = []
-            day_names_tr = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+            unique_days = set()
+            tr_days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
             for i in range(30):
                 check_date = today + timedelta(days=i)
-                day_of_week = str(check_date.weekday())
+                day_index = check_date.weekday()
+                day_of_week = str(day_index)
                 delivery_day = self.env['delivery.day'].search([
                     ('day_of_week', '=', day_of_week),
                     ('active', '=', True),
@@ -176,11 +176,12 @@ class DeliveryCreateWizard(models.TransientModel):
                         ('state', 'in', ['draft', 'ready'])
                     ])
                     if today_count < record.vehicle_id.daily_limit:
-                        ymd = check_date.strftime('%Y-%m-%d')
-                        available_dates_list.append(ymd)
-                        readable_lines.append(f"- {check_date.strftime('%d/%m/%Y')} ({day_names_tr[check_date.weekday()]})")
+                        available_dates_list.append(check_date.strftime('%Y-%m-%d'))
+                        unique_days.add(day_index)
             record.available_date_ids = ','.join(available_dates_list)
-            record.available_dates = '\n'.join(readable_lines)
+            # Günleri haftalık sıraya göre yaz
+            ordered_day_names = [tr_days[i] for i in range(7) if i in unique_days]
+            record.available_dates = ', '.join(ordered_day_names)
             if record.date and record.date.strftime('%Y-%m-%d') not in available_dates_list:
                 record.date = False
 
