@@ -8,21 +8,7 @@
             <field name="model">delivery.document</field>
             <field name="arch" type="xml">
                 <tree string="Teslimat Belgeleri">
-                    <field name="name"/>
-                    <field name="date"/>
-                    <field name="partner_id"/>
                     <field name="state"/>
-                    <field name="vehicle_id"/>
-                    <field name="photo_count"/>
-                    <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
-                            groups="delivery_module.group_delivery_driver"
-                            attrs="{'invisible': [('state', '!=', 'ready')]}"/>
-                    <button name="action_open_navigation" type="object" icon="fa-location-arrow" string="Haritada Aç" 
-                            groups="delivery_module.group_delivery_driver"
-                            attrs="{'invisible': [('state', '!=', 'on_the_way')]}"/>
-                    <button name="action_complete" type="object" icon="fa-check" string="Tamamla" 
-                            groups="delivery_module.group_delivery_driver"
-                            attrs="{'invisible': [('state', '!=', 'on_the_way')]}"/>
                 </tree>
             </field>
         </record>
