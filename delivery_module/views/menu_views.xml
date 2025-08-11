@@ -2,11 +2,18 @@
 <odoo>
     <data>
         
-        <!-- Kök menü: tüm iç kullanıcılar + sürücü + yönetici -->
+        <!-- Kök menü: tüm iç kullanıcılar + sürücü + yönetici (aksiyonsuz) -->
         <menuitem id="menu_delivery_root"
                   name="Teslimat"
-                  action="delivery_module.action_delivery_entrypoint"
                   sequence="10"
+                  groups="base.group_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+
+        <!-- Ana Sayfa (rol bazlı yönlendirme) -->
+        <menuitem id="menu_delivery_home"
+                  name="Ana Sayfa"
+                  parent="menu_delivery_root"
+                  action="delivery_module.action_delivery_entrypoint"
+                  sequence="1"
                   groups="base.group_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
 
         <!-- Teslimat Belgeleri -->
