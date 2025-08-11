@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    <data noupdate="0">
         
         <!-- Teslimat Kullanıcısı (Stok / ...) -->
         <record id="group_delivery_user" model="res.groups">
