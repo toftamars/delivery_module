@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    <data noupdate="0">
         
         <!-- Kök menü: tüm iç kullanıcılar + sürücü + yönetici + teslimat kullanıcısı (aksiyonsuz) -->
         <menuitem id="menu_delivery_root"
