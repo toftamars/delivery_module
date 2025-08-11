@@ -1,7 +1,7 @@
 {
     'name': 'Teslimat Modülü',
     'version': '1.0',
-    'category': 'Stock',
+    'category': 'Inventory',
     'summary': 'Teslimat belgeleri ve araç yönetimi',
     'description': """
         Teslimat belgeleri oluşturma ve yönetimi
