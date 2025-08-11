@@ -4,7 +4,7 @@
         
         <!-- Teslimat Kullanıcısı (Stok / ...) -->
         <record id="group_delivery_user" model="res.groups">
-            <field name="name">Teslimat Kullanıcısı</field>
+            <field name="name">Kullanıcı</field>
             <field name="category_id" ref="base.module_category_stock"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
