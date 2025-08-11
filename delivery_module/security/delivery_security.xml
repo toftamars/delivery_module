@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-    
+        
+        <!-- Teslimat Kullanıcısı (Stok / ...) -->
+        <record id="group_delivery_user" model="res.groups">
+            <field name="name">Teslimat Kullanıcısı</field>
+            <field name="category_id" ref="base.module_category_stock"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
         <!-- Teslimat Yöneticisi Grubu -->
         <record id="group_delivery_manager" model="res.groups">
             <field name="name">Teslimat Yöneticisi</field>
