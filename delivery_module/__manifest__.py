@@ -1,7 +1,7 @@
 {
     'name': 'Teslimat Yönetimi',
     'version': '1.0',
-    'category': 'Inventory',
+    'category': 'Teslimat Yönetimi',
     'summary': 'Teslimat belgeleri ve araç yönetimi',
     'description': """
         Teslimat belgeleri oluşturma ve yönetimi
