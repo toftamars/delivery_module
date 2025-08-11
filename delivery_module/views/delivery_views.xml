@@ -8,7 +8,11 @@
             <field name="model">delivery.document</field>
             <field name="arch" type="xml">
                 <tree string="Teslimat Belgeleri">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="partner_id"/>
                     <field name="state"/>
+                    <field name="vehicle_id"/>
                 </tree>
             </field>
         </record>
@@ -71,10 +75,10 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="vehicle_id"/>
-                    <filter string="Taslak" name="draft" domain="[('state', '=', 'draft')]"/>
-                    <filter string="Hazır" name="ready" domain="[('state', '=', 'ready')]"/>
-                    <filter string="Yolda" name="on_the_way" domain="[('state', '=', 'on_the_way')]"/>
-                    <filter string="Teslim Edildi" name="done" domain="[('state', '=', 'done')]"/>
+                    <filter name="draft" string="Taslak" domain="[('state', '=', 'draft')]"/>
+                    <filter name="ready" string="Hazır" domain="[('state', '=', 'ready')]"/>
+                    <filter name="on_the_way" string="Yolda" domain="[('state', '=', 'on_the_way')]"/>
+                    <filter name="done" string="Teslim Edildi" domain="[('state', '=', 'done')]"/>
                     <group expand="0" string="Grupla">
                         <filter string="Durum" name="state" context="{'group_by': 'state'}"/>
                         <filter string="Müşteri" name="partner" context="{'group_by': 'partner_id'}"/>
