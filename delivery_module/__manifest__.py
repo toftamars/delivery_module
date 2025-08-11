@@ -6,7 +6,7 @@
     'description': 'Delivery management module with scheduling and driver features',
     'author': 'tofta',
     'category': 'Operations/Inventory',
-    'depends': ['base', 'mail', 'web'],
+    'depends': ['base', 'mail', 'web', 'stock'],
     'data': [
         'security/delivery_security.xml',
         'security/ir.model.access.csv',
