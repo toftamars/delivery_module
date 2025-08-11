@@ -1,5 +1,5 @@
 {
-    'name': 'Teslimat Modülü',
+    'name': 'Teslimat Yönetimi',
     'version': '1.0',
     'category': 'Inventory',
     'summary': 'Teslimat belgeleri ve araç yönetimi',
