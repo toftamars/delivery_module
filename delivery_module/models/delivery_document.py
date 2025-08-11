@@ -41,23 +41,6 @@ class DeliveryDocument(models.Model):
     estimated_arrival = fields.Datetime('Tahmini Varış', help='Tahmini varış zamanı')
     route_info = fields.Text('Rota Bilgisi', help='Rota detayları ve notlar')
 
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        if view_type == 'form':
-            active_id = self.env.context.get('active_id')
-            if active_id:
-                rec = self.browse(active_id)
-                if rec.exists() and rec.state == 'done':
-                    try:
-                        from lxml import etree
-                        doc = etree.XML(res['arch'])
-                        doc.set('edit', 'false')
-                        res['arch'] = etree.tostring(doc, encoding='unicode')
-                    except Exception:
-                        # Eğer dönüşümde sorun olursa sessizce geç
-                        return res
-        return res
-
     def _compute_picking_count(self):
         for delivery in self:
             delivery.picking_count = len(delivery.picking_ids)
@@ -156,7 +139,7 @@ class DeliveryDocument(models.Model):
     def action_on_the_way(self):
         if self.state != 'ready':
             raise UserError(_('Sadece hazır durumundaki teslimatlar yola çıkabilir.'))
-        self.with_context(bypass_lock=True, tracking_disable=True).write({
+        self.with_context(bypass_lock=True).write({
             'state': 'on_the_way',
             'is_on_the_way': True
         })
@@ -181,6 +164,7 @@ class DeliveryDocument(models.Model):
             'target': 'new',
             'context': {
                 'default_delivery_document_id': self.id,
+                'bypass_lock': True,
             }
         }
 
