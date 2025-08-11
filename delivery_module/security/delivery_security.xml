@@ -5,21 +5,21 @@
         <!-- Teslimat Kullanıcısı (Stok / ...) -->
         <record id="group_delivery_user" model="res.groups">
             <field name="name">Teslimat Kullanıcısı</field>
-            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="category_id" ref="base.module_category_stock"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <!-- Teslimat Yöneticisi Grubu -->
         <record id="group_delivery_manager" model="res.groups">
             <field name="name">Teslimat Yöneticisi</field>
-            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="category_id" ref="base.module_category_stock"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <!-- Teslimat Sürücüsü Grubu -->
         <record id="group_delivery_driver" model="res.groups">
             <field name="name">Teslimat Sürücüsü</field>
-            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="category_id" ref="base.module_category_stock"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
