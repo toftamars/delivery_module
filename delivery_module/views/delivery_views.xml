@@ -50,7 +50,7 @@
                                 <button name="action_view_photos" type="object" string="Fotoğrafları Gör" attrs="{'invisible': [('photo_count', '=', 0)]}"/>
                                 <field name="delivery_address"/>
                                 <field name="phone" widget="phone"/>
-                                <field name="manual_task" placeholder="Manuel teslimat için yapılacak iş açıklaması..." attrs="{'invisible': [('picking_count', '>', 0)]}"/>
+                                <field name="manual_task" placeholder="Manuel teslimat için yapılacak iş açıklaması..."/>
                                 <field name="note" placeholder="Teslimat hakkında ek notlar..."/>
                                 <button name="action_open_navigation" type="object" string="Navigasyon" class="btn-secondary" 
                                         groups="delivery_module.group_delivery_driver"
