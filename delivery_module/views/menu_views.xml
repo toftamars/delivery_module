@@ -6,7 +6,7 @@
         <menuitem id="menu_delivery_root"
                   name="Teslimat"
                   sequence="10"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Ana Sayfa (rol bazlı yönlendirme) -->
         <menuitem id="menu_delivery_home"
@@ -14,7 +14,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_entrypoint"
                   sequence="1"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Teslimat Belgeleri -->
         <menuitem id="menu_delivery_document"
@@ -22,7 +22,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_document"
                   sequence="10"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Teslimat Belgesi Oluştur -->
         <menuitem id="menu_delivery_create"
@@ -30,7 +30,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_create_wizard"
                   sequence="20"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Teslimat Araçları -->
         <menuitem id="menu_delivery_vehicle"
@@ -38,7 +38,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_vehicle"
                   sequence="30"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Teslimat Günleri -->
         <menuitem id="menu_delivery_day"
@@ -46,7 +46,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_delivery_day"
                   sequence="40"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Teslimat Programı Kurulumu -->
         <menuitem id="menu_setup_delivery_schedule"
@@ -54,7 +54,7 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_setup_delivery_schedule_wizard"
                   sequence="45"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
 
         <!-- Uygunluk Kontrol -->
         <menuitem id="menu_availability_check"
@@ -62,6 +62,6 @@
                   parent="menu_delivery_root"
                   action="delivery_module.action_availability_check"
                   sequence="50"
-                  groups="base.group_user,delivery_module.group_delivery_user,delivery_module.group_delivery_driver,delivery_module.group_delivery_manager"/>
+                  groups="base.group_user"/>
     </data>
 </odoo> 
