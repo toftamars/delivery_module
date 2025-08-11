@@ -32,10 +32,10 @@ class DeliveryPhotoWizard(models.TransientModel):
         
         photo = self.env['delivery.photo'].create(photo_vals)
         
-        # Teslimat belgesini "done" durumuna geçir
-        self.delivery_document_id.write({
+        # Teslimat belgesini "done" durumuna geçir (kilit baypas + tracking kapalı)
+        self.delivery_document_id.with_context(bypass_lock=True, tracking_disable=True).write({
             'state': 'done',
-            'is_on_the_way': False  # Artık yolda değil
+            'is_on_the_way': False
         })
         
         # Teslimat belgesine fotoğraf eklendi mesajı
