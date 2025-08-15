@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Teslimat Belgesi Tree Görünümü -->
+        <record id="view_delivery_document_tree" model="ir.ui.view">
+            <field name="name">delivery.document.tree</field>
+            <field name="model">delivery.document</field>
+            <field name="arch" type="xml">
+                <tree string="Teslimat Belgeleri">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="vehicle_id"/>
+                    <field name="picking_count"/>
+                    <button name="action_on_the_way" type="object" icon="fa-truck" string="Yolda" 
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_finish_delivery" type="object" icon="fa-check" string="Tamamla" 
+                            attrs="{'invisible': [('state', '!=', 'ready')]}"/>
+                    <button name="action_view_pickings" type="object" icon="fa-list" string="Transferler" 
+                            attrs="{'invisible': [('picking_count', '=', 0)]}"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Teslimat Belgesi Form Görünümü -->
+        <record id="view_delivery_document_form" model="ir.ui.view">
+            <field name="name">delivery.document.form</field>
+            <field name="model">delivery.document</field>
+            <field name="arch" type="xml">
+                <form string="Teslimat Belgesi">
+                    <header>
+                        <button name="action_on_the_way" string="Yolda" type="object" 
+                                class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_finish_delivery" string="Tamamla" type="object" 
+                                class="btn-success" attrs="{'invisible': [('state', '!=', 'ready')]}"/>
+                        <button name="action_cancel" string="İptal" type="object" 
+                                class="btn-danger" attrs="{'invisible': [('state', 'in', ['cancel', 'done'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,ready,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="partner_id"/>
+                                <field name="vehicle_id"/>
+                
+                            </group>
+                            <group>
+                                <field name="picking_count"/>
+                                <button name="action_view_pickings" type="object" string="Transferleri Görüntüle" attrs="{'invisible': [('picking_count', '=', 0)]}"/>
+                                <field name="delivery_address"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Transferler">
+                                <field name="picking_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="scheduled_date"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Teslimat Belgesi Search Görünümü -->
+        <record id="view_delivery_document_search" model="ir.ui.view">
+            <field name="name">delivery.document.search</field>
+            <field name="model">delivery.document</field>
+            <field name="arch" type="xml">
+                <search string="Teslimat Belgeleri">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="vehicle_id"/>
+                    <filter string="Taslak" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Hazır" name="ready" domain="[('state', '=', 'ready')]"/>
+                    <filter string="Teslim Edildi" name="done" domain="[('state', '=', 'done')]"/>
+                    <group expand="0" string="Grupla">
+                        <filter string="Durum" name="state" context="{'group_by': 'state'}"/>
+                        <filter string="Müşteri" name="partner" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Araç" name="vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo> 

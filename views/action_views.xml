@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Teslimat Belgesi Action -->
+        <record id="action_delivery_document" model="ir.actions.act_window">
+            <field name="name">Teslimat Belgeleri</field>
+            <field name="res_model">delivery.document</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat belgenizi oluşturun!
+                </p>
+                <p>
+                    Teslimat belgeleri, müşterilerinize yapılacak teslimatları yönetmek için kullanılır.
+                </p>
+            </field>
+        </record>
+
+        <!-- Teslimat Aracı Action -->
+        <record id="action_delivery_vehicle" model="ir.actions.act_window">
+            <field name="name">Teslimat Araçları</field>
+            <field name="res_model">delivery.vehicle</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat aracınızı oluşturun!
+                </p>
+                <p>
+                    Teslimat araçları, teslimatları yönetmek için kullanılır.
+                </p>
+            </field>
+        </record>
+
+        <!-- Teslimat Günü Action -->
+        <record id="action_delivery_day" model="ir.actions.act_window">
+            <field name="name">Teslimat Günleri</field>
+            <field name="res_model">delivery.day</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat gününüzü oluşturun!
+                </p>
+                <p>
+                    Teslimat günleri, hangi günlerde teslimat yapılabileceğini tanımlar.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo> 

@@ -1,73 +1,134 @@
-# Teslimat Planlama Modülü
+# Teslimat Modülü v1.0.3
 
-Bu Odoo modülü teslimat planlama ve rota optimizasyonu için geliştirilmiştir.
+## 📋 Genel Bakış
 
-## Özellikler
+Teslimat yönetimi için geliştirilmiş Odoo modülü. Transfer belgelerinden otomatik teslimat oluşturma, SMS bildirimleri, araç yönetimi ve ilçe bazlı teslimat programı özelliklerini içerir.
 
-- **Teslimat Planlama**: Teslimat planları oluşturma ve yönetme
-- **Teslimat Noktaları**: Teslimat noktalarını tanımlama ve sıralama
-- **Araç Yönetimi**: Araç kapasitesi ve müsaitlik durumu takibi
-- **Rota Optimizasyonu**: Mesafe ve süre hesaplamaları
-- **Durum Takibi**: Teslimat durumlarının takibi
+## 🚀 Özellikler
 
-## Kurulum
+### ✅ Ana Özellikler
+- **Transfer Belgesi Entegrasyonu**: Stock picking'lerden otomatik teslimat oluşturma
+- **SMS Bildirimleri**: Durum değişikliklerinde müşteriye SMS gönderimi
+- **Araç Yönetimi**: Günlük kapasite kontrolü ve araç takibi
+- **Teslimat Günleri**: İlçe bazlı haftalık teslimat programı
+- **Geçici Kapatma**: Araç ve gün bazında geçici kapatma özelliği
+- **Yetki Yönetimi**: Teslimat yöneticisi ve normal kullanıcı yetkileri
 
-1. Modülü Odoo addons klasörüne kopyalayın
-2. Odoo'yu yeniden başlatın
-3. Uygulamalar menüsünden "Teslimat Planlama" modülünü yükleyin
+### 📅 Teslimat Günleri
+- **Pazartesi**: Anadolu + Avrupa yakası ilçeleri
+- **Salı**: Anadolu + Avrupa yakası ilçeleri
+- **Çarşamba**: Anadolu + Avrupa yakası ilçeleri
+- **Perşembe**: Anadolu + Avrupa yakası ilçeleri
+- **Cuma**: Anadolu + Avrupa yakası ilçeleri
+- **Cumartesi**: Anadolu + Avrupa yakası ilçeleri
+- **Pazar**: ❌ Teslimat yapılmıyor
 
-## Kullanım
+### 🚗 Araç Tipleri
+- **Anadolu Yakası**: Anadolu yakası ilçeleri için
+- **Avrupa Yakası**: Avrupa yakası ilçeleri için
+- **Küçük Araç 1/2**: Ek araçlar
+- **Ek Araç**: Geçici araçlar
 
-### Teslimat Planı Oluşturma
+## 📦 Kurulum
 
-1. "Teslimat Planlama" menüsüne gidin
-2. "Teslimat Planları" alt menüsünü seçin
-3. "Oluştur" butonuna tıklayın
-4. Plan adı, tarih, araç ve sürücü bilgilerini girin
-5. Teslimat noktalarını ekleyin
+### 1. Modülü Yükle
+```bash
+python3 -m odoo -d your_database -i delivery_module --stop-after-init
+```
 
-### Teslimat Noktası Ekleme
+### 2. Odoo'yu Yeniden Başlat
+```bash
+sudo systemctl restart odoo
+```
 
-1. Teslimat planı formunda "Teslimat Noktaları" sekmesine gidin
-2. "Ekle" butonuna tıklayın
-3. Müşteri, adres ve diğer bilgileri girin
-4. Mesafe ve süre bilgilerini ekleyin
+### 3. Teslimat Programını Ayarla
+- Odoo'ya giriş yapın
+- **Teslimat** → **Teslimat Programı Kurulumu**
+- "Teslimat Programını Ayarla" butonuna tıklayın
 
-## Modeller
+## 🔧 Kullanım
 
-### delivery.planning
-Teslimat planlarını yönetir.
+### Teslimat Belgesi Oluşturma
+1. **Teslimat** → **Teslimat Belgesi Oluştur**
+2. Transfer numarasını girin
+3. İlçe seçin
+4. Araç seçin
+5. "Teslimat Oluştur" butonuna tıklayın
 
-**Alanlar:**
-- name: Plan adı
-- date: Plan tarihi
-- vehicle_id: Araç
-- driver_id: Sürücü
-- state: Durum (taslak, onaylandı, devam ediyor, tamamlandı, iptal edildi)
-- total_distance: Toplam mesafe
-- estimated_duration: Tahmini süre
+### Teslimat Durumu Yönetimi
+- **Yolda**: Teslimatı yola çıkarır ve SMS gönderir
+- **Tamamla**: Teslimatı tamamlar ve SMS gönderir
+- **İptal**: Teslimatı iptal eder ve SMS gönderir
 
-### delivery.point
-Teslimat noktalarını yönetir.
+### Araç Yönetimi
+- **Kapasite Kontrolü**: Günlük teslimat limiti
+- **Geçici Kapatma**: Araçları geçici olarak kapatma
+- **Durum Takibi**: Bugünkü teslimat sayısı
 
-**Alanlar:**
-- name: Nokta adı
-- partner_id: Müşteri
-- address: Adres
-- distance_from_previous: Önceki noktadan mesafe
-- estimated_time: Tahmini süre
-- state: Durum
+## 🛠️ Teknik Detaylar
 
-## Güvenlik
+### Model Yapısı
+- `delivery.document`: Ana teslimat belgesi
+- `delivery.vehicle`: Araç yönetimi
+- `delivery.day`: Teslimat günleri
+- `res.city`: İl yönetimi
+- `res.city.district`: İlçe yönetimi
+- `res.partner`: Müşteri bilgileri (genişletilmiş)
 
-Modül aşağıdaki güvenlik kurallarını içerir:
-- Kullanıcılar: Okuma, yazma, oluşturma (silme yok)
-- Yöneticiler: Tam erişim
+### Güvenlik
+- `group_delivery_manager`: Teslimat yöneticisi grubu
+- Model erişim hakları
+- Kayıt seviyesi kuralları
 
-## Geliştirme
+### SMS Entegrasyonu
+- Durum değişikliklerinde otomatik SMS
+- Hata durumunda işlem devam eder
+- Müşteri telefon numarası kontrolü
 
-Bu modül Odoo 16.0 ile uyumlu olarak geliştirilmiştir.
+## 🐛 Sorun Giderme
 
-## Lisans
+### Veritabanı Şeması Sorunları
+```bash
+# Modülü yeniden yükle
+python3 -m odoo -d your_database -u delivery_module --stop-after-init
+python3 -m odoo -d your_database -i delivery_module --stop-after-init
+```
 
-LGPL-3
+### SMS Sorunları
+- SMS modülünün yüklü olduğundan emin olun
+- Müşteri telefon numarasının doğru olduğunu kontrol edin
+
+### Kapasite Sorunları
+- Araç günlük limitini kontrol edin
+- Teslimat yöneticisi yetkilerini kontrol edin
+
+## 📝 Sürüm Geçmişi
+
+### v1.0.3 (Temiz Versiyon)
+- ✅ Hata yönetimi iyileştirildi
+- ✅ SMS fonksiyonu güvenli hale getirildi
+- ✅ Gereksiz dosyalar temizlendi
+- ✅ Log sistemi eklendi
+- ✅ Manifest sürümü güncellendi
+
+### v1.0.2
+- ✅ CloudPepper durum raporu eklendi
+- ✅ Modül stabil çalışır durumda
+
+### v1.0.1
+- ✅ Fotoğraf wizard'ı geçici olarak devre dışı bırakıldı
+- ✅ Modül yükleme hataları çözüldü
+
+## 📞 Destek
+
+Sorunlar için:
+- GitHub Issues: https://github.com/toftamars/delivery_module/issues
+- Email: [your-email@example.com]
+
+## 📄 Lisans
+
+LGPL-3 License
+
+---
+
+**Not**: Bu modül Odoo 16.0 ile uyumludur ve test edilmiştir.
