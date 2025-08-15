@@ -18,7 +18,7 @@ def migrate_database(cr, registry):
         _logger.info("🧹 IR Model Data çakışmaları temizleniyor...")
         
         # Çakışan modül kayıtlarını temizle
-        conflicting_names = ['module_teslimat_planlama', 'module_delivery_module']
+        conflicting_names = ['module_teslimat_planlama', 'module_delivery_module', 'module_tofta_delivery_module']
         
         for name in conflicting_names:
             # Önce mevcut kayıtları kontrol et

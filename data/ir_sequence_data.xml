@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <!-- Teslimat Belgesi Sıra Numarası -->
-        <record id="seq_delivery_document" model="ir.sequence">
+        <record id="tofta_seq_delivery_document" model="ir.sequence">
             <field name="name">Teslimat Belgesi</field>
             <field name="code">delivery.document</field>
             <field name="prefix">DEL/%(y)s/</field>

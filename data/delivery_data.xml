@@ -1,331 +1,331 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <!-- Örnek İller -->
-        <record id="city_istanbul" model="res.city">
+        <record id="tofta_city_istanbul" model="res.city">
             <field name="name">İstanbul</field>
             <field name="state_id" ref="base.state_tr_34"/>
             <field name="active">True</field>
         </record>
 
-        <record id="city_ankara" model="res.city">
+        <record id="tofta_city_ankara" model="res.city">
             <field name="name">Ankara</field>
             <field name="state_id" ref="base.state_tr_06"/>
             <field name="active">True</field>
         </record>
 
-        <record id="city_izmir" model="res.city">
+        <record id="tofta_city_izmir" model="res.city">
             <field name="name">İzmir</field>
             <field name="state_id" ref="base.state_tr_35"/>
             <field name="active">True</field>
         </record>
 
         <!-- İstanbul İlçeleri - Anadolu Yakası -->
-        <record id="district_maltepe" model="res.city.district">
+        <record id="tofta_district_maltepe" model="res.city.district">
             <field name="name">Maltepe</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_kartal" model="res.city.district">
+        <record id="tofta_district_kartal" model="res.city.district">
             <field name="name">Kartal</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_pendik" model="res.city.district">
+        <record id="tofta_district_pendik" model="res.city.district">
             <field name="name">Pendik</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_tuzla" model="res.city.district">
+        <record id="tofta_district_tuzla" model="res.city.district">
             <field name="name">Tuzla</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_uskudar" model="res.city.district">
+        <record id="tofta_district_uskudar" model="res.city.district">
             <field name="name">Üsküdar</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_kadikoy" model="res.city.district">
+        <record id="tofta_district_kadikoy" model="res.city.district">
             <field name="name">Kadıköy</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_atasehir" model="res.city.district">
+        <record id="tofta_district_atasehir" model="res.city.district">
             <field name="name">Ataşehir</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_umraniye" model="res.city.district">
+        <record id="tofta_district_umraniye" model="res.city.district">
             <field name="name">Ümraniye</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sancaktepe" model="res.city.district">
+        <record id="tofta_district_sancaktepe" model="res.city.district">
             <field name="name">Sancaktepe</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_cekmekoy" model="res.city.district">
+        <record id="tofta_district_cekmekoy" model="res.city.district">
             <field name="name">Çekmeköy</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_beykoz" model="res.city.district">
+        <record id="tofta_district_beykoz" model="res.city.district">
             <field name="name">Beykoz</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sile" model="res.city.district">
+        <record id="tofta_district_sile" model="res.city.district">
             <field name="name">Şile</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sultanbeyli" model="res.city.district">
+        <record id="tofta_district_sultanbeyli" model="res.city.district">
             <field name="name">Sultanbeyli</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
         <!-- İstanbul İlçeleri - Avrupa Yakası -->
-        <record id="district_beyoglu" model="res.city.district">
+        <record id="tofta_district_beyoglu" model="res.city.district">
             <field name="name">Beyoğlu</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sisli" model="res.city.district">
+        <record id="tofta_district_sisli" model="res.city.district">
             <field name="name">Şişli</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_besiktas" model="res.city.district">
+        <record id="tofta_district_besiktas" model="res.city.district">
             <field name="name">Beşiktaş</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_kagithane" model="res.city.district">
+        <record id="tofta_district_kagithane" model="res.city.district">
             <field name="name">Kağıthane</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sariyer" model="res.city.district">
+        <record id="tofta_district_sariyer" model="res.city.district">
             <field name="name">Sarıyer</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_bakirkoy" model="res.city.district">
+        <record id="tofta_district_bakirkoy" model="res.city.district">
             <field name="name">Bakırköy</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_bahcelievler" model="res.city.district">
+        <record id="tofta_district_bahcelievler" model="res.city.district">
             <field name="name">Bahçelievler</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_gungoren" model="res.city.district">
+        <record id="tofta_district_gungoren" model="res.city.district">
             <field name="name">Güngören</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_esenler" model="res.city.district">
+        <record id="tofta_district_esenler" model="res.city.district">
             <field name="name">Esenler</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_bagcilar" model="res.city.district">
+        <record id="tofta_district_bagcilar" model="res.city.district">
             <field name="name">Bağcılar</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_eyupsultan" model="res.city.district">
+        <record id="tofta_district_eyupsultan" model="res.city.district">
             <field name="name">Eyüpsultan</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_gaziosmanpasa" model="res.city.district">
+        <record id="tofta_district_gaziosmanpasa" model="res.city.district">
             <field name="name">Gaziosmanpaşa</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_kucukcekmece" model="res.city.district">
+        <record id="tofta_district_kucukcekmece" model="res.city.district">
             <field name="name">Küçükçekmece</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_avcilar" model="res.city.district">
+        <record id="tofta_district_avcilar" model="res.city.district">
             <field name="name">Avcılar</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_basaksehir" model="res.city.district">
+        <record id="tofta_district_basaksehir" model="res.city.district">
             <field name="name">Başakşehir</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_sultangazi" model="res.city.district">
+        <record id="tofta_district_sultangazi" model="res.city.district">
             <field name="name">Sultangazi</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_arnavutkoy" model="res.city.district">
+        <record id="tofta_district_arnavutkoy" model="res.city.district">
             <field name="name">Arnavutköy</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_fatih" model="res.city.district">
+        <record id="tofta_district_fatih" model="res.city.district">
             <field name="name">Fatih</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_zeytinburnu" model="res.city.district">
+        <record id="tofta_district_zeytinburnu" model="res.city.district">
             <field name="name">Zeytinburnu</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_bayrampasa" model="res.city.district">
+        <record id="tofta_district_bayrampasa" model="res.city.district">
             <field name="name">Bayrampaşa</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_esenyurt" model="res.city.district">
+        <record id="tofta_district_esenyurt" model="res.city.district">
             <field name="name">Esenyurt</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_beylikduzu" model="res.city.district">
+        <record id="tofta_district_beylikduzu" model="res.city.district">
             <field name="name">Beylikdüzü</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_silivri" model="res.city.district">
+        <record id="tofta_district_silivri" model="res.city.district">
             <field name="name">Silivri</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_catalca" model="res.city.district">
+        <record id="tofta_district_catalca" model="res.city.district">
             <field name="name">Çatalca</field>
-            <field name="city_id" ref="city_istanbul"/>
+            <field name="city_id" ref="tofta_city_istanbul"/>
             <field name="active">True</field>
         </record>
 
         <!-- Ankara İlçeleri -->
-        <record id="district_cankaya" model="res.city.district">
+        <record id="tofta_district_cankaya" model="res.city.district">
             <field name="name">Çankaya</field>
-            <field name="city_id" ref="city_ankara"/>
+            <field name="city_id" ref="tofta_city_ankara"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_kecioren" model="res.city.district">
+        <record id="tofta_district_kecioren" model="res.city.district">
             <field name="name">Keçiören</field>
-            <field name="city_id" ref="city_ankara"/>
+            <field name="city_id" ref="tofta_city_ankara"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_mamak" model="res.city.district">
+        <record id="tofta_district_mamak" model="res.city.district">
             <field name="name">Mamak</field>
-            <field name="city_id" ref="city_ankara"/>
+            <field name="city_id" ref="tofta_city_ankara"/>
             <field name="active">True</field>
         </record>
 
         <!-- İzmir İlçeleri -->
-        <record id="district_konak" model="res.city.district">
+        <record id="tofta_district_konak" model="res.city.district">
             <field name="name">Konak</field>
-            <field name="city_id" ref="city_izmir"/>
+            <field name="city_id" ref="tofta_city_izmir"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_bornova" model="res.city.district">
+        <record id="tofta_district_bornova" model="res.city.district">
             <field name="name">Bornova</field>
-            <field name="city_id" ref="city_izmir"/>
+            <field name="city_id" ref="tofta_city_izmir"/>
             <field name="active">True</field>
         </record>
 
-        <record id="district_karsiyaka" model="res.city.district">
+        <record id="tofta_district_karsiyaka" model="res.city.district">
             <field name="name">Karşıyaka</field>
-            <field name="city_id" ref="city_izmir"/>
+            <field name="city_id" ref="tofta_city_izmir"/>
             <field name="active">True</field>
         </record>
 
         <!-- Teslimat Günleri -->
-        <record id="delivery_day_monday" model="delivery.day">
+        <record id="tofta_delivery_day_monday" model="delivery.day">
             <field name="name">Pazartesi</field>
             <field name="day_of_week">0</field>
             <field name="sequence">10</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_tuesday" model="delivery.day">
+        <record id="tofta_delivery_day_tuesday" model="delivery.day">
             <field name="name">Salı</field>
             <field name="day_of_week">1</field>
             <field name="sequence">20</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_wednesday" model="delivery.day">
+        <record id="tofta_delivery_day_wednesday" model="delivery.day">
             <field name="name">Çarşamba</field>
             <field name="day_of_week">2</field>
             <field name="sequence">30</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_thursday" model="delivery.day">
+        <record id="tofta_delivery_day_thursday" model="delivery.day">
             <field name="name">Perşembe</field>
             <field name="day_of_week">3</field>
             <field name="sequence">40</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_friday" model="delivery.day">
+        <record id="tofta_delivery_day_friday" model="delivery.day">
             <field name="name">Cuma</field>
             <field name="day_of_week">4</field>
             <field name="sequence">50</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_saturday" model="delivery.day">
+        <record id="tofta_delivery_day_saturday" model="delivery.day">
             <field name="name">Cumartesi</field>
             <field name="day_of_week">5</field>
             <field name="sequence">60</field>
             <field name="active">True</field>
         </record>
 
-        <record id="delivery_day_sunday" model="delivery.day">
+        <record id="tofta_delivery_day_sunday" model="delivery.day">
             <field name="name">Pazar</field>
             <field name="day_of_week">6</field>
             <field name="sequence">70</field>
@@ -333,31 +333,31 @@
         </record>
 
         <!-- Teslimat Araçları -->
-        <record id="delivery_vehicle_anadolu" model="delivery.vehicle">
+        <record id="tofta_delivery_vehicle_anadolu" model="delivery.vehicle">
             <field name="name">Anadolu Yakası</field>
             <field name="vehicle_type">anadolu</field>
             <field name="daily_limit">7</field>
         </record>
 
-        <record id="delivery_vehicle_avrupa" model="delivery.vehicle">
+        <record id="tofta_delivery_vehicle_avrupa" model="delivery.vehicle">
             <field name="name">Avrupa Yakası</field>
             <field name="vehicle_type">avrupa</field>
             <field name="daily_limit">7</field>
         </record>
 
-        <record id="delivery_vehicle_kucuk_arac_1" model="delivery.vehicle">
+        <record id="tofta_delivery_vehicle_kucuk_arac_1" model="delivery.vehicle">
             <field name="name">Küçük Araç 1</field>
             <field name="vehicle_type">kucuk_arac_1</field>
             <field name="daily_limit">7</field>
         </record>
 
-        <record id="delivery_vehicle_kucuk_arac_2" model="delivery.vehicle">
+        <record id="tofta_delivery_vehicle_kucuk_arac_2" model="delivery.vehicle">
             <field name="name">Küçük Araç 2</field>
             <field name="vehicle_type">kucuk_arac_2</field>
             <field name="daily_limit">7</field>
         </record>
 
-        <record id="delivery_vehicle_ek_arac" model="delivery.vehicle">
+        <record id="tofta_delivery_vehicle_ek_arac" model="delivery.vehicle">
             <field name="name">Ek Araç</field>
             <field name="vehicle_type">ek_arac</field>
             <field name="daily_limit">7</field>
