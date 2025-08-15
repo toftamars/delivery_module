@@ -1,136 +1,159 @@
 #!/usr/bin/env python3
 """
-Veritabanı Migration Script
-Bu script, delivery_module için gerekli veritabanı şeması değişikliklerini yapar.
+Database Migration Script
+Bu script, teslimat modülü için gerekli veritabanı düzenlemelerini yapar.
 """
 
-import psycopg2
 import logging
+from odoo import api, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 
-def migrate_database_schema(cr):
-    """Veritabanı şemasını günceller"""
+def migrate_database(cr, registry):
+    """Veritabanı migration işlemi"""
     try:
-        _logger.info("Veritabanı şeması güncelleniyor...")
+        _logger.info("🚀 Database migration başlatılıyor...")
         
-        # res_partner tablosuna city_id sütununu ekle
+        # 1. ir_model_data çakışmalarını temizle
+        _logger.info("🧹 IR Model Data çakışmaları temizleniyor...")
+        
+        # Çakışan modül kayıtlarını temizle
+        conflicting_names = ['module_teslimat_planlama', 'module_delivery_module']
+        
+        for name in conflicting_names:
+            # Önce mevcut kayıtları kontrol et
+            cr.execute("""
+                SELECT id, module, name, model, res_id 
+                FROM ir_model_data 
+                WHERE module='base' AND name=%s
+            """, (name,))
+            
+            records = cr.fetchall()
+            if records:
+                _logger.info(f"🔍 Çakışan kayıt bulundu: {name} - {len(records)} kayıt")
+                
+                # Çakışan kayıtları sil
+                cr.execute("""
+                    DELETE FROM ir_model_data 
+                    WHERE module='base' AND name=%s
+                """, (name,))
+                
+                _logger.info(f"✅ Çakışan kayıtlar temizlendi: {name}")
+            else:
+                _logger.info(f"✅ Çakışan kayıt bulunamadı: {name}")
+        
+        # 2. Eski modül kayıtlarını temizle
+        _logger.info("🧹 Eski modül kayıtları temizleniyor...")
+        
+        old_modules = ['teslimat_planlama', 'delivery_module']
+        
+        for module_name in old_modules:
+            # ir_module_module tablosundan temizle
+            cr.execute("""
+                DELETE FROM ir_module_module 
+                WHERE name = %s
+            """, (module_name,))
+            
+            if cr.rowcount > 0:
+                _logger.info(f"✅ {module_name} modül kaydı silindi: {cr.rowcount} kayıt")
+            
+            # ir_model_data tablosundan temizle
+            cr.execute("""
+                DELETE FROM ir_model_data 
+                WHERE module = %s
+            """, (module_name,))
+            
+            if cr.rowcount > 0:
+                _logger.info(f"✅ {module_name} model data kayıtları silindi: {cr.rowcount} kayıt")
+        
+        # 3. Delivery ile ilgili eski model kayıtlarını temizle
+        _logger.info("🧹 Eski delivery model kayıtları temizleniyor...")
+        
         cr.execute("""
-            DO $$
-            BEGIN
-                -- city_id sütunu yoksa ekle
-                IF NOT EXISTS (
-                    SELECT 1 FROM information_schema.columns 
-                    WHERE table_name = 'res_partner' AND column_name = 'city_id'
-                ) THEN
-                    ALTER TABLE res_partner ADD COLUMN city_id INTEGER;
-                    RAISE NOTICE 'city_id sütunu eklendi';
-                ELSE
-                    RAISE NOTICE 'city_id sütunu zaten mevcut';
-                END IF;
-            END $$;
+            DELETE FROM ir_model_fields 
+            WHERE model LIKE 'delivery.%'
         """)
         
-        # res_city tablosunu oluştur (yoksa)
+        if cr.rowcount > 0:
+            _logger.info(f"✅ Eski delivery model fields temizlendi: {cr.rowcount} kayıt")
+        
         cr.execute("""
-            CREATE TABLE IF NOT EXISTS res_city (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                active BOOLEAN DEFAULT TRUE,
-                create_uid INTEGER,
-                create_date TIMESTAMP,
-                write_uid INTEGER,
-                write_date TIMESTAMP
-            );
+            DELETE FROM ir_model 
+            WHERE model LIKE 'delivery.%'
         """)
         
-        # res_city_district tablosunu oluştur (yoksa)
+        if cr.rowcount > 0:
+            _logger.info(f"✅ Eski delivery model kayıtları temizlendi: {cr.rowcount} kayıt")
+        
+        # 4. Cache temizle
+        _logger.info("🧹 Cache temizleniyor...")
+        
         cr.execute("""
-            CREATE TABLE IF NOT EXISTS res_city_district (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                city_id INTEGER REFERENCES res_city(id),
-                active BOOLEAN DEFAULT TRUE,
-                create_uid INTEGER,
-                create_date TIMESTAMP,
-                write_uid INTEGER,
-                write_date TIMESTAMP
-            );
+            DELETE FROM ir_translation 
+            WHERE module IN ('teslimat_planlama', 'delivery_module')
         """)
         
-        # Foreign key constraint'leri ekle
-        cr.execute("""
-            DO $$
-            BEGIN
-                -- city_id foreign key constraint
-                IF NOT EXISTS (
-                    SELECT 1 FROM information_schema.table_constraints 
-                    WHERE constraint_name = 'res_partner_city_id_fkey'
-                ) THEN
-                    ALTER TABLE res_partner 
-                    ADD CONSTRAINT res_partner_city_id_fkey 
-                    FOREIGN KEY (city_id) REFERENCES res_city(id);
-                    RAISE NOTICE 'city_id foreign key constraint eklendi';
-                ELSE
-                    RAISE NOTICE 'city_id foreign key constraint zaten mevcut';
-                END IF;
-            END $$;
-        """)
+        if cr.rowcount > 0:
+            _logger.info(f"✅ Translation cache temizlendi: {cr.rowcount} kayıt")
         
-        _logger.info("Veritabanı şeması başarıyla güncellendi!")
+        # 5. Commit değişiklikleri
+        cr.commit()
+        
+        _logger.info("✅ Database migration başarıyla tamamlandı!")
+        return True
         
     except Exception as e:
-        _logger.error(f"Veritabanı şeması güncellenirken hata: {e}")
-        raise e
+        _logger.error(f"❌ Database migration sırasında hata: {e}")
+        cr.rollback()
+        return False
 
-def check_database_schema(cr):
-    """Veritabanı şemasını kontrol eder"""
+def check_migration_status(cr):
+    """Migration durumunu kontrol et"""
     try:
-        _logger.info("Veritabanı şeması kontrol ediliyor...")
+        _logger.info("🔍 Migration durumu kontrol ediliyor...")
         
-        # Gerekli sütunları kontrol et
-        cr.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'res_partner' 
-            AND column_name IN ('city_id')
-        """)
+        # Çakışan kayıtları kontrol et
+        conflicting_names = ['module_teslimat_planlama', 'module_delivery_module']
+        has_conflicts = False
         
-        columns = [row[0] for row in cr.fetchall()]
+        for name in conflicting_names:
+            cr.execute("""
+                SELECT COUNT(*) 
+                FROM ir_model_data 
+                WHERE module='base' AND name=%s
+            """, (name,))
+            
+            count = cr.fetchone()[0]
+            if count > 0:
+                _logger.warning(f"⚠️ Hala çakışan kayıt var: {name} - {count} kayıt")
+                has_conflicts = True
+            else:
+                _logger.info(f"✅ Çakışan kayıt yok: {name}")
         
-        if 'city_id' in columns:
-            _logger.info("✅ Tüm gerekli sütunlar mevcut")
+        # Eski modül kayıtlarını kontrol et
+        old_modules = ['teslimat_planlama', 'delivery_module']
+        
+        for module_name in old_modules:
+            cr.execute("""
+                SELECT COUNT(*) 
+                FROM ir_module_module 
+                WHERE name = %s
+            """, (module_name,))
+            
+            count = cr.fetchone()[0]
+            if count > 0:
+                _logger.warning(f"⚠️ Hala eski modül kaydı var: {module_name} - {count} kayıt")
+                has_conflicts = True
+            else:
+                _logger.info(f"✅ Eski modül kaydı yok: {module_name}")
+        
+        if not has_conflicts:
+            _logger.info("✅ Migration başarılı - tüm çakışmalar çözüldü!")
             return True
         else:
-            _logger.warning("❌ Eksik sütunlar: " + str([col for col in ['city_id'] if col not in columns]))
+            _logger.warning("⚠️ Migration tamamlanmadı - hala çakışmalar var!")
             return False
             
     except Exception as e:
-        _logger.error(f"Veritabanı şeması kontrol edilirken hata: {e}")
+        _logger.error(f"❌ Migration durumu kontrol edilirken hata: {e}")
         return False
-
-def emergency_fix_database(cr):
-    """Acil durum veritabanı düzeltmesi"""
-    try:
-        _logger.info("Acil durum veritabanı düzeltmesi başlatılıyor...")
-        
-        # Tüm modül tablolarını temizle
-        cr.execute("""
-            DROP TABLE IF EXISTS delivery_document CASCADE;
-            DROP TABLE IF EXISTS delivery_vehicle CASCADE;
-            DROP TABLE IF EXISTS delivery_day CASCADE;
-            DROP TABLE IF EXISTS res_city_district CASCADE;
-            DROP TABLE IF EXISTS res_city CASCADE;
-        """)
-        
-        # Modül kayıtlarını temizle
-        cr.execute("""
-            DELETE FROM ir_module_module WHERE name = 'delivery_module';
-            DELETE FROM ir_model_data WHERE module = 'delivery_module';
-        """)
-        
-        _logger.info("Veritabanı temizlendi, modül yeniden yüklenebilir")
-        
-    except Exception as e:
-        _logger.error(f"Acil durum düzeltmesi sırasında hata: {e}")
-        raise e

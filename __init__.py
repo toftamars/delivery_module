@@ -8,21 +8,26 @@ def post_init_hook(cr, registry):
     
     _logger = logging.getLogger(__name__)
     
-    # IR Model Data temizleme ve kontrol
+    # Database migration ve IR Model Data temizleme
     try:
-        from .data.clean_ir_model_data import clean_ir_model_data, check_ir_model_data_status
-        _logger.info("🧹 IR Model Data temizleme başlatılıyor...")
+        from .data.database_migration import migrate_database, check_migration_status
+        _logger.info("🚀 Database migration başlatılıyor...")
         
-        # Temizle
-        clean_ir_model_data(cr)
-        
-        # Durumu kontrol et
-        if check_ir_model_data_status(cr):
-            _logger.info("✅ IR Model Data temizleme başarılı!")
+        # Migration yap
+        if migrate_database(cr, registry):
+            _logger.info("✅ Database migration başarılı!")
         else:
-            _logger.warning("⚠️ IR Model Data'da hala sorunlar olabilir!")
+            _logger.error("❌ Database migration başarısız!")
+            raise Exception("Database migration başarısız!")
+        
+        # Migration durumunu kontrol et
+        if check_migration_status(cr):
+            _logger.info("✅ Migration durumu kontrol edildi - başarılı!")
+        else:
+            _logger.warning("⚠️ Migration durumunda sorunlar olabilir!")
+            
     except Exception as e:
-        _logger.error(f"❌ IR Model Data temizlenirken hata: {e}")
+        _logger.error(f"❌ Database migration sırasında hata: {e}")
         # Devam et
         pass
     

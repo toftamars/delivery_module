@@ -60,8 +60,11 @@ def emergency_database_fix(cr):
         # 4. Modül kayıtlarını ve çakışan kayıtları temizle
         cr.execute("""
             DELETE FROM ir_module_module WHERE name = 'teslimat_planlama';
+            DELETE FROM ir_module_module WHERE name = 'delivery_module';
             DELETE FROM ir_model_data WHERE module = 'teslimat_planlama';
+            DELETE FROM ir_model_data WHERE module = 'delivery_module';
             DELETE FROM ir_model_data WHERE module = 'base' AND name = 'module_teslimat_planlama';
+            DELETE FROM ir_model_data WHERE module = 'base' AND name = 'module_delivery_module';
             DELETE FROM ir_model_fields WHERE model LIKE 'delivery.%';
             DELETE FROM ir_model WHERE model LIKE 'delivery.%';
         """)

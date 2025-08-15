@@ -17,28 +17,31 @@ def clean_ir_model_data(cr):
     try:
         _logger.info("🧹 IR Model Data temizleme ve kontrol başlatılıyor...")
         
-        # 1. Çakışan kayıtları kontrol et
-        cr.execute("""
-            SELECT id, module, name, model, res_id 
-            FROM ir_model_data 
-            WHERE module='base' AND name='module_teslimat_planlama'
-        """)
+        # 1. Çakışan kayıtları kontrol et ve temizle
+        conflicting_names = ['module_teslimat_planlama', 'module_delivery_module']
         
-        records = cr.fetchall()
-        if records:
-            _logger.info(f"🔍 Çakışan kayıtlar bulundu: {len(records)} kayıt")
-            for record in records:
-                _logger.info(f"   - ID: {record[0]}, Module: {record[1]}, Name: {record[2]}, Model: {record[3]}, Res_ID: {record[4]}")
-            
-            # Çakışan kayıtları sil
+        for name in conflicting_names:
             cr.execute("""
-                DELETE FROM ir_model_data 
-                WHERE module='base' AND name='module_teslimat_planlama'
-            """)
+                SELECT id, module, name, model, res_id 
+                FROM ir_model_data 
+                WHERE module='base' AND name=%s
+            """, (name,))
             
-            _logger.info(f"✅ Çakışan kayıtlar silindi: {cr.rowcount} kayıt etkilendi")
-        else:
-            _logger.info("✅ 'module_teslimat_planlama' için çakışan kayıt bulunamadı")
+            records = cr.fetchall()
+            if records:
+                _logger.info(f"🔍 Çakışan kayıtlar bulundu: {len(records)} kayıt - {name}")
+                for record in records:
+                    _logger.info(f"   - ID: {record[0]}, Module: {record[1]}, Name: {record[2]}, Model: {record[3]}, Res_ID: {record[4]}")
+                
+                # Çakışan kayıtları sil
+                cr.execute("""
+                    DELETE FROM ir_model_data 
+                    WHERE module='base' AND name=%s
+                """, (name,))
+                
+                _logger.info(f"✅ Çakışan kayıtlar silindi: {cr.rowcount} kayıt etkilendi - {name}")
+            else:
+                _logger.info(f"✅ '{name}' için çakışan kayıt bulunamadı")
         
         # 2. Diğer potansiyel çakışmaları kontrol et
         cr.execute("""
