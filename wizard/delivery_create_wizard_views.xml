@@ -28,7 +28,7 @@
         </record>
 
         <!-- Teslimat Oluşturma Sihirbazı Action -->
-        <record id="action_delivery_create_wizard" model="ir.actions.act_window">
+        <record id="tofta_action_delivery_create_wizard" model="ir.actions.act_window">
             <field name="name">Teslimat Belgesi Oluştur</field>
             <field name="res_model">delivery.create.wizard</field>
             <field name="view_mode">form</field>

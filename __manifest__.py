@@ -15,7 +15,7 @@
         - Geçici teslimat günü kapatma
     """,
     'author': 'Tofta',
-    'website': 'https://github.com/toftamars/teslimat_planlama',
+    'website': 'https://github.com/toftamars/delivery_module',
     'depends': [
         'base',
         'mail',

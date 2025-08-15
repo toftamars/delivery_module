@@ -2,25 +2,25 @@
 <odoo>
     <data>
         <!-- Teslimat Yöneticisi Grubu -->
-        <record id="group_delivery_manager" model="res.groups">
+        <record id="tofta_group_delivery_manager" model="res.groups">
             <field name="name">Teslimat Yöneticisi</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <!-- Teslimat Sürücüsü Grubu -->
-        <record id="group_delivery_driver" model="res.groups">
+        <record id="tofta_group_delivery_driver" model="res.groups">
             <field name="name">Teslimat Sürücüsü</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <!-- Teslimat Yöneticisi Yetkileri -->
-        <record id="delivery_manager_rule" model="ir.rule">
+        <record id="tofta_delivery_manager_rule" model="ir.rule">
             <field name="name">Teslimat Yöneticisi Kuralı</field>
             <field name="model_id" ref="model_delivery_document"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_manager'))]"/>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -28,11 +28,11 @@
         </record>
 
         <!-- Teslimat Sürücüsü Yetkileri - Sadece kendi araçlarındaki teslimatları görebilir -->
-        <record id="delivery_driver_rule" model="ir.rule">
+        <record id="tofta_delivery_driver_rule" model="ir.rule">
             <field name="name">Teslimat Sürücüsü Kuralı</field>
             <field name="model_id" ref="model_delivery_document"/>
             <field name="domain_force">[('vehicle_id', '!=', False)]</field>
-            <field name="groups" eval="[(4, ref('group_delivery_driver'))]"/>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_driver'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="False"/>

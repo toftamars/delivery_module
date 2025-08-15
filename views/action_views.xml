@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <!-- Teslimat Belgesi Action -->
-        <record id="action_delivery_document" model="ir.actions.act_window">
+        <record id="tofta_action_delivery_document" model="ir.actions.act_window">
             <field name="name">Teslimat Belgeleri</field>
             <field name="res_model">delivery.document</field>
             <field name="view_mode">tree,form</field>
@@ -18,7 +18,7 @@
         </record>
 
         <!-- Teslimat Aracı Action -->
-        <record id="action_delivery_vehicle" model="ir.actions.act_window">
+        <record id="tofta_action_delivery_vehicle" model="ir.actions.act_window">
             <field name="name">Teslimat Araçları</field>
             <field name="res_model">delivery.vehicle</field>
             <field name="view_mode">tree,form</field>
@@ -34,7 +34,7 @@
         </record>
 
         <!-- Teslimat Günü Action -->
-        <record id="action_delivery_day" model="ir.actions.act_window">
+        <record id="tofta_action_delivery_day" model="ir.actions.act_window">
             <field name="name">Teslimat Günleri</field>
             <field name="res_model">delivery.day</field>
             <field name="view_mode">tree,form</field>

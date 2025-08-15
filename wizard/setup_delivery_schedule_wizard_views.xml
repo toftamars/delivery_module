@@ -52,7 +52,7 @@
         </record>
 
         <!-- Setup Wizard Action -->
-        <record id="action_setup_delivery_schedule_wizard" model="ir.actions.act_window">
+        <record id="tofta_action_setup_delivery_schedule_wizard" model="ir.actions.act_window">
             <field name="name">Teslimat Programı Kurulumu</field>
             <field name="res_model">setup.delivery.schedule.wizard</field>
             <field name="view_mode">form</field>
