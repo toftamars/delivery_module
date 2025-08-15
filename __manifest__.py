@@ -1,5 +1,5 @@
 {
-    'name': 'Teslimat Modülü',
+    'name': 'Delivery Module',
     'version': '1.0.3',
     'category': 'Inventory',
     'summary': 'Teslimat yönetimi için modül',
