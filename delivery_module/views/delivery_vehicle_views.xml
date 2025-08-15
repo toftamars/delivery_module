@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <!-- Teslimat Aracı Tree Görünümü -->
+        <record id="view_delivery_vehicle_tree" model="ir.ui.view">
+            <field name="name">delivery.vehicle.tree</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="arch" type="xml">
+                <tree string="Teslimat Araçları">
+                    <field name="name"/>
+                    <field name="vehicle_type"/>
+                    <field name="daily_limit"/>
+                    <field name="today_delivery_count"/>
+                    <field name="remaining_capacity"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Teslimat Aracı Form Görünümü -->
+        <record id="view_delivery_vehicle_form" model="ir.ui.view">
+            <field name="name">delivery.vehicle.form</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="arch" type="xml">
+                <form string="Teslimat Aracı">
+                    <header>
+                        <button name="action_temporarily_close" string="Geçici Kapat" type="object" 
+                                class="btn-warning" attrs="{'invisible': [('is_temporarily_closed', '=', True)]}"/>
+                        <button name="action_reopen" string="Tekrar Aç" type="object" 
+                                class="btn-success" attrs="{'invisible': [('is_temporarily_closed', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Araç Adı"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="vehicle_type"/>
+                                <field name="daily_limit"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="today_delivery_count"/>
+                                <field name="remaining_capacity"/>
+                                <field name="is_temporarily_closed"/>
+                            </group>
+                        </group>
+                        
+                        <!-- Geçici Kapatma Bilgileri -->
+                        <group attrs="{'invisible': [('is_temporarily_closed', '=', False)]}">
+                            <group>
+                                <field name="closure_reason"/>
+                                <field name="closed_by"/>
+                            </group>
+                            <group>
+                                <field name="closure_start_date"/>
+                                <field name="closure_end_date"/>
+                                <field name="closed_date"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Bugünkü Teslimatlar">
+                                <field name="today_delivery_count" readonly="1"/>
+                                <button name="action_view_today_deliveries" string="Bugünkü Teslimatları Görüntüle" type="object" class="btn-primary"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Teslimat Aracı Search Görünümü -->
+        <record id="view_delivery_vehicle_search" model="ir.ui.view">
+            <field name="name">delivery.vehicle.search</field>
+            <field name="model">delivery.vehicle</field>
+            <field name="arch" type="xml">
+                <search string="Teslimat Araçları">
+                    <field name="name"/>
+                    <field name="vehicle_type"/>
+                    <filter string="Aktif" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Pasif" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Grupla">
+                        <filter string="Araç Tipi" name="vehicle_type" context="{'group_by': 'vehicle_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Teslimat Aracı Action -->
+        <record id="action_delivery_vehicle" model="ir.actions.act_window">
+            <field name="name">Teslimat Araçları</field>
+            <field name="res_model">delivery.vehicle</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teslimat aracınızı oluşturun!
+                </p>
+                <p>
+                    Teslimat araçları, teslimatları yönetmek için kullanılır.
+                </p>
+            </field>
+        </record>
+    
+    </data>
+</odoo> 

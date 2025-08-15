@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="view_delivery_route_info_wizard_form" model="ir.ui.view">
+        <field name="name">delivery.route.info.wizard.form</field>
+        <field name="model">delivery.route.info.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Rota Bilgileri">
+                <group>
+                    <field name="delivery_id" readonly="1"/>
+                    <field name="route_info" placeholder="Rota detayları ve notlar..."/>
+                    <field name="traffic_info"/>
+                    <field name="weather_info"/>
+                    <field name="note" placeholder="Rota hakkında ek bilgiler..."/>
+                </group>
+                <footer>
+                    <button name="action_save_route_info" string="Rota Bilgilerini Kaydet" type="object" class="btn-primary"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_delivery_route_info_wizard" model="ir.actions.act_window">
+        <field name="name">Rota Bilgileri</field>
+        <field name="res_model">delivery.route.info.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+    </data>
+</odoo>
