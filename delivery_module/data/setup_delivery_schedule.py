@@ -7,13 +7,27 @@ def setup_delivery_schedule(env):
     
     print("Teslimat programı ayarlanıyor...")
     
-    # Teslimat günlerini al
-    monday = env.ref('delivery_module.delivery_day_monday')
-    tuesday = env.ref('delivery_module.delivery_day_tuesday')
-    wednesday = env.ref('delivery_module.delivery_day_wednesday')
-    thursday = env.ref('delivery_module.delivery_day_thursday')
-    friday = env.ref('delivery_module.delivery_day_friday')
-    saturday = env.ref('delivery_module.delivery_day_saturday')
+    # Teslimat günlerini al - ref yerine search kullanarak
+    monday = env['delivery.day'].search([('name', '=', 'Pazartesi')], limit=1)
+    tuesday = env['delivery.day'].search([('name', '=', 'Salı')], limit=1)
+    wednesday = env['delivery.day'].search([('name', '=', 'Çarşamba')], limit=1)
+    thursday = env['delivery.day'].search([('name', '=', 'Perşembe')], limit=1)
+    friday = env['delivery.day'].search([('name', '=', 'Cuma')], limit=1)
+    saturday = env['delivery.day'].search([('name', '=', 'Cumartesi')], limit=1)
+    
+    # Eğer günler bulunamazsa, oluştur
+    if not monday:
+        monday = env['delivery.day'].create({'name': 'Pazartesi', 'day_of_week': 0, 'sequence': 10})
+    if not tuesday:
+        tuesday = env['delivery.day'].create({'name': 'Salı', 'day_of_week': 1, 'sequence': 20})
+    if not wednesday:
+        wednesday = env['delivery.day'].create({'name': 'Çarşamba', 'day_of_week': 2, 'sequence': 30})
+    if not thursday:
+        thursday = env['delivery.day'].create({'name': 'Perşembe', 'day_of_week': 3, 'sequence': 40})
+    if not friday:
+        friday = env['delivery.day'].create({'name': 'Cuma', 'day_of_week': 4, 'sequence': 50})
+    if not saturday:
+        saturday = env['delivery.day'].create({'name': 'Cumartesi', 'day_of_week': 5, 'sequence': 60})
     
     print(f"Teslimat günleri bulundu: {monday.name}, {tuesday.name}, {wednesday.name}, {thursday.name}, {friday.name}, {saturday.name}")
     
