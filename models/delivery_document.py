@@ -61,7 +61,7 @@ class DeliveryDocument(models.Model):
             
             if today_count >= self.vehicle_id.daily_limit:
                 # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                if not self.env.user.has_group('teslimat_planlama.group_delivery_manager'):
                     return {
                         'warning': {
                             'title': 'Uyarı',

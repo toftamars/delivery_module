@@ -34,7 +34,7 @@ class DeliveryDayClosureWizard(models.TransientModel):
 
     def action_confirm_closure(self):
         """Geçici kapatmayı onayla"""
-        if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+        if not self.env.user.has_group('teslimat_planlama.group_delivery_manager'):
             raise UserError(_('Bu işlem için teslimat yöneticisi yetkisi gereklidir.'))
         
         if not self.is_permanent and (not self.closure_start_date or not self.closure_end_date):

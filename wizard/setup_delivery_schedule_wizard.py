@@ -29,7 +29,7 @@ class SetupDeliveryScheduleWizard(models.TransientModel):
     def _setup_delivery_manager_group(self):
         """Teslimat yöneticisi grubunu ve yetkilerini ayarlar"""
         # Teslimat yöneticisi grubunu bul veya oluştur
-        delivery_manager_group = self.env.ref('delivery_module.group_delivery_manager', raise_if_not_found=False)
+        delivery_manager_group = self.env.ref('teslimat_planlama.group_delivery_manager', raise_if_not_found=False)
         
         if not delivery_manager_group:
             # Grup yoksa oluştur

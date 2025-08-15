@@ -21,7 +21,7 @@ def clean_ir_model_data(cr):
         cr.execute("""
             SELECT id, module, name, model, res_id 
             FROM ir_model_data 
-            WHERE module='base' AND name='module_delivery_module'
+            WHERE module='base' AND name='module_teslimat_planlama'
         """)
         
         records = cr.fetchall()
@@ -33,12 +33,12 @@ def clean_ir_model_data(cr):
             # Çakışan kayıtları sil
             cr.execute("""
                 DELETE FROM ir_model_data 
-                WHERE module='base' AND name='module_delivery_module'
+                WHERE module='base' AND name='module_teslimat_planlama'
             """)
             
             _logger.info(f"✅ Çakışan kayıtlar silindi: {cr.rowcount} kayıt etkilendi")
         else:
-            _logger.info("✅ 'module_delivery_module' için çakışan kayıt bulunamadı")
+            _logger.info("✅ 'module_teslimat_planlama' için çakışan kayıt bulunamadı")
         
         # 2. Diğer potansiyel çakışmaları kontrol et
         cr.execute("""
@@ -79,10 +79,10 @@ def clean_ir_model_data(cr):
         else:
             _logger.info("✅ Diğer çakışan kayıt bulunamadı")
         
-        # 3. delivery_module ile ilgili kayıtları temizle
+        # 3. teslimat_planlama ile ilgili kayıtları temizle
         cr.execute("""
             DELETE FROM ir_model_data 
-            WHERE module='delivery_module' AND model='ir.module.module'
+            WHERE module='teslimat_planlama' AND model='ir.module.module'
         """)
         
         if cr.rowcount > 0:
@@ -91,7 +91,7 @@ def clean_ir_model_data(cr):
         # 4. Kaldırılmış modül kayıtlarını temizle
         cr.execute("""
             DELETE FROM ir_module_module 
-            WHERE name='delivery_module' AND state='uninstalled'
+            WHERE name='teslimat_planlama' AND state='uninstalled'
         """)
         
         if cr.rowcount > 0:
@@ -156,10 +156,10 @@ def check_ir_model_data_status(cr):
         for module, count in module_counts:
             _logger.info(f"   - {module}: {count} kayıt")
         
-        # 3. delivery_module kayıtları
-        cr.execute("SELECT COUNT(*) FROM ir_model_data WHERE module='delivery_module'")
+        # 3. teslimat_planlama kayıtları
+        cr.execute("SELECT COUNT(*) FROM ir_model_data WHERE module='teslimat_planlama'")
         delivery_count = cr.fetchone()[0]
-        _logger.info(f"📊 delivery_module kayıt sayısı: {delivery_count}")
+        _logger.info(f"📊 teslimat_planlama kayıt sayısı: {delivery_count}")
         
         # 4. Çakışma kontrolü
         cr.execute("""

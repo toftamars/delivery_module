@@ -53,7 +53,7 @@ class DeliveryCreateWizard(models.TransientModel):
             
             if today_count >= self.vehicle_id.daily_limit:
                 # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                if not self.env.user.has_group('teslimat_planlama.group_delivery_manager'):
                     return {
                         'warning': {
                             'title': 'Uyarı',
@@ -90,7 +90,7 @@ class DeliveryCreateWizard(models.TransientModel):
                 selected_day_name = day_names[self.date.weekday()]
                 
                 # Teslimat yöneticisi için sadece uyarı ver, engelleme
-                if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+                if not self.env.user.has_group('teslimat_planlama.group_delivery_manager'):
                     raise UserError(_(f'Seçilen tarih ({self.date.strftime("%d/%m/%Y")} - {selected_day_name}) uygun bir teslimat günü değil.'))
                 else:
                     # Teslimat yöneticisi için uyarı ver ama devam et

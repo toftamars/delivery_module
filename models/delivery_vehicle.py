@@ -74,7 +74,7 @@ class DeliveryVehicle(models.Model):
 
     def action_reopen(self):
         """Geçici kapatmayı kaldır"""
-        if not self.env.user.has_group('delivery_module.group_delivery_manager'):
+        if not self.env.user.has_group('teslimat_planlama.group_delivery_manager'):
             raise UserError(_('Bu işlem için teslimat yöneticisi yetkisi gereklidir.'))
         
         self.write({

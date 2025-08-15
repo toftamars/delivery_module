@@ -11,7 +11,7 @@
         <menuitem id="menu_delivery_document"
                   name="Teslimat Belgeleri"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_delivery_document"
+                  action="teslimat_planlama.action_delivery_document"
                   sequence="10"
                   groups="base.group_user"/>
 
@@ -19,7 +19,7 @@
         <menuitem id="menu_delivery_create"
                   name="Teslimat Belgesi Oluştur"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_delivery_create_wizard"
+                  action="teslimat_planlama.action_delivery_create_wizard"
                   sequence="20"
                   groups="base.group_user"/>
 
@@ -27,7 +27,7 @@
         <menuitem id="menu_delivery_vehicle"
                   name="Teslimat Araçları"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_delivery_vehicle"
+                  action="teslimat_planlama.action_delivery_vehicle"
                   sequence="30"
                   groups="base.group_user"/>
 
@@ -35,7 +35,7 @@
         <menuitem id="menu_delivery_day"
                   name="Teslimat Günleri"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_delivery_day"
+                  action="teslimat_planlama.action_delivery_day"
                   sequence="40"
                   groups="base.group_user"/>
 
@@ -43,7 +43,7 @@
         <menuitem id="menu_setup_delivery_schedule"
                   name="Teslimat Programı Kurulumu"
                   parent="menu_delivery_root"
-                  action="delivery_module.action_setup_delivery_schedule_wizard"
+                  action="teslimat_planlama.action_setup_delivery_schedule_wizard"
                   sequence="45"
                   groups="base.group_user"/>
 

@@ -1,0 +1,55 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Teslimat Modülü v1.0.3</h1>
+            <h3 class="text-center">Teslimat yönetimi için geliştirilmiş Odoo modülü</h3>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Genel Bakış</h2>
+            <p>Transfer belgelerinden otomatik teslimat oluşturma, SMS bildirimleri, araç yönetimi ve ilçe bazlı teslimat programı özelliklerini içerir.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Özellikler</h2>
+            <ul>
+                <li><strong>Transfer Belgesi Entegrasyonu:</strong> Stock picking'lerden otomatik teslimat oluşturma</li>
+                <li><strong>SMS Bildirimleri:</strong> Durum değişikliklerinde müşteriye SMS gönderimi</li>
+                <li><strong>Araç Yönetimi:</strong> Günlük kapasite kontrolü ve araç takibi</li>
+                <li><strong>Teslimat Günleri:</strong> İlçe bazlı haftalık teslimat programı</li>
+                <li><strong>Geçici Kapatma:</strong> Araç ve gün bazında geçici kapatma özelliği</li>
+                <li><strong>Yetki Yönetimi:</strong> Teslimat yöneticisi ve normal kullanıcı yetkileri</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Kullanım</h2>
+            <h3>Teslimat Belgesi Oluşturma</h3>
+            <ol>
+                <li><strong>Teslimat → Teslimat Belgesi Oluştur</strong></li>
+                <li>Transfer numarasını girin</li>
+                <li>İlçe seçin</li>
+                <li>Araç seçin</li>
+                <li>"Teslimat Oluştur" butonuna tıklayın</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Teknik Detaylar</h2>
+            <h3>Model Yapısı</h3>
+            <ul>
+                <li><code>delivery.document</code>: Ana teslimat belgesi</li>
+                <li><code>delivery.vehicle</code>: Araç yönetimi</li>
+                <li><code>delivery.day</code>: Teslimat günleri</li>
+                <li><code>res.city</code>: İl yönetimi</li>
+                <li><code>res.city.district</code>: İlçe yönetimi</li>
+                <li><code>res.partner</code>: Müşteri bilgileri (genişletilmiş)</li>
+            </ul>
+        </div>
+    </div>
+</div>
