@@ -33,7 +33,7 @@ Teslimat yönetimi için geliştirilmiş Odoo modülü. Transfer belgelerinden o
 
 ### 1. Modülü Yükle
 ```bash
-python3 -m odoo -d your_database -i delivery_module --stop-after-init
+python3 -m odoo -d your_database -i teslimat_planlama --stop-after-init
 ```
 
 ### 2. Odoo'yu Yeniden Başlat
@@ -90,8 +90,8 @@ sudo systemctl restart odoo
 ### Veritabanı Şeması Sorunları
 ```bash
 # Modülü yeniden yükle
-python3 -m odoo -d your_database -u delivery_module --stop-after-init
-python3 -m odoo -d your_database -i delivery_module --stop-after-init
+python3 -m odoo -d your_database -u teslimat_planlama --stop-after-init
+python3 -m odoo -d your_database -i teslimat_planlama --stop-after-init
 ```
 
 ### SMS Sorunları
@@ -110,6 +110,7 @@ python3 -m odoo -d your_database -i delivery_module --stop-after-init
 - ✅ Gereksiz dosyalar temizlendi
 - ✅ Log sistemi eklendi
 - ✅ Manifest sürümü güncellendi
+- ✅ Modül adı teslimat_planlama olarak değiştirildi
 
 ### v1.0.2
 - ✅ CloudPepper durum raporu eklendi
@@ -122,7 +123,7 @@ python3 -m odoo -d your_database -i delivery_module --stop-after-init
 ## 📞 Destek
 
 Sorunlar için:
-- GitHub Issues: https://github.com/toftamars/delivery_module/issues
+- GitHub Issues: https://github.com/toftamars/teslimat_planlama/issues
 - Email: [your-email@example.com]
 
 ## 📄 Lisans
