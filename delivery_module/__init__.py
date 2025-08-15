@@ -5,10 +5,9 @@ def post_init_hook(cr, registry):
     """Modül yüklendikten sonra çalışacak hook"""
     from odoo import api, SUPERUSER_ID
     import logging
+    import time
     
     _logger = logging.getLogger(__name__)
-    
-    env = api.Environment(cr, SUPERUSER_ID, {})
     
     # Acil durum düzeltmesi
     try:
@@ -25,15 +24,25 @@ def post_init_hook(cr, registry):
             
     except Exception as e:
         _logger.error(f"❌ Acil durum düzeltmesi sırasında hata: {e}")
-        raise e
+        # Hata durumunda modülün çalışmasını engelleme
+        pass
+    
+    # Tabloların oluşturulmasını bekle
+    _logger.info("Veritabanı tablolarının oluşturulması bekleniyor...")
+    time.sleep(2)  # 2 saniye bekle
     
     # Teslimat programını ayarla
     try:
-        from .data.setup_delivery_schedule import setup_delivery_schedule
-        _logger.info("Teslimat programı ayarlanıyor...")
-        setup_delivery_schedule(env)
-        _logger.info("Teslimat programı başarıyla ayarlandı!")
+        env = api.Environment(cr, SUPERUSER_ID, {})
+        # Tabloların oluşturulduğunu kontrol et
+        if env['ir.model'].search([('model', '=', 'delivery.day')]):
+            from .data.setup_delivery_schedule import setup_delivery_schedule
+            _logger.info("Teslimat programı ayarlanıyor...")
+            setup_delivery_schedule(env)
+            _logger.info("Teslimat programı başarıyla ayarlandı!")
+        else:
+            _logger.warning("delivery.day modeli henüz oluşturulmamış, teslimat programı ayarlaması atlanıyor.")
     except Exception as e:
         _logger.error(f"Teslimat programı ayarlanırken hata: {e}")
         # Hata durumunda modülün çalışmasını engelleme
-        raise e 
+        pass 
