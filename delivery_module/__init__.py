@@ -9,6 +9,16 @@ def post_init_hook(cr, registry):
     
     _logger = logging.getLogger(__name__)
     
+    # Çakışan kayıtları temizle
+    try:
+        from .data.fix_duplicate_key import fix_duplicate_key
+        _logger.info("🚨 Çakışan kayıtlar temizleniyor...")
+        fix_duplicate_key(cr)
+    except Exception as e:
+        _logger.error(f"❌ Çakışan kayıtları temizlerken hata: {e}")
+        # Hata durumunda devam et
+        pass
+    
     # Acil durum düzeltmesi
     try:
         from .data.emergency_fix import emergency_database_fix, check_fix_status
