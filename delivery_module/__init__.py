@@ -8,6 +8,24 @@ def post_init_hook(cr, registry):
     
     _logger = logging.getLogger(__name__)
     
+    # IR Model Data temizleme ve kontrol
+    try:
+        from .data.clean_ir_model_data import clean_ir_model_data, check_ir_model_data_status
+        _logger.info("🧹 IR Model Data temizleme başlatılıyor...")
+        
+        # Temizle
+        clean_ir_model_data(cr)
+        
+        # Durumu kontrol et
+        if check_ir_model_data_status(cr):
+            _logger.info("✅ IR Model Data temizleme başarılı!")
+        else:
+            _logger.warning("⚠️ IR Model Data'da hala sorunlar olabilir!")
+    except Exception as e:
+        _logger.error(f"❌ IR Model Data temizlenirken hata: {e}")
+        # Devam et
+        pass
+    
     env = api.Environment(cr, SUPERUSER_ID, {})
     
     # Acil durum düzeltmesi
@@ -25,7 +43,8 @@ def post_init_hook(cr, registry):
             
     except Exception as e:
         _logger.error(f"❌ Acil durum düzeltmesi sırasında hata: {e}")
-        raise e
+        # Devam et
+        pass
     
     # Teslimat programını ayarla
     try:
