@@ -61,4 +61,4 @@ def post_init_hook(cr, registry):
         _logger.error(f"Teslimat programı ayarlanırken hata: {e}")
         # Hata durumunda modülün çalışmasını engelleme - sadece log yaz
         _logger.warning("Teslimat programı ayarlanamadı ama modül çalışmaya devam edecek")
-        # raise e  # Bu satırı kaldırdık 
+        # raise e  # Bu satırı kaldırdık
