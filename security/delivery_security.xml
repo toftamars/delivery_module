@@ -12,6 +12,13 @@
         <record id="tofta_group_delivery_driver" model="res.groups">
             <field name="name">Teslimat Sürücüsü</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Grubu -->
+        <record id="tofta_group_delivery_user" model="res.groups">
+            <field name="name">Teslimat Kullanıcısı</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
@@ -35,6 +42,243 @@
             <field name="groups" eval="[(4, ref('tofta_group_delivery_driver'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Sadece okuma yetkisi -->
+        <record id="tofta_delivery_user_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Kuralı</field>
+            <field name="model_id" ref="model_delivery_document"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Şehir ve İlçe -->
+        <record id="tofta_delivery_user_city_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Şehir Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_res_city"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="tofta_delivery_user_district_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı İlçe Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_res_city_district"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Teslimat Günü ve Araç -->
+        <record id="tofta_delivery_user_day_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Gün Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_day"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="tofta_delivery_user_vehicle_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Araç Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_vehicle"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Wizard'lar -->
+        <record id="tofta_delivery_user_wizard_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Wizard Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_create_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Diğer Wizard'lar -->
+        <record id="tofta_delivery_user_other_wizard_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Diğer Wizard Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_limit_warning_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Kapatma Wizard'ları -->
+        <record id="tofta_delivery_user_closure_wizard_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Kapatma Wizard Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_day_closure_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="tofta_delivery_user_vehicle_closure_wizard_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Araç Kapatma Wizard Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_delivery_vehicle_closure_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field_name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Kurulum Wizard'ı -->
+        <record id="tofta_delivery_user_setup_wizard_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Kurulum Wizard Kuralı</field>
+            <field name="model_id" ref="teslimat_planlama.model_setup_delivery_schedule_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Partner -->
+        <record id="tofta_delivery_user_partner_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Partner Kuralı</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Stock Picking -->
+        <record id="tofta_delivery_user_picking_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Picking Kuralı</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Stock Picking -->
+        <record id="tofta_delivery_user_picking_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Picking Kuralı</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Users -->
+        <record id="tofta_delivery_user_users_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Users Kuralı</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Groups -->
+        <record id="tofta_delivery_user_groups_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Groups Kuralı</field>
+            <field name="model_id" ref="base.model_res_groups"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Country State -->
+        <record id="tofta_delivery_user_country_state_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Country State Kuralı</field>
+            <field name="model_id" ref="base.model_res_country_state"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Country -->
+        <record id="tofta_delivery_user_country_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Country Kuralı</field>
+            <field name="model_id" ref="base.model_res_country"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Mail Thread -->
+        <record id="tofta_delivery_user_mail_thread_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Mail Thread Kuralı</field>
+            <field name="model_id" ref="mail.model_mail_thread"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Mail Activity -->
+        <record id="tofta_delivery_user_mail_activity_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Mail Activity Kuralı</field>
+            <field name="model_id" ref="mail.model_mail_activity"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Teslimat Kullanıcısı Yetkileri - Mail Message -->
+        <record id="tofta_delivery_user_mail_message_rule" model="ir.rule">
+            <field name="name">Teslimat Kullanıcısı Mail Message Kuralı</field>
+            <field name="model_id" ref="mail.model_mail_message"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('tofta_group_delivery_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>
         </record>

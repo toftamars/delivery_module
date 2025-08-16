@@ -53,5 +53,21 @@
                   parent="tofta_menu_delivery_root"
                   sequence="100"
                   groups="base.group_user"/>
+
+        <!-- Şehirler Menüsü -->
+        <menuitem id="tofta_menu_res_city"
+                  name="Şehirler"
+                  parent="tofta_menu_delivery_config"
+                  action="teslimat_planlama.action_res_city"
+                  sequence="10"
+                  groups="base.group_user"/>
+
+        <!-- İlçeler Menüsü -->
+        <menuitem id="tofta_menu_res_city_district"
+                  name="İlçeler"
+                  parent="tofta_menu_delivery_config"
+                  action="teslimat_planlama.action_res_city_district"
+                  sequence="20"
+                  groups="base.group_user"/>
     </data>
 </odoo> 
