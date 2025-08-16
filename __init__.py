@@ -4,7 +4,7 @@ from . import wizard
 def post_init_hook(cr, registry):
     """Modül yüklendikten sonra çalışacak hook"""
     # Odoo import'ları sadece Odoo ortamında çalışır
-    # from odoo import api, SUPERUSER_ID
+    from odoo import api, SUPERUSER_ID
     import logging
     
     _logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def post_init_hook(cr, registry):
         # Devam et
         pass
     
-    # env = api.Environment(cr, SUPERUSER_ID, {})
+    env = api.Environment(cr, SUPERUSER_ID, {})
     # Odoo ortamında bu satır aktif olacak
     
     # Acil durum düzeltmesi
@@ -57,9 +57,8 @@ def post_init_hook(cr, registry):
     try:
         from .data.setup_delivery_schedule import setup_delivery_schedule
         _logger.info("Teslimat programı ayarlanıyor...")
-        # env tanımlanmadığı için bu kısmı atla
-        # setup_delivery_schedule(env)
-        _logger.info("Teslimat programı ayarlanması atlandı (env tanımlanmadı)")
+        setup_delivery_schedule(env)
+        _logger.info("Teslimat programı başarıyla ayarlandı!")
     except Exception as e:
         _logger.error(f"Teslimat programı ayarlanırken hata: {e}")
         # Hata durumunda modülün çalışmasını engelleme - sadece log yaz
