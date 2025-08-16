@@ -1,6 +1,7 @@
 # Odoo import'ları sadece Odoo ortamında çalışır
-# # # from odoo import models, fields, api, _
-# from odoo.exceptions import UserError
+# Bu dosya sadece Odoo ortamında çalıştırılmalıdır
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 class DeliveryDay(models.Model):
     _name = 'delivery.day'

@@ -1,5 +1,6 @@
 # Odoo import'ları sadece Odoo ortamında çalışır
-# from odoo import models, fields
+# Odoo import'ları sadece Odoo ortamında çalışır
+from odoo import models, fields
 
 class ResCity(models.Model):
     _name = 'res.city'

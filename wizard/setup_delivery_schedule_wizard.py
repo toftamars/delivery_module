@@ -1,6 +1,7 @@
 # Odoo import'ları sadece Odoo ortamında çalışır
-# # # from odoo import models, fields, api, _
-# from odoo.exceptions import UserError
+# Odoo import'ları sadece Odoo ortamında çalışır
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 class SetupDeliveryScheduleWizard(models.TransientModel):
     _name = 'setup.delivery.schedule.wizard'
