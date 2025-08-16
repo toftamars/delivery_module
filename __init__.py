@@ -57,8 +57,9 @@ def post_init_hook(cr, registry):
     try:
         from .data.setup_delivery_schedule import setup_delivery_schedule
         _logger.info("Teslimat programı ayarlanıyor...")
-        setup_delivery_schedule(env)
-        _logger.info("Teslimat programı başarıyla ayarlandı!")
+        # env tanımlanmadığı için bu kısmı atla
+        # setup_delivery_schedule(env)
+        _logger.info("Teslimat programı ayarlanması atlandı (env tanımlanmadı)")
     except Exception as e:
         _logger.error(f"Teslimat programı ayarlanırken hata: {e}")
         # Hata durumunda modülün çalışmasını engelleme - sadece log yaz
