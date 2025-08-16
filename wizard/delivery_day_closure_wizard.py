@@ -1,5 +1,6 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+# Odoo import'ları sadece Odoo ortamında çalışır
+# # # from odoo import models, fields, api, _
+# from odoo.exceptions import UserError
 
 class DeliveryDayClosureWizard(models.TransientModel):
     _name = 'delivery.day.closure.wizard'

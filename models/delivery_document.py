@@ -1,5 +1,6 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+# Odoo import'ları sadece Odoo ortamında çalışır
+# # # from odoo import models, fields, api, _
+# from odoo.exceptions import UserError
 
 class DeliveryDocument(models.Model):
     _name = 'delivery.document'

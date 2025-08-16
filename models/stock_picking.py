@@ -1,4 +1,5 @@
-from odoo import models, fields
+# Odoo import'ları sadece Odoo ortamında çalışır
+# from odoo import models, fields
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'

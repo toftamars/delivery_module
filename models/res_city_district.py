@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+# Odoo import'ları sadece Odoo ortamında çalışır
+# # from odoo import models, fields, api
 
 class ResCityDistrict(models.Model):
     _name = 'res.city.district'
