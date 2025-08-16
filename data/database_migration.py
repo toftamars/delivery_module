@@ -5,7 +5,8 @@ Bu script, teslimat modülü için gerekli veritabanı düzenlemelerini yapar.
 """
 
 import logging
-from odoo import api, SUPERUSER_ID
+# Odoo import'ları sadece Odoo ortamında çalışır
+# from odoo import api, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 

@@ -3,7 +3,8 @@ from . import wizard
 
 def post_init_hook(cr, registry):
     """Modül yüklendikten sonra çalışacak hook"""
-    from odoo import api, SUPERUSER_ID
+    # Odoo import'ları sadece Odoo ortamında çalışır
+    # from odoo import api, SUPERUSER_ID
     import logging
     
     _logger = logging.getLogger(__name__)
@@ -31,7 +32,8 @@ def post_init_hook(cr, registry):
         # Devam et
         pass
     
-    env = api.Environment(cr, SUPERUSER_ID, {})
+    # env = api.Environment(cr, SUPERUSER_ID, {})
+    # Odoo ortamında bu satır aktif olacak
     
     # Acil durum düzeltmesi
     try:
